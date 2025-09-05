@@ -1,7 +1,7 @@
 ---
 title: "Journal 1"
 #bibliography: references.bib
-author: "Your Name"
+author: "Paige Kemper"
 ---
 
 
@@ -37,6 +37,17 @@ You can journal the assignments of the first day here.
   
 
 ----
+
+erty
+
+# h1
+
+test
+
+## h2
+
+*this course*
+
 
 
 ```{r}

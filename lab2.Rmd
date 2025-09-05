@@ -1,7 +1,8 @@
 ---
-title: "Journal 1"
+title: "Journal 2"
 #bibliography: references.bib
 author: "Paige Kemper"
+
 ---
 
 ```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
@@ -13,10 +14,11 @@ options(width = 100)
 rgl::setupKnitr()
 
 
-
 colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
 
+
 ```
+
 
 ```{r klippy, echo=FALSE, include=TRUE}
 klippy::klippy(position = c('top', 'right'))
@@ -24,40 +26,35 @@ klippy::klippy(position = c('top', 'right'))
 #klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
 ```
 
+
 Last compiled on `r format(Sys.time(), '%B, %Y')`
 
 <br>
 
 ------------------------------------------------------------------------
 
-This is just an example page of your `r colorize("lab journal", "red")`. You can journal the assignments of the first day here.
+This is another example page of your `r colorize("lab journal", "red")`. You can journal the assignments of the first day here too.
 
 ------------------------------------------------------------------------
 
-erty
 
-# h1
 
-test
+## R Markdown
 
-## h2
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-*this course*
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-### h3
-
-**heading 3**
-
-list
-
--   1
-
--   2
-
--   3
-
--   4
-
-```{r}
-print("Hello Lab Journal")
+```{r cars}
+summary(cars)
 ```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

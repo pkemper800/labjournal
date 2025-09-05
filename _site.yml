@@ -16,6 +16,15 @@ navbar:
         href: lab1.html
         
         # here, other .Rmds can be added
+      - text: "Page 2"
+        href: lab2.html
+        
+    - text: "Assignments"
+      menu:
+      - text: "Assignment 1"
+        href: assignment1.html
+        
+    - text: "Research"
 
 
   right:

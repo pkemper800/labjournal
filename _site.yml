@@ -25,6 +25,9 @@ navbar:
         href: assignment1.html
         
     - text: "Research"
+      menu:
+      - text: "Research Questions"
+        href: researchquestions.html
 
 
   right:

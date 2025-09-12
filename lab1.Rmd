@@ -81,23 +81,39 @@ _This is just an example page of your `r colorize("lab journal", "red")`. You ca
 ------------------------------------------------------------------------
 
 # Chapter 1 and Appendix A
-Key Terms
--   Social Network: "a finite set of actors and the relation(s) defined on this set. The actors are social entities (people, organizations, countries, etc.) whose specific ties (friendship, competition, collaboration, etc.), constitute the network. (, as quoted from Wasserman and Faust 1994 : 20)." 
+Key Terms 
+
+-   Social Network: "a finite set of actors and the relation(s) defined on this set. The actors are social entities (people, organizations, countries, etc.) whose specific ties (friendship, competition, collaboration, etc.), constitute the network. (, as quoted from Wasserman and Faust 1994 : 20)."
+
 -   Social Network Perspective: Look at nodes, ties, and relational effects within a network.
-* Nodes: A social agent, also known as one actor or individual, 
-* Dyads: Type of social network, smallest possible type of network is between two social agents. 
-* Undirected relationships: Have 2 possible configurations, present and not present.
-* Directed relationships: Have 4 configurations, depending on the presence and direction of the relation. 
-* Egonets: Type of social network, comprised of nodes/actors that have relationships with ego. 
-* Ego: The node/actor of focus within a social network
-* Alter: The other nodes/actors relating to an ego within a social network
-* 1 Degree Network: When there is one type of tie; for example, one ego connected to several alters. 
-* 1.5 Degree Network: When the alters of a 1 degree network become connected. 
-* 2 Degree Network: When, in mapping the alters, additional nodes are included that are not directly connected to the ego.
-* Complete nets ("Socionets"): Type of social network, full and complete in the sense that we know all the nodes and connections of nodes; 
-* Multiple-mode networks: Networks with two different types of nodes, such that relationships between two different types of nodes are present. 
-* Multiplex networks: Multiple types of relationships are present. 
-* Weighted networks: When the relationships between nodes are not binary, but can vary in strength;    
+
+-   Nodes: A social agent, also known as one actor or individual,
+
+-   Dyads: Type of social network, smallest possible type of network is between two social agents.
+
+-   Undirected relationships: Have 2 possible configurations, present and not present.
+
+-   Directed relationships: Have 4 configurations, depending on the presence and direction of the relation.
+
+-   Egonets: Type of social network, comprised of nodes/actors that have relationships with ego. 
+
+-   Ego: The node/actor of focus within a social network
+
+-   Alter: The other nodes/actors relating to an ego within a social network
+
+-   1 Degree Network: When there is one type of tie; for example, one ego connected to several alters. 
+
+-   1.5 Degree Network: When the alters of a 1 degree network become connected.
+
+-   2 Degree Network: When, in mapping the alters, additional nodes are included that are not directly connected to the ego.
+
+-   Complete nets ("Socionets"): Type of social network, full and complete in the sense that we know all the nodes and connections of nodes; 
+
+-   Multiple-mode networks: Networks with two different types of nodes, such that relationships between two different types of nodes are present.
+
+-   Multiplex networks: Multiple types of relationships are present. 
+
+-   Weighted networks: When the relationships between nodes are not binary, but can vary in strength;    
 
 
 ::: Citations: 
@@ -143,6 +159,7 @@ print(img)
 
 ### **Dataset Background**
 Data on sociologists and political scientists collected from all Universities in the Netherlands, with faculty members are the nodes. Includes characteristics of nodes (gender, age, position), research output/publications, and collaborations. Also have time-stamped data on ego level, with all the papers also time stamped for publication date. Data collected over 3 years. Prioritize investigations of inequalities in networks (gender inequality, segregation, etc). 
+  
 
 ### **Preliminary Research Questions**
 Do the researcher’s # of collaborations within department vs. across departments differ depending on their ethnic diversity across Dutch universities?

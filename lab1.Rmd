@@ -162,7 +162,24 @@ Data on sociologists and political scientists collected from all Universities in
   
 
 ### **Preliminary Research Questions**
-Do the researcher’s # of collaborations within department vs. across departments differ depending on their ethnic diversity across Dutch universities?
+What impact does ethnic diversity in departments have on cross department collaboration?
+
+Do the researcher’s # of collaborations within department vs. across departments differ depending on their ethnic diversity across Dutch universities? 
+
+Do the department's proportion of within-department collaboration vs beyond department collaboration change depening on the ethnic diversity of the department across universities in the netherlands? 
+
+How is this impacted by how long researchers have been at the university? 
+
+
+
+Researcher -
+# of collabarations within department
+# of collaborations across department 
+Ethnic background
+
+
+
+Questions for the group: 
 
 
 

@@ -1,0 +1,216 @@
+---
+title: "Descriptive Statistics"
+author: "Paige Kemper"
+date: "2025-09-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+```{r cars}
+
+#matrix(data, nrow, ncol, byrow, dimnames)
+num1 <- c(0, 1, 2, 3, 4, 5, 6, 7, 8)
+num2 <- data.frame(0, 1, 2, 3, 4, 5, 6, 7, 8)
+
+
+## ego is row, alter is column
+base <- c(0, 1)
+mat1 <- matrix(base, nrow=100, ncol = 100, byrow = TRUE)
+mat1
+
+mat2 <- matrix(rnorm(1), nrow = 100, byrow = TRUE)
+mat2
+
+
+#in class 
+numbers <- sample(x=0:1, size = 16, replace = TRUE)
+net1 <- matrix(numbers, 4, 4, TRUE)
+net1
+diag(net1) <- 0
+net1
+
+#undirected network -- symmetric matrix
+#symmetry - triangle (transpose didn't work) - if flip columns and rows, will have the same matrix
+# upper triangle of matrix -- as AS SYMMETRIC
+
+# descriptive statistics
+rowSums(net1)
+mean(net1)
+
+```
+
+
+``` {r}
+## WORKSPACE FOR LEARNING R CODE
+
+
+
+## SUMMARY - STEPS FOR WHAT COVERED TODAY
+# per row: for ego 1: if ego has a tie with alter 1, and alter 1 has a tie with alter 2, and alter 3 has a tie with 1
+# per row: if ego 1 has tie with ego to and ego 3, and ego 2 and 3 have a tie XX 
+install.packages("igraph")
+#code from sample lab notebook
+## graph <- graph_from_adjacency_matrix(AM_empty, mode = "directed")
+## triad_census(graph)
+
+
+# STEP 1: MAKE A MATRIX
+# we will come back to this matrix to look at directed relationships, which is NOT symmetrical
+
+set.seed(124376) #randomized start
+matrix1 <- matrix(sample(x=0:1, size = 25, replace = TRUE), nrow = 5, ncol = 5)
+
+
+
+#STEP 2: MAKE MATRIX SYMMETRICAL
+## this will make it possible to review undirected relationships. "t" is a command for transpose. we next will look for the number of ties in an undirected network (and we will be looking at a transitive triad) 
+
+symmatrix1 <- matrix1 + t(matrix1) #this will just add over where there are 1's, but it will be a bit redundant
+symmatrix1
+symmatrix1[symmatrix1 == 2] <- 1 #neutralize redundancies
+ # Replacement script -- IF/ELSE
+ ## symmatrix1 <- ifelse(symmatrix1==2,1,0) 
+diag(symmatrix1) <- 0
+symmatrix1
+
+
+symmatrix1G <- graph_from_adjacency_matrix(symmatrix1) 
+class(symmatrix1G)
+plot(symmatrix1G) #now we will map the triad relationships
+igraph::transitivity(symmatrix1G, type = "undirected")
+
+dyad_census(symmatrix1G)
+
+
+
+#STEP 3: Now we will look at the dyad relationships: 0 tie, 1-way tie, or mutual (2-way) tie.
+
+# now looking at dyad relationships - need to look at the direction of the relationships. Number of ties in a directed network is not symmetrical. 
+matrix1G <- graph_from_adjacency_matrix(matrix1)
+class(matrix1G)
+plot(matrix1G)
+igraph::transitivity(matrix1G, type = "undirected")
+dyad_census(matrix1G)
+
+
+# STEP 4: We will next look at triad census function: look at the different types of triad relationships
+## can look at empty dyads within triad: how many one-way and two-way relationships are there? how many are missing? 
+triad_census(matrix1G) #from igraph package, it relays the countes for each of the 16 different configurations for directed networks but it doesn't actually say the type of configuration
+
+install.packages("sna")
+library(sna)
+triad.census(matrix1) #Option 1 for looking at the types of triad census functions
+
+triad_counts <- triad.census(as.matrix(as_adjacency_matrix(matrix1G))) #Option 2
+print(triad_counts)
+
+
+# STEP 5: MAKE 100 ROW AND COLUMN MATRIX AND VISUALIZE DYADS AND TRIADS BOOM
+set.seed(178376) #randomized start
+matrix100 <- matrix(sample(x=0:1, size = 10000, replace = TRUE), nrow = 100, ncol = 100)
+
+matrix100G <- graph_from_adjacency_matrix(matrix100)
+class(matrix100G)
+plot(matrix100G)
+igraph::transitivity(matrix100G, type = "undirected")
+dyad_census(matrix100G)
+triad.census(matrix100) 
+
+
+
+
+
+##### WORKSPACE BELOW 
+
+
+if [1,2]=TRUE and [2,3]=TRUE and [3,1]=true
+if x=1 and 
+
+## Text From Working in Class: 
+library(igraph)
+set.seed(123443)
+net3 <- matrix(sample(0:1, 16, replace = TRUE), nrow = 4, ncol = 4)
+
+netN <- net3 + t(net3)
+netN[netN == 2] <- 1
+diag(netN) <- 0
+netN
+
+## closed triad: 1 connected to 2 and 3, 2 to 1 and 3, and 3 connected to 1 and 2
+netG <- graph_from_adjacency_matrix(netN)
+class(netG)
+plot(netG)
+igraph::transitivity(netG, type = "undirected")
+
+dyad_census(netG)
+## dyad: can have no, 1, or 2-way relationship. 
+
+
+
+```
+
+
+different seed
+``` {r}
+set.seed(123643)
+net4 <- matrix(sample(0:1, 16, replace = TRUE), nrow = 4, ncol = 4)
+
+netM <- net4 + t(net4)
+netM[netM == 2] <- 1
+diag(netM) <- 0
+netM
+netQ <- graph_from_adjacency_matrix(netM)
+class(netQ)
+plot(netQ)
+igraph::transitivity(netQ, type = "undirected")
+
+
+```
+
+``` {r}
+require(igraph)
+g <- make_graph("Zachary")
+plot(g)
+gmat <- as_adjacency_matrix(g, type = "both", sparse = FALSE)
+gmat
+
+```
+
+
+
+``` {r}
+require(MASS)
+set.seed(9864)  # We set a seed. In this we the random numbers we will generate be the same and we thus end up with the same dataset. Please not that to be absolutely sure to get the same dataset, we need to run the same R version (and packages).
+
+# let us start with simulating the opinion of both partners.
+Sigma <- matrix(c(10, 4, 4, 5), 2, 2)
+opinions <- mvrnorm(n = 1000, mu = c(4, 5), Sigma)
+opinion_W <- opinions[, 1]
+opinion_M <- opinions[, 2]
+dyad_id <- 1:1000
+
+# and let's put everything together
+data <- data.frame(dyad_id, opinion_W, opinion_M)
+# add some description to the data
+attr(data, "description") <- "This is a simulated dataset to illustrate interdependencies of observations within dyads (i.e. heterosexual couples). The dataset is in wide-format: one row refers to one couple. Variables with \"_W\" refer to women,\"_M\" refer to men."
+
+# I don't think the variables need any further description.
+
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

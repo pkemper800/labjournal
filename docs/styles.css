@@ -1,0 +1,20 @@
+/*styles.css*/
+
+/* Style the body text */
+  body {
+    font-family: "Georgia", serif;
+    font-size: 16px;
+    color: #333333;
+  }
+
+/* Style headers (H1 to H4) */
+  h1, h2, h3, h4 {
+    font-family: "Helvetica", sans-serif;
+    color: #2C3E50;
+  }
+
+/* Optionally customize H1 alone */
+  h1 {
+    color: darkblue;
+    font-family: "Georgia", serif;
+  }

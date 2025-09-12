@@ -3,9 +3,9 @@ title: "Journal 1"
 #bibliography: references.bib
 author: "Paige Kemper"
 
-output:
-  html_document:
-    css: styles.css
+# output:
+  # html_document:
+    # css: styles.css
 
 ---
 
@@ -19,17 +19,17 @@ knitr::opts_chunk$set(
 )
 
 options(width = 100)
-
+``` {r}
 # Setup for interactive 3D plots (optional)
 if (requireNamespace("rgl", quietly = TRUE)) {
   rgl::setupKnitr()
 }
 
 # Define the colorize function for use later in the document
-colorize <- function(x, color) {
+ colorize <- function(x, color) {
   sprintf("<span style='color: %s;'>%s</span>", color, x)
 }
-
+```
 
 ```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
 library(knitr)

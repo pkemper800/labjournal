@@ -6,7 +6,13 @@ bibliography: references.bib
  
 ---
 
+testing formatting 
+```{r}
+output:
+  html_document:
+    css: styles.css
 
+```
 
 
 ```{r, install remotely, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
@@ -21,7 +27,6 @@ knitr::opts_chunk$set(echo = TRUE)
 opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
 options(width = 100)
 rgl::setupKnitr()
-
 
 
 colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }

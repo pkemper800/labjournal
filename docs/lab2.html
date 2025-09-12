@@ -369,7 +369,18 @@ div.tocify {
     </li>
   </ul>
 </li>
-<li class="dropdown-header">Research</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Research
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="researchquestions.html">Research Questions</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -409,22 +420,231 @@ div.tocify {
 </script>
 <p>Last compiled on September, 2025</p>
 <p><br></p>
-<hr />
-<p>This is another example page of your <span style="color: red;">lab
-journal</span>. You can journal the assignments of the first day here
-too.</p>
-<hr />
-<div id="r-markdown" class="section level2" number="1">
-<h2><span class="header-section-number">1</span> R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting
-syntax for authoring HTML, PDF, and MS Word documents. For more details
-on using R Markdown see <a href="http://rmarkdown.rstudio.com"
-class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be
-generated that includes both content as well as the output of any
-embedded R code chunks within the document. You can embed an R code
-chunk like this:</p>
-<pre class="r test"><code>summary(cars)</code></pre>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left">### Date: <span style="color: navy;">12 September
+2025</span></td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Week 2 Assignments:</strong></td>
+</tr>
+<tr class="odd">
+<td align="left">1. Review: Chapter 2, 3,3 and 5</td>
+</tr>
+<tr class="even">
+<td align="left">2. Assignment from Chapter 2</td>
+</tr>
+<tr class="odd">
+<td align="left">## Review ### Chapter 2</td>
+</tr>
+</tbody>
+</table>
+<div id="chapter-3" class="section level3" number="0.0.1">
+<h3><span class="header-section-number">0.0.1</span> Chapter 3</h3>
+<ul>
+<li>Homogamy:</li>
+<li>Homophily: . When looking at it as a consequence of the tie in
+dyads, focus on dynamic characteristics (like political opinion) and the
+shared context and influence processes</li>
+</ul>
+</div>
+<div id="chapter-5" class="section level3" number="0.0.2">
+<h3><span class="header-section-number">0.0.2</span> Chapter 5</h3>
+<p>Assignment code: ``` #{r}
+load(“C:/Users/paigek/Downloads/liss_cdn.Rdata”)</p>
+<div id="clean-the-environment-." class="section level4"
+number="0.0.2.1">
+<h4><span class="header-section-number">0.0.2.1</span> clean the
+environment ####.</h4>
+<p>rm(list = ls()) load(“C:/Users/paigek/Downloads/liss_cdn.Rdata”)</p>
+</div>
+<div id="packages-." class="section level4" number="0.0.2.2">
+<h4><span class="header-section-number">0.0.2.2</span> packages
+####.</h4>
+<p>require(tidyverse) require(lavaan)</p>
+<div id="data-input-." class="section level5" number="0.0.2.2.1">
+<h5><span class="header-section-number">0.0.2.2.1</span> Data input
+###.</h5>
+<p>load(“addfiles/liss_cdn.Rdata”)</p>
+<p>liss_l &lt;- liss_cdn[[1]] liss_w &lt;- liss_cdn[[2]]</p>
+</div>
+</div>
+</div>
+<div
+id="we-need-to-disaggregate-our-data.-thus-each-ego-wave-alter-per-row."
+class="section level1" number="1">
+<h1><span class="header-section-number">1</span> we need to disaggregate
+our data. thus each ego, wave, alter per row.</h1>
+<p>liss_ll &lt;- rbind(liss_l, liss_l, liss_l, liss_l, liss_l)
+liss_ll<span class="math inline">\(index_alter &lt;- rep(1:5, each =
+length(liss_l[, 1]))
+liss_ll\)</span>educ_alter &lt;- NA</p>
+<p>liss_ll<span class="math inline">\(educ_alter &lt;-
+ifelse(liss_ll\)</span>index_alter == 1, liss_ll<span
+class="math inline">\(educ_alter1, liss_ll\)</span>educ_alter)
+liss_ll<span class="math inline">\(educ_alter &lt;-
+ifelse(liss_ll\)</span>index_alter == 2, liss_ll<span
+class="math inline">\(educ_alter2, liss_ll\)</span>educ_alter)
+liss_ll<span class="math inline">\(educ_alter &lt;-
+ifelse(liss_ll\)</span>index_alter == 3, liss_ll<span
+class="math inline">\(educ_alter3, liss_ll\)</span>educ_alter)
+liss_ll<span class="math inline">\(educ_alter &lt;-
+ifelse(liss_ll\)</span>index_alter == 4, liss_ll<span
+class="math inline">\(educ_alter4, liss_ll\)</span>educ_alter)
+liss_ll<span class="math inline">\(educ_alter &lt;-
+ifelse(liss_ll\)</span>index_alter == 5, liss_ll<span
+class="math inline">\(educ_alter5, liss_ll\)</span>educ_alter)</p>
+<p>liss_ll_sel &lt;- liss_ll %&gt;% filter(survey_wave == 11)</p>
+<p>model1 &lt;- ” euthanasia ~ educ_alter euthanasia ~ 1 euthanasia ~~
+euthanasia ”</p>
+<p>fit1 &lt;- lavaan(model1, data = liss_ll_sel) summary(fit1)</p>
+<div id="aggregation-method" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> AGGREGATION
+METHOD</h2>
+<p>liss_l &lt;- liss_l %&gt;% mutate(educ_alter_mean =
+rowMeans(cbind(educ_alter1, educ_alter2, educ_alter3, educ_alter4,
+educ_alter5), na.rm = TRUE)) #calculate the mean educational level of
+the alters.</p>
+<p>liss_l_sel &lt;- liss_l %&gt;% filter(survey_wave == 11)</p>
+<p>model1 &lt;- ” euthanasia ~ educ_alter_mean euthanasia ~ 1 euthanasia
+~~ euthanasia ”</p>
+<p>fit2 &lt;- lavaan(model1, data = liss_l_sel, missing = “fiml”)
+summary(fit2)</p>
+</div>
+<div id="micro-macro-model" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> MICRO-MACRO
+MODEL</h2>
+<p>liss_l_sel &lt;- liss_l %&gt;% filter(survey_wave == 11)</p>
+<p>model &lt;- ” #latent variable FX =~ 1<em>educ_alter1 FX =~
+1</em>educ_alter2 FX =~ 1<em>educ_alter3 FX =~ 1</em>educ_alter4 FX =~
+1*educ_alter5</p>
+<p>#variances educ_alter1 ~~ b<em>educ_alter1 educ_alter2 ~~
+b</em>educ_alter2 educ_alter3 ~~ b<em>educ_alter3 educ_alter4 ~~
+b</em>educ_alter4 educ_alter5 ~~ b*educ_alter5</p>
+<p>FX ~~ FX euthanasia ~~ euthanasia</p>
+<p>#regression model euthanasia ~ FX euthanasia ~ 1</p>
+<p>#intercepts/means educ_alter1 ~ e<em>1 educ_alter2 ~ e</em>1
+educ_alter3 ~ e<em>1 educ_alter4 ~ e</em>1 educ_alter5 ~ e*1 ”</p>
+<p>fit3 &lt;- lavaan(model, data = liss_l_sel, missing = “fiml”, fixed.x
+= FALSE) summary(fit3)</p>
+</div>
+<div id="measurement-model" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> MEASUREMENT
+MODEL</h2>
+<p>myModel &lt;- ’</p>
+<p>FX6 =~ 1<em>educ_alter1.6 + 1</em>educ_alter2.6 + 1<em>educ_alter3.6
++ 1</em>educ_alter4.6 + 1<em>educ_alter5.6<br />
+FX7 =~ 1</em>educ_alter1.7 + 1<em>educ_alter2.7 + 1</em>educ_alter3.7 +
+1<em>educ_alter4.7 + 1</em>educ_alter5.7<br />
+FX8 =~ 1<em>educ_alter1.8 + 1</em>educ_alter2.8 + 1<em>educ_alter3.8 +
+1</em>educ_alter4.8 + 1<em>educ_alter5.8<br />
+FX9 =~ 1</em>educ_alter1.9 + 1<em>educ_alter2.9 + 1</em>educ_alter3.9 +
+1<em>educ_alter4.9 + 1</em>educ_alter5.9</p>
+<p>#variances of latent variables FX6 ~~ FX6 FX7 ~~ FX7 FX8 ~~ FX8 FX9
+~~ FX9</p>
+<p>#constrained variances of manifest variables educ_alter1.6 ~~
+a<em>educ_alter1.6 educ_alter2.6 ~~ a</em>educ_alter2.6 educ_alter3.6 ~~
+a<em>educ_alter3.6 educ_alter4.6 ~~ a</em>educ_alter4.6 educ_alter5.6 ~~
+a*educ_alter5.6</p>
+<p>educ_alter1.7 ~~ b<em>educ_alter1.7 educ_alter2.7 ~~
+b</em>educ_alter2.7 educ_alter3.7 ~~ b<em>educ_alter3.7 educ_alter4.7 ~~
+b</em>educ_alter4.7 educ_alter5.7 ~~ b*educ_alter5.7</p>
+<p>educ_alter1.8 ~~ c<em>educ_alter1.8 educ_alter2.8 ~~
+c</em>educ_alter2.8 educ_alter3.8 ~~ c<em>educ_alter3.8 educ_alter4.8 ~~
+c</em>educ_alter4.8 educ_alter5.8 ~~ c*educ_alter5.8</p>
+<p>educ_alter1.9 ~~ d<em>educ_alter1.9 educ_alter2.9 ~~
+d</em>educ_alter2.9 educ_alter3.9 ~~ d<em>educ_alter3.9 educ_alter4.9 ~~
+d</em>educ_alter4.9 educ_alter5.9 ~~ d*educ_alter5.9</p>
+<p>#contrained intercepts of the manifest variables (structural changes
+are picked up by the latent variables) educ_alter1.6 ~ e<em>1
+educ_alter2.6 ~ e</em>1 educ_alter3.6 ~ e<em>1 educ_alter4.6 ~ e</em>1
+educ_alter5.6 ~ e*1</p>
+<p>educ_alter1.7 ~ e<em>1 educ_alter2.7 ~ e</em>1 educ_alter3.7 ~ e<em>1
+educ_alter4.7 ~ e</em>1 educ_alter5.7 ~ e*1</p>
+<p>educ_alter1.8 ~ e<em>1 educ_alter2.8 ~ e</em>1 educ_alter3.8 ~ e<em>1
+educ_alter4.8 ~ e</em>1 educ_alter5.8 ~ e*1</p>
+<p>educ_alter1.9 ~ e<em>1 educ_alter2.9 ~ e</em>1 educ_alter3.9 ~ e<em>1
+educ_alter4.9 ~ e</em>1 educ_alter5.9 ~ e*1</p>
+<p>#free the means of the latent variables</p>
+<p>FX7 ~ 1 FX8 ~ 1 FX9 ~ 1 ’ fit &lt;- lavaan(myModel, data = liss_w,
+missing = ‘ML’, fixed.x=FALSE, meanstructure = T) summary(fit,
+standardized = T)</p>
+</div>
+<div id="the-structural-model" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> THE STRUCTURAL
+MODEL</h2>
+<p>RICLPM &lt;- ’ # Create between components (random intercepts) RIx =~
+1<em>FX6 + 1</em>FX7 + 1<em>FX8 + 1</em>FX9 RIy =~ 1<em>euthanasia.6 +
+1</em>euthanasia.7 + 1<em>euthanasia.8 + 1</em>euthanasia.9</p>
+<p># Create within-person centered variables wx6 =~ 1<em>FX6 wx7 =~
+1</em>FX7 wx8 =~ 1<em>FX8 wx9 =~ 1</em>FX9</p>
+<p>wy6 =~ 1<em>euthanasia.6 wy7 =~ 1</em>euthanasia.7 wy8 =~
+1<em>euthanasia.8 wy9 =~ 1</em>euthanasia.9</p>
+<p># Estimate the lagged effects between the within-person centered
+variables. wx7 ~ a<em>wx6 + b</em>wy6 wx8 ~ a<em>wx7 + b</em>wy7 wx9 ~
+a<em>wx8 + b</em>wy8</p>
+<p>wy7 ~ c<em>wx6 + d</em>wy6 wy8 ~ c<em>wx7 + d</em>wy7 wy9 ~ c<em>wx8
++ d</em>wy8</p>
+<p># Estimate the (residual) covariance between the within-person
+centered variables wx6 ~~ wy6 wx7 ~~ wy7 wx8 ~~ wy8 wx9 ~~ wy9</p>
+<p># Estimate the variance and covariance of the random intercepts. RIx
+~~ RIx RIy ~~ RIy RIx ~~ RIy</p>
+<p># Estimate the (residual) variance of the within-person centered
+variables. wx6 ~~ wx6 wy6 ~~ wy6 wx7 ~~ wx7 wy7 ~~ wy7 wx8 ~~ wx8 wy8 ~~
+wy8 wx9 ~~ wx9 wy9 ~~ wy9</p>
+<p>#include intercepts FX6 ~ 1 FX7 ~ 1 FX8 ~ 1 FX9 ~ 1</p>
+<p>euthanasia.6 ~ 1 euthanasia.7 ~ 1 euthanasia.8 ~ 1 euthanasia.9 ~ 1
+’</p>
+<p>fit5 &lt;- lavaan(RICLPM, data=liss_w, missing = “fiml.x”,
+meanstructure = T ) summary(fit5, standardized = T)</p>
+<pre><code>
+-   
+
+
+## Assignment from Chapter 2 ## 
+
+1.    Formulate a hypothesis on how cultural modernisation (e.g. more equal gender norms) may have affected assortative mating. Please focus on the impact of cultural modernisation on ‘preferences’. Motivate your answer.
+
+2.    Formulate a hypothesis on how continuing educational expansion (which has been more pronounced for women than for men) may have affected patterns of homogamy. Please focus on the impact of educational expansion on ‘the structure of search’. Motivate your answer.
+    This question is about intermarriage.
+    A. Why would people prefer to marry someone who is similar?
+    B. Why would people prefer to marry someone who is dissimilar?
+    C. To what extent do you expect these reasons – mentioned in 3A and 3B to hold with respect to online relations (e.g. ‘friend’ relations on Facebook or ‘follower’ relations on Twitter)? Thus, with online relations I do not mean ‘romantic’ relations but simply forming a tie (e.g. befriending someone on Facebook; @-mention someone on twitter; etc.). Please motivate your answer.
+
+4.    What does Kalmijn (1998) mean with the by-product hypothesis?
+
+5.    What does Schwartz (2013) mean with the economic inequality hypothesis and what role do returns to schooling play in this idea/hypothesis?
+
+6.    Please give at least two reasons why increased assortative mating could increase economic inequality. See also Gonalons-Pons and Schwartz (2017).
+
+7.    Read Verbakel and De Graaf (2009) and answer the following questions:
+    A. What social problem(s) do the authors address?
+    B. How do the authors deal with interdependencies?
+    C. What macro-micro and micro-macro links are discussed?
+
+8.    Have a look at all the papers citing the paper of Verbakel and De Graaf (2009). How did the social-network perspective in the field addressing the same (or similar) social problems evolve?
+
+
+
+
+
+This is another example page of your &lt;span style=&#39;color: red;&#39;&gt;lab journal&lt;/span&gt;. You can journal the assignments of the first day here too.
+
+------------------------------------------------------------------------
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see &lt;http://rmarkdown.rstudio.com&gt;.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+```{.r .test}
+summary(cars)</code></pre>
 <pre class="test2"><code>#&gt;      speed           dist       
 #&gt;  Min.   : 4.0   Min.   :  2.00  
 #&gt;  1st Qu.:12.0   1st Qu.: 26.00  
@@ -433,16 +653,17 @@ chunk like this:</p>
 #&gt;  3rd Qu.:19.0   3rd Qu.: 56.00  
 #&gt;  Max.   :25.0   Max.   :120.00</code></pre>
 </div>
-<div id="including-plots" class="section level2" number="2">
-<h2><span class="header-section-number">2</span> Including Plots</h2>
+<div id="including-plots" class="section level2" number="1.5">
+<h2><span class="header-section-number">1.5</span> Including Plots</h2>
 <p>You can also embed plots, for example:</p>
 <p><img src="lab2_files/figure-html/pressure-1.png" width="672" /></p>
 <p>Note that the <code>echo = FALSE</code> parameter was added to the
 code chunk to prevent printing of the R code that generated the
 plot.</p>
 </div>
+</div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkpvdXJuYWwgMiINCiNiaWJsaW9ncmFwaHk6IHJlZmVyZW5jZXMuYmliDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQoNCi0tLQ0KDQpgYGB7ciwgZ2xvYmFsc2V0dGluZ3MsIGVjaG89RkFMU0UsIHdhcm5pbmc9RkFMU0UsIHJlc3VsdHM9J2hpZGUnfQ0KbGlicmFyeShrbml0cikNCg0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0Kb3B0c19jaHVuayRzZXQodGlkeS5vcHRzPWxpc3Qod2lkdGguY3V0b2ZmPTEwMCksdGlkeT1UUlVFLCB3YXJuaW5nID0gRkFMU0UsIG1lc3NhZ2UgPSBGQUxTRSxjb21tZW50ID0gIiM+IiwgY2FjaGU9VFJVRSwgY2xhc3Muc291cmNlPWMoInRlc3QiKSwgY2xhc3Mub3V0cHV0PWMoInRlc3QyIikpDQpvcHRpb25zKHdpZHRoID0gMTAwKQ0KcmdsOjpzZXR1cEtuaXRyKCkNCg0KDQpjb2xvcml6ZSA8LSBmdW5jdGlvbih4LCBjb2xvcikge3NwcmludGYoIjxzcGFuIHN0eWxlPSdjb2xvcjogJXM7Jz4lczwvc3Bhbj4iLCBjb2xvciwgeCkgfQ0KDQoNCmBgYA0KDQoNCmBgYHtyIGtsaXBweSwgZWNobz1GQUxTRSwgaW5jbHVkZT1UUlVFfQ0Ka2xpcHB5OjprbGlwcHkocG9zaXRpb24gPSBjKCd0b3AnLCAncmlnaHQnKSkNCiNrbGlwcHk6OmtsaXBweShjb2xvciA9ICdkYXJrcmVkJykNCiNrbGlwcHk6OmtsaXBweSh0b29sdGlwX21lc3NhZ2UgPSAnQ2xpY2sgdG8gY29weScsIHRvb2x0aXBfc3VjY2VzcyA9ICdEb25lJykNCmBgYA0KDQoNCkxhc3QgY29tcGlsZWQgb24gYHIgZm9ybWF0KFN5cy50aW1lKCksICclQiwgJVknKWANCg0KPGJyPg0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KVGhpcyBpcyBhbm90aGVyIGV4YW1wbGUgcGFnZSBvZiB5b3VyIGByIGNvbG9yaXplKCJsYWIgam91cm5hbCIsICJyZWQiKWAuIFlvdSBjYW4gam91cm5hbCB0aGUgYXNzaWdubWVudHMgb2YgdGhlIGZpcnN0IGRheSBoZXJlIHRvby4NCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoNCg0KDQojIyBSIE1hcmtkb3duDQoNClRoaXMgaXMgYW4gUiBNYXJrZG93biBkb2N1bWVudC4gTWFya2Rvd24gaXMgYSBzaW1wbGUgZm9ybWF0dGluZyBzeW50YXggZm9yIGF1dGhvcmluZyBIVE1MLCBQREYsIGFuZCBNUyBXb3JkIGRvY3VtZW50cy4gRm9yIG1vcmUgZGV0YWlscyBvbiB1c2luZyBSIE1hcmtkb3duIHNlZSA8aHR0cDovL3JtYXJrZG93bi5yc3R1ZGlvLmNvbT4uDQoNCldoZW4geW91IGNsaWNrIHRoZSAqKktuaXQqKiBidXR0b24gYSBkb2N1bWVudCB3aWxsIGJlIGdlbmVyYXRlZCB0aGF0IGluY2x1ZGVzIGJvdGggY29udGVudCBhcyB3ZWxsIGFzIHRoZSBvdXRwdXQgb2YgYW55IGVtYmVkZGVkIFIgY29kZSBjaHVua3Mgd2l0aGluIHRoZSBkb2N1bWVudC4gWW91IGNhbiBlbWJlZCBhbiBSIGNvZGUgY2h1bmsgbGlrZSB0aGlzOg0KDQpgYGB7ciBjYXJzfQ0Kc3VtbWFyeShjYXJzKQ0KYGBgDQoNCiMjIEluY2x1ZGluZyBQbG90cw0KDQpZb3UgY2FuIGFsc28gZW1iZWQgcGxvdHMsIGZvciBleGFtcGxlOg0KDQpgYGB7ciBwcmVzc3VyZSwgZWNobz1GQUxTRX0NCnBsb3QocHJlc3N1cmUpDQpgYGANCg0KTm90ZSB0aGF0IHRoZSBgZWNobyA9IEZBTFNFYCBwYXJhbWV0ZXIgd2FzIGFkZGVkIHRvIHRoZSBjb2RlIGNodW5rIHRvIHByZXZlbnQgcHJpbnRpbmcgb2YgdGhlIFIgY29kZSB0aGF0IGdlbmVyYXRlZCB0aGUgcGxvdC4NCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkpvdXJuYWwgMiINCiNiaWJsaW9ncmFwaHk6IHJlZmVyZW5jZXMuYmliDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQotLS0NCg0KYGBge3IsIGdsb2JhbHNldHRpbmdzLCBlY2hvPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCByZXN1bHRzPSdoaWRlJ30NCmxpYnJhcnkoa25pdHIpDQoNCmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSkNCm9wdHNfY2h1bmskc2V0KHRpZHkub3B0cz1saXN0KHdpZHRoLmN1dG9mZj0xMDApLHRpZHk9VFJVRSwgd2FybmluZyA9IEZBTFNFLCBtZXNzYWdlID0gRkFMU0UsY29tbWVudCA9ICIjPiIsIGNhY2hlPVRSVUUsIGNsYXNzLnNvdXJjZT1jKCJ0ZXN0IiksIGNsYXNzLm91dHB1dD1jKCJ0ZXN0MiIpKQ0Kb3B0aW9ucyh3aWR0aCA9IDEwMCkNCnJnbDo6c2V0dXBLbml0cigpDQoNCg0KY29sb3JpemUgPC0gZnVuY3Rpb24oeCwgY29sb3IpIHtzcHJpbnRmKCI8c3BhbiBzdHlsZT0nY29sb3I6ICVzOyc+JXM8L3NwYW4+IiwgY29sb3IsIHgpIH0NCg0KDQpgYGANCg0KYGBge3Iga2xpcHB5LCBlY2hvPUZBTFNFLCBpbmNsdWRlPVRSVUV9DQprbGlwcHk6OmtsaXBweShwb3NpdGlvbiA9IGMoJ3RvcCcsICdyaWdodCcpKQ0KI2tsaXBweTo6a2xpcHB5KGNvbG9yID0gJ2RhcmtyZWQnKQ0KI2tsaXBweTo6a2xpcHB5KHRvb2x0aXBfbWVzc2FnZSA9ICdDbGljayB0byBjb3B5JywgdG9vbHRpcF9zdWNjZXNzID0gJ0RvbmUnKQ0KYGBgDQoNCkxhc3QgY29tcGlsZWQgb24gYHIgZm9ybWF0KFN5cy50aW1lKCksICclQiwgJVknKWANCg0KPGJyPg0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCiMjIyBEYXRlOiBgciBjb2xvcml6ZSgiMTIgU2VwdGVtYmVyIDIwMjUiLCAibmF2eSIpYCANCg0KKipXZWVrIDIgQXNzaWdubWVudHM6KioNCg0KMS4gIFJldmlldzogQ2hhcHRlciAyLCAzLDMgYW5kIDUNCg0KMi4gIEFzc2lnbm1lbnQgZnJvbSBDaGFwdGVyIDINCg0KDQojIyBSZXZpZXcNCiMjIyBDaGFwdGVyIDIgDQotICAgIA0KDQojIyMgQ2hhcHRlciAzIA0KLSAgIEhvbW9nYW15OiANCi0gICBIb21vcGhpbHk6IC4gV2hlbiBsb29raW5nIGF0IGl0IGFzIGEgY29uc2VxdWVuY2Ugb2YgdGhlIHRpZSBpbiBkeWFkcywgZm9jdXMgb24gZHluYW1pYyBjaGFyYWN0ZXJpc3RpY3MgKGxpa2UgcG9saXRpY2FsIG9waW5pb24pIGFuZCB0aGUgc2hhcmVkIGNvbnRleHQgYW5kIGluZmx1ZW5jZSBwcm9jZXNzZXMNCg0KDQoNCiMjIyBDaGFwdGVyIDUgDQpBc3NpZ25tZW50IGNvZGU6IA0KYGBgICN7cn0NCmxvYWQoIkM6L1VzZXJzL3BhaWdlay9Eb3dubG9hZHMvbGlzc19jZG4uUmRhdGEiKQ0KDQoNCiMjIyMgY2xlYW4gdGhlIGVudmlyb25tZW50ICMjIyMuDQpybShsaXN0ID0gbHMoKSkNCmxvYWQoIkM6L1VzZXJzL3BhaWdlay9Eb3dubG9hZHMvbGlzc19jZG4uUmRhdGEiKQ0KDQojIyMjIHBhY2thZ2VzICMjIyMuDQpyZXF1aXJlKHRpZHl2ZXJzZSkNCnJlcXVpcmUobGF2YWFuKQ0KDQojIyMjIyBEYXRhIGlucHV0ICMjIy4NCmxvYWQoImFkZGZpbGVzL2xpc3NfY2RuLlJkYXRhIikNCg0KbGlzc19sIDwtIGxpc3NfY2RuW1sxXV0NCmxpc3NfdyA8LSBsaXNzX2NkbltbMl1dDQoNCg0KIyB3ZSBuZWVkIHRvIGRpc2FnZ3JlZ2F0ZSBvdXIgZGF0YS4gdGh1cyBlYWNoIGVnbywgd2F2ZSwgYWx0ZXIgcGVyIHJvdy4NCmxpc3NfbGwgPC0gcmJpbmQobGlzc19sLCBsaXNzX2wsIGxpc3NfbCwgbGlzc19sLCBsaXNzX2wpDQpsaXNzX2xsJGluZGV4X2FsdGVyIDwtIHJlcCgxOjUsIGVhY2ggPSBsZW5ndGgobGlzc19sWywgMV0pKQ0KbGlzc19sbCRlZHVjX2FsdGVyIDwtIE5BDQoNCmxpc3NfbGwkZWR1Y19hbHRlciA8LSBpZmVsc2UobGlzc19sbCRpbmRleF9hbHRlciA9PSAxLCBsaXNzX2xsJGVkdWNfYWx0ZXIxLCBsaXNzX2xsJGVkdWNfYWx0ZXIpDQpsaXNzX2xsJGVkdWNfYWx0ZXIgPC0gaWZlbHNlKGxpc3NfbGwkaW5kZXhfYWx0ZXIgPT0gMiwgbGlzc19sbCRlZHVjX2FsdGVyMiwgbGlzc19sbCRlZHVjX2FsdGVyKQ0KbGlzc19sbCRlZHVjX2FsdGVyIDwtIGlmZWxzZShsaXNzX2xsJGluZGV4X2FsdGVyID09IDMsIGxpc3NfbGwkZWR1Y19hbHRlcjMsIGxpc3NfbGwkZWR1Y19hbHRlcikNCmxpc3NfbGwkZWR1Y19hbHRlciA8LSBpZmVsc2UobGlzc19sbCRpbmRleF9hbHRlciA9PSA0LCBsaXNzX2xsJGVkdWNfYWx0ZXI0LCBsaXNzX2xsJGVkdWNfYWx0ZXIpDQpsaXNzX2xsJGVkdWNfYWx0ZXIgPC0gaWZlbHNlKGxpc3NfbGwkaW5kZXhfYWx0ZXIgPT0gNSwgbGlzc19sbCRlZHVjX2FsdGVyNSwgbGlzc19sbCRlZHVjX2FsdGVyKQ0KDQpsaXNzX2xsX3NlbCA8LSBsaXNzX2xsICU+JQ0KICAgIGZpbHRlcihzdXJ2ZXlfd2F2ZSA9PSAxMSkNCg0KbW9kZWwxIDwtICINCiAgZXV0aGFuYXNpYSB+IGVkdWNfYWx0ZXINCiAgZXV0aGFuYXNpYSB+IDENCiAgZXV0aGFuYXNpYSB+fiBldXRoYW5hc2lhDQogICINCg0KZml0MSA8LSBsYXZhYW4obW9kZWwxLCBkYXRhID0gbGlzc19sbF9zZWwpDQpzdW1tYXJ5KGZpdDEpDQoNCg0KIyMgQUdHUkVHQVRJT04gTUVUSE9EDQpsaXNzX2wgPC0gbGlzc19sICU+JQ0KICAgIG11dGF0ZShlZHVjX2FsdGVyX21lYW4gPSByb3dNZWFucyhjYmluZChlZHVjX2FsdGVyMSwgZWR1Y19hbHRlcjIsIGVkdWNfYWx0ZXIzLCBlZHVjX2FsdGVyNCwgZWR1Y19hbHRlcjUpLA0KICAgICAgICBuYS5ybSA9IFRSVUUpKSAgI2NhbGN1bGF0ZSB0aGUgbWVhbiBlZHVjYXRpb25hbCBsZXZlbCBvZiB0aGUgYWx0ZXJzLiANCg0KbGlzc19sX3NlbCA8LSBsaXNzX2wgJT4lDQogICAgZmlsdGVyKHN1cnZleV93YXZlID09IDExKQ0KDQptb2RlbDEgPC0gIg0KICBldXRoYW5hc2lhIH4gZWR1Y19hbHRlcl9tZWFuDQogIGV1dGhhbmFzaWEgfiAxDQogIGV1dGhhbmFzaWEgfn4gZXV0aGFuYXNpYQ0KICAiDQoNCmZpdDIgPC0gbGF2YWFuKG1vZGVsMSwgZGF0YSA9IGxpc3NfbF9zZWwsIG1pc3NpbmcgPSAiZmltbCIpDQpzdW1tYXJ5KGZpdDIpDQoNCg0KIyMgTUlDUk8tTUFDUk8gTU9ERUwNCmxpc3NfbF9zZWwgPC0gbGlzc19sICU+JQ0KICAgIGZpbHRlcihzdXJ2ZXlfd2F2ZSA9PSAxMSkNCg0KbW9kZWwgPC0gIg0KICAjbGF0ZW50IHZhcmlhYmxlDQogIEZYID1+IDEqZWR1Y19hbHRlcjENCiAgRlggPX4gMSplZHVjX2FsdGVyMg0KICBGWCA9fiAxKmVkdWNfYWx0ZXIzDQogIEZYID1+IDEqZWR1Y19hbHRlcjQNCiAgRlggPX4gMSplZHVjX2FsdGVyNQ0KICANCiAgI3ZhcmlhbmNlcw0KICBlZHVjX2FsdGVyMSB+fiBiKmVkdWNfYWx0ZXIxDQogIGVkdWNfYWx0ZXIyIH5+IGIqZWR1Y19hbHRlcjINCiAgZWR1Y19hbHRlcjMgfn4gYiplZHVjX2FsdGVyMw0KICBlZHVjX2FsdGVyNCB+fiBiKmVkdWNfYWx0ZXI0DQogIGVkdWNfYWx0ZXI1IH5+IGIqZWR1Y19hbHRlcjUNCiAgDQogIA0KICBGWCB+fiBGWA0KICBldXRoYW5hc2lhIH5+IGV1dGhhbmFzaWENCiAgDQogICNyZWdyZXNzaW9uIG1vZGVsDQogIGV1dGhhbmFzaWEgfiBGWA0KICBldXRoYW5hc2lhIH4gMQ0KICANCiAgI2ludGVyY2VwdHMvbWVhbnMNCiAgZWR1Y19hbHRlcjEgfiBlKjENCiAgZWR1Y19hbHRlcjIgfiBlKjENCiAgZWR1Y19hbHRlcjMgfiBlKjENCiAgZWR1Y19hbHRlcjQgfiBlKjENCiAgZWR1Y19hbHRlcjUgfiBlKjENCiINCg0KZml0MyA8LSBsYXZhYW4obW9kZWwsIGRhdGEgPSBsaXNzX2xfc2VsLCBtaXNzaW5nID0gImZpbWwiLCBmaXhlZC54ID0gRkFMU0UpDQpzdW1tYXJ5KGZpdDMpDQoNCg0KIyMgTUVBU1VSRU1FTlQgTU9ERUwNCm15TW9kZWwgPC0gJw0KDQpGWDYgPX4gMSplZHVjX2FsdGVyMS42ICsgMSplZHVjX2FsdGVyMi42ICsgMSplZHVjX2FsdGVyMy42ICsgMSplZHVjX2FsdGVyNC42ICsgMSplZHVjX2FsdGVyNS42ICAgDQpGWDcgPX4gMSplZHVjX2FsdGVyMS43ICsgMSplZHVjX2FsdGVyMi43ICsgMSplZHVjX2FsdGVyMy43ICsgMSplZHVjX2FsdGVyNC43ICsgMSplZHVjX2FsdGVyNS43ICAgDQpGWDggPX4gMSplZHVjX2FsdGVyMS44ICsgMSplZHVjX2FsdGVyMi44ICsgMSplZHVjX2FsdGVyMy44ICsgMSplZHVjX2FsdGVyNC44ICsgMSplZHVjX2FsdGVyNS44ICAgDQpGWDkgPX4gMSplZHVjX2FsdGVyMS45ICsgMSplZHVjX2FsdGVyMi45ICsgMSplZHVjX2FsdGVyMy45ICsgMSplZHVjX2FsdGVyNC45ICsgMSplZHVjX2FsdGVyNS45ICAgDQoNCiN2YXJpYW5jZXMgb2YgbGF0ZW50IHZhcmlhYmxlcw0KRlg2IH5+IEZYNg0KRlg3IH5+IEZYNw0KRlg4IH5+IEZYOA0KRlg5IH5+IEZYOQ0KDQojY29uc3RyYWluZWQgdmFyaWFuY2VzIG9mIG1hbmlmZXN0IHZhcmlhYmxlcw0KZWR1Y19hbHRlcjEuNiB+fiBhKmVkdWNfYWx0ZXIxLjYNCmVkdWNfYWx0ZXIyLjYgfn4gYSplZHVjX2FsdGVyMi42DQplZHVjX2FsdGVyMy42IH5+IGEqZWR1Y19hbHRlcjMuNg0KZWR1Y19hbHRlcjQuNiB+fiBhKmVkdWNfYWx0ZXI0LjYNCmVkdWNfYWx0ZXI1LjYgfn4gYSplZHVjX2FsdGVyNS42DQoNCmVkdWNfYWx0ZXIxLjcgfn4gYiplZHVjX2FsdGVyMS43DQplZHVjX2FsdGVyMi43IH5+IGIqZWR1Y19hbHRlcjIuNw0KZWR1Y19hbHRlcjMuNyB+fiBiKmVkdWNfYWx0ZXIzLjcNCmVkdWNfYWx0ZXI0Ljcgfn4gYiplZHVjX2FsdGVyNC43DQplZHVjX2FsdGVyNS43IH5+IGIqZWR1Y19hbHRlcjUuNw0KDQplZHVjX2FsdGVyMS44IH5+IGMqZWR1Y19hbHRlcjEuOA0KZWR1Y19hbHRlcjIuOCB+fiBjKmVkdWNfYWx0ZXIyLjgNCmVkdWNfYWx0ZXIzLjggfn4gYyplZHVjX2FsdGVyMy44DQplZHVjX2FsdGVyNC44IH5+IGMqZWR1Y19hbHRlcjQuOA0KZWR1Y19hbHRlcjUuOCB+fiBjKmVkdWNfYWx0ZXI1LjgNCg0KZWR1Y19hbHRlcjEuOSB+fiBkKmVkdWNfYWx0ZXIxLjkNCmVkdWNfYWx0ZXIyLjkgfn4gZCplZHVjX2FsdGVyMi45DQplZHVjX2FsdGVyMy45IH5+IGQqZWR1Y19hbHRlcjMuOQ0KZWR1Y19hbHRlcjQuOSB+fiBkKmVkdWNfYWx0ZXI0LjkNCmVkdWNfYWx0ZXI1Ljkgfn4gZCplZHVjX2FsdGVyNS45DQoNCg0KDQojY29udHJhaW5lZCBpbnRlcmNlcHRzIG9mIHRoZSBtYW5pZmVzdCB2YXJpYWJsZXMgKHN0cnVjdHVyYWwgY2hhbmdlcyBhcmUgcGlja2VkIHVwIGJ5IHRoZSBsYXRlbnQgdmFyaWFibGVzKQ0KZWR1Y19hbHRlcjEuNiB+IGUqMQ0KZWR1Y19hbHRlcjIuNiB+IGUqMQ0KZWR1Y19hbHRlcjMuNiB+IGUqMQ0KZWR1Y19hbHRlcjQuNiB+IGUqMQ0KZWR1Y19hbHRlcjUuNiB+IGUqMQ0KDQplZHVjX2FsdGVyMS43IH4gZSoxDQplZHVjX2FsdGVyMi43IH4gZSoxDQplZHVjX2FsdGVyMy43IH4gZSoxDQplZHVjX2FsdGVyNC43IH4gZSoxDQplZHVjX2FsdGVyNS43IH4gZSoxDQoNCmVkdWNfYWx0ZXIxLjggfiBlKjENCmVkdWNfYWx0ZXIyLjggfiBlKjENCmVkdWNfYWx0ZXIzLjggfiBlKjENCmVkdWNfYWx0ZXI0LjggfiBlKjENCmVkdWNfYWx0ZXI1LjggfiBlKjENCg0KZWR1Y19hbHRlcjEuOSB+IGUqMQ0KZWR1Y19hbHRlcjIuOSB+IGUqMQ0KZWR1Y19hbHRlcjMuOSB+IGUqMQ0KZWR1Y19hbHRlcjQuOSB+IGUqMQ0KZWR1Y19hbHRlcjUuOSB+IGUqMQ0KDQoNCg0KI2ZyZWUgdGhlIG1lYW5zIG9mIHRoZSBsYXRlbnQgdmFyaWFibGVzDQoNCkZYNyB+IDENCkZYOCB+IDENCkZYOSB+IDENCicNCmZpdCA8LSBsYXZhYW4obXlNb2RlbCwgZGF0YSA9IGxpc3NfdywgbWlzc2luZyA9ICdNTCcsIGZpeGVkLng9RkFMU0UsIG1lYW5zdHJ1Y3R1cmUgPSBUKQ0Kc3VtbWFyeShmaXQsIHN0YW5kYXJkaXplZCA9IFQpDQoNCg0KDQojIyBUSEUgU1RSVUNUVVJBTCBNT0RFTCANCg0KUklDTFBNIDwtICcNCiAgIyBDcmVhdGUgYmV0d2VlbiBjb21wb25lbnRzIChyYW5kb20gaW50ZXJjZXB0cykNCiAgUkl4ID1+IDEqRlg2ICsgMSpGWDcgKyAxKkZYOCArIDEqRlg5IA0KICBSSXkgPX4gMSpldXRoYW5hc2lhLjYgKyAxKmV1dGhhbmFzaWEuNyArIDEqZXV0aGFuYXNpYS44ICsgMSpldXRoYW5hc2lhLjkNCiAgDQogICMgQ3JlYXRlIHdpdGhpbi1wZXJzb24gY2VudGVyZWQgdmFyaWFibGVzDQogIHd4NiA9fiAxKkZYNg0KICB3eDcgPX4gMSpGWDcNCiAgd3g4ID1+IDEqRlg4IA0KICB3eDkgPX4gMSpGWDkNCiAgDQogIHd5NiA9fiAxKmV1dGhhbmFzaWEuNg0KICB3eTcgPX4gMSpldXRoYW5hc2lhLjcNCiAgd3k4ID1+IDEqZXV0aGFuYXNpYS44DQogIHd5OSA9fiAxKmV1dGhhbmFzaWEuOQ0KICANCiAgIyBFc3RpbWF0ZSB0aGUgbGFnZ2VkIGVmZmVjdHMgYmV0d2VlbiB0aGUgd2l0aGluLXBlcnNvbiBjZW50ZXJlZCB2YXJpYWJsZXMuDQogIHd4NyB+IGEqd3g2ICsgYip3eTYNCiAgd3g4IH4gYSp3eDcgKyBiKnd5Nw0KICB3eDkgfiBhKnd4OCArIGIqd3k4DQogIA0KICB3eTcgfiBjKnd4NiArIGQqd3k2DQogIHd5OCB+IGMqd3g3ICsgZCp3eTcNCiAgd3k5IH4gYyp3eDggKyBkKnd5OA0KICANCiAgIyBFc3RpbWF0ZSB0aGUgKHJlc2lkdWFsKSBjb3ZhcmlhbmNlIGJldHdlZW4gdGhlIHdpdGhpbi1wZXJzb24gY2VudGVyZWQgdmFyaWFibGVzDQogIHd4NiB+fiB3eTYNCiAgd3g3IH5+IHd5Nw0KICB3eDggfn4gd3k4DQogIHd4OSB+fiB3eTkNCiAgDQogICMgRXN0aW1hdGUgdGhlIHZhcmlhbmNlIGFuZCBjb3ZhcmlhbmNlIG9mIHRoZSByYW5kb20gaW50ZXJjZXB0cy4gDQogIFJJeCB+fiBSSXgNCiAgUkl5IH5+IFJJeQ0KICBSSXggfn4gUkl5DQoNCiAgIyBFc3RpbWF0ZSB0aGUgKHJlc2lkdWFsKSB2YXJpYW5jZSBvZiB0aGUgd2l0aGluLXBlcnNvbiBjZW50ZXJlZCB2YXJpYWJsZXMuDQogIHd4NiB+fiB3eDYNCiAgd3k2IH5+IHd5Ng0KICB3eDcgfn4gd3g3DQogIHd5NyB+fiB3eTcgDQogIHd4OCB+fiB3eDggDQogIHd5OCB+fiB3eTggDQogIHd4OSB+fiB3eDkgDQogIHd5OSB+fiB3eTkgDQoNCiAgI2luY2x1ZGUgaW50ZXJjZXB0cyANCiAgRlg2IH4gMQ0KICBGWDcgfiAxDQogIEZYOCB+IDENCiAgRlg5IH4gMQ0KICANCiAgZXV0aGFuYXNpYS42IH4gMQ0KICBldXRoYW5hc2lhLjcgfiAxDQogIGV1dGhhbmFzaWEuOCB+IDENCiAgZXV0aGFuYXNpYS45IH4gMQ0KJyAgDQoNCmZpdDUgPC0gbGF2YWFuKFJJQ0xQTSwgZGF0YT1saXNzX3csIG1pc3NpbmcgPSAiZmltbC54IiwgbWVhbnN0cnVjdHVyZSA9IFQgKQ0Kc3VtbWFyeShmaXQ1LCBzdGFuZGFyZGl6ZWQgPSBUKQ0KDQoNCg0KYGBgDQoNCi0gICANCg0KDQojIyBBc3NpZ25tZW50IGZyb20gQ2hhcHRlciAyICMjIA0KDQoxLiAgICBGb3JtdWxhdGUgYSBoeXBvdGhlc2lzIG9uIGhvdyBjdWx0dXJhbCBtb2Rlcm5pc2F0aW9uIChlLmcuIG1vcmUgZXF1YWwgZ2VuZGVyIG5vcm1zKSBtYXkgaGF2ZSBhZmZlY3RlZCBhc3NvcnRhdGl2ZSBtYXRpbmcuIFBsZWFzZSBmb2N1cyBvbiB0aGUgaW1wYWN0IG9mIGN1bHR1cmFsIG1vZGVybmlzYXRpb24gb24g4oCYcHJlZmVyZW5jZXPigJkuIE1vdGl2YXRlIHlvdXIgYW5zd2VyLg0KDQoyLiAgICBGb3JtdWxhdGUgYSBoeXBvdGhlc2lzIG9uIGhvdyBjb250aW51aW5nIGVkdWNhdGlvbmFsIGV4cGFuc2lvbiAod2hpY2ggaGFzIGJlZW4gbW9yZSBwcm9ub3VuY2VkIGZvciB3b21lbiB0aGFuIGZvciBtZW4pIG1heSBoYXZlIGFmZmVjdGVkIHBhdHRlcm5zIG9mIGhvbW9nYW15LiBQbGVhc2UgZm9jdXMgb24gdGhlIGltcGFjdCBvZiBlZHVjYXRpb25hbCBleHBhbnNpb24gb24g4oCYdGhlIHN0cnVjdHVyZSBvZiBzZWFyY2jigJkuIE1vdGl2YXRlIHlvdXIgYW5zd2VyLg0KICAgIFRoaXMgcXVlc3Rpb24gaXMgYWJvdXQgaW50ZXJtYXJyaWFnZS4NCiAgICBBLiBXaHkgd291bGQgcGVvcGxlIHByZWZlciB0byBtYXJyeSBzb21lb25lIHdobyBpcyBzaW1pbGFyPw0KICAgIEIuIFdoeSB3b3VsZCBwZW9wbGUgcHJlZmVyIHRvIG1hcnJ5IHNvbWVvbmUgd2hvIGlzIGRpc3NpbWlsYXI/DQogICAgQy4gVG8gd2hhdCBleHRlbnQgZG8geW91IGV4cGVjdCB0aGVzZSByZWFzb25zIOKAkyBtZW50aW9uZWQgaW4gM0EgYW5kIDNCIHRvIGhvbGQgd2l0aCByZXNwZWN0IHRvIG9ubGluZSByZWxhdGlvbnMgKGUuZy4g4oCYZnJpZW5k4oCZIHJlbGF0aW9ucyBvbiBGYWNlYm9vayBvciDigJhmb2xsb3dlcuKAmSByZWxhdGlvbnMgb24gVHdpdHRlcik/IFRodXMsIHdpdGggb25saW5lIHJlbGF0aW9ucyBJIGRvIG5vdCBtZWFuIOKAmHJvbWFudGlj4oCZIHJlbGF0aW9ucyBidXQgc2ltcGx5IGZvcm1pbmcgYSB0aWUgKGUuZy4gYmVmcmllbmRpbmcgc29tZW9uZSBvbiBGYWNlYm9vazsgQC1tZW50aW9uIHNvbWVvbmUgb24gdHdpdHRlcjsgZXRjLikuIFBsZWFzZSBtb3RpdmF0ZSB5b3VyIGFuc3dlci4NCg0KNC4gICAgV2hhdCBkb2VzIEthbG1pam4gKDE5OTgpIG1lYW4gd2l0aCB0aGUgYnktcHJvZHVjdCBoeXBvdGhlc2lzPw0KDQo1LiAgICBXaGF0IGRvZXMgU2Nod2FydHogKDIwMTMpIG1lYW4gd2l0aCB0aGUgZWNvbm9taWMgaW5lcXVhbGl0eSBoeXBvdGhlc2lzIGFuZCB3aGF0IHJvbGUgZG8gcmV0dXJucyB0byBzY2hvb2xpbmcgcGxheSBpbiB0aGlzIGlkZWEvaHlwb3RoZXNpcz8NCg0KNi4gICAgUGxlYXNlIGdpdmUgYXQgbGVhc3QgdHdvIHJlYXNvbnMgd2h5IGluY3JlYXNlZCBhc3NvcnRhdGl2ZSBtYXRpbmcgY291bGQgaW5jcmVhc2UgZWNvbm9taWMgaW5lcXVhbGl0eS4gU2VlIGFsc28gR29uYWxvbnMtUG9ucyBhbmQgU2Nod2FydHogKDIwMTcpLg0KDQo3LiAgICBSZWFkIFZlcmJha2VsIGFuZCBEZSBHcmFhZiAoMjAwOSkgYW5kIGFuc3dlciB0aGUgZm9sbG93aW5nIHF1ZXN0aW9uczoNCiAgICBBLiBXaGF0IHNvY2lhbCBwcm9ibGVtKHMpIGRvIHRoZSBhdXRob3JzIGFkZHJlc3M/DQogICAgQi4gSG93IGRvIHRoZSBhdXRob3JzIGRlYWwgd2l0aCBpbnRlcmRlcGVuZGVuY2llcz8NCiAgICBDLiBXaGF0IG1hY3JvLW1pY3JvIGFuZCBtaWNyby1tYWNybyBsaW5rcyBhcmUgZGlzY3Vzc2VkPw0KDQo4LiAgICBIYXZlIGEgbG9vayBhdCBhbGwgdGhlIHBhcGVycyBjaXRpbmcgdGhlIHBhcGVyIG9mIFZlcmJha2VsIGFuZCBEZSBHcmFhZiAoMjAwOSkuIEhvdyBkaWQgdGhlIHNvY2lhbC1uZXR3b3JrIHBlcnNwZWN0aXZlIGluIHRoZSBmaWVsZCBhZGRyZXNzaW5nIHRoZSBzYW1lIChvciBzaW1pbGFyKSBzb2NpYWwgcHJvYmxlbXMgZXZvbHZlPw0KDQoNCg0KDQoNClRoaXMgaXMgYW5vdGhlciBleGFtcGxlIHBhZ2Ugb2YgeW91ciBgciBjb2xvcml6ZSgibGFiIGpvdXJuYWwiLCAicmVkIilgLiBZb3UgY2FuIGpvdXJuYWwgdGhlIGFzc2lnbm1lbnRzIG9mIHRoZSBmaXJzdCBkYXkgaGVyZSB0b28uDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQojIyBSIE1hcmtkb3duDQoNClRoaXMgaXMgYW4gUiBNYXJrZG93biBkb2N1bWVudC4gTWFya2Rvd24gaXMgYSBzaW1wbGUgZm9ybWF0dGluZyBzeW50YXggZm9yIGF1dGhvcmluZyBIVE1MLCBQREYsIGFuZCBNUyBXb3JkIGRvY3VtZW50cy4gRm9yIG1vcmUgZGV0YWlscyBvbiB1c2luZyBSIE1hcmtkb3duIHNlZSA8aHR0cDovL3JtYXJrZG93bi5yc3R1ZGlvLmNvbT4uDQoNCldoZW4geW91IGNsaWNrIHRoZSAqKktuaXQqKiBidXR0b24gYSBkb2N1bWVudCB3aWxsIGJlIGdlbmVyYXRlZCB0aGF0IGluY2x1ZGVzIGJvdGggY29udGVudCBhcyB3ZWxsIGFzIHRoZSBvdXRwdXQgb2YgYW55IGVtYmVkZGVkIFIgY29kZSBjaHVua3Mgd2l0aGluIHRoZSBkb2N1bWVudC4gWW91IGNhbiBlbWJlZCBhbiBSIGNvZGUgY2h1bmsgbGlrZSB0aGlzOg0KDQpgYGB7ciBjYXJzfQ0Kc3VtbWFyeShjYXJzKQ0KYGBgDQoNCiMjIEluY2x1ZGluZyBQbG90cw0KDQpZb3UgY2FuIGFsc28gZW1iZWQgcGxvdHMsIGZvciBleGFtcGxlOg0KDQpgYGB7ciBwcmVzc3VyZSwgZWNobz1GQUxTRX0NCnBsb3QocHJlc3N1cmUpDQpgYGANCg0KTm90ZSB0aGF0IHRoZSBgZWNobyA9IEZBTFNFYCBwYXJhbWV0ZXIgd2FzIGFkZGVkIHRvIHRoZSBjb2RlIGNodW5rIHRvIHByZXZlbnQgcHJpbnRpbmcgb2YgdGhlIFIgY29kZSB0aGF0IGdlbmVyYXRlZCB0aGUgcGxvdC4NCg==</div>
 
 
 </div>

@@ -11,14 +11,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-
-```{r cars}
-
+Make a matrix: Review how to make column, dataframe, and matrix
+```{r}
 #matrix(data, nrow, ncol, byrow, dimnames)
 num1 <- c(0, 1, 2, 3, 4, 5, 6, 7, 8)
 num2 <- data.frame(0, 1, 2, 3, 4, 5, 6, 7, 8)
+```
 
 
+Try making a 100x100 matrix
+```{r}
 ## ego is row, alter is column
 base <- c(0, 1)
 mat1 <- matrix(base, nrow=100, ncol = 100, byrow = TRUE)
@@ -26,19 +28,29 @@ mat1
 
 mat2 <- matrix(rnorm(1), nrow = 100, byrow = TRUE)
 mat2
+```
 
 
+Then start small: Make a 4x4 matrix
+```{r}
 #in class 
 numbers <- sample(x=0:1, size = 16, replace = TRUE)
 net1 <- matrix(numbers, 4, 4, TRUE)
 net1
+```
+
+Set the diagonal to 0: This will start process of making data symmetrical, and would represent undirected ties/an undirected network. If you flip the columns and rows, the matrix will look the same (upper triangle of the matrix becomes symmetric).
+```{r}
 diag(net1) <- 0
 net1
 
 #undirected network -- symmetric matrix
 #symmetry - triangle (transpose didn't work) - if flip columns and rows, will have the same matrix
 # upper triangle of matrix -- as AS SYMMETRIC
+```
 
+Then review the descriptive statistics
+```{r}
 # descriptive statistics
 rowSums(net1)
 mean(net1)
@@ -46,31 +58,38 @@ mean(net1)
 ```
 
 
+
+Now things speed up. 
+
+Task: how model triad relationships? 
+
+First think how this would play out: 
+Directed relationships: per row, for ego 1: if ego has a tie with alter 1, and alter 1 has a tie with alter 2, and alter 3 has a tie with 1
+Undirected relationships: per row, if ego 1 has tie with ego 2 and ego 3, and ego 2 and 3 have a tie, XX 
+
+### SUMMARY - STEPS FOR WHAT COVERED TODAY
 ``` {r}
 ## WORKSPACE FOR LEARNING R CODE
-
-
-
-## SUMMARY - STEPS FOR WHAT COVERED TODAY
-# per row: for ego 1: if ego has a tie with alter 1, and alter 1 has a tie with alter 2, and alter 3 has a tie with 1
-# per row: if ego 1 has tie with ego to and ego 3, and ego 2 and 3 have a tie XX 
-install.packages("igraph")
+# install.packages("igraph")
 #code from sample lab notebook
 ## graph <- graph_from_adjacency_matrix(AM_empty, mode = "directed")
 ## triad_census(graph)
+library(igraph)
+``` 
 
 
-# STEP 1: MAKE A MATRIX
-# we will come back to this matrix to look at directed relationships, which is NOT symmetrical
-
+**STEP 1: MAKE A MATRIX**
+We will come back to this matrix to look at directed relationships, which is NOT symmetrical. Randomize start with 'set.seed;
+``` {r}
 set.seed(124376) #randomized start
 matrix1 <- matrix(sample(x=0:1, size = 25, replace = TRUE), nrow = 5, ncol = 5)
+```
 
 
+**STEP 2: MAKE MATRIX SYMMETRICAL**
+This will make it possible to review undirected relationships. "t" is a command for transpose. we next will look for the number of ties in an undirected network (and we will be looking at a transitive triad) 
 
-#STEP 2: MAKE MATRIX SYMMETRICAL
-## this will make it possible to review undirected relationships. "t" is a command for transpose. we next will look for the number of ties in an undirected network (and we will be looking at a transitive triad) 
-
+``` {r}
 symmatrix1 <- matrix1 + t(matrix1) #this will just add over where there are 1's, but it will be a bit redundant
 symmatrix1
 symmatrix1[symmatrix1 == 2] <- 1 #neutralize redundancies
@@ -78,8 +97,10 @@ symmatrix1[symmatrix1 == 2] <- 1 #neutralize redundancies
  ## symmatrix1 <- ifelse(symmatrix1==2,1,0) 
 diag(symmatrix1) <- 0
 symmatrix1
+```
 
 
+``` {r}
 symmatrix1G <- graph_from_adjacency_matrix(symmatrix1) 
 class(symmatrix1G)
 plot(symmatrix1G) #now we will map the triad relationships
@@ -87,21 +108,25 @@ igraph::transitivity(symmatrix1G, type = "undirected")
 
 dyad_census(symmatrix1G)
 
+```
 
+**STEP 3: Now we will look at the dyad relationships: 0 tie, 1-way tie, or mutual (2-way) tie.**
 
-#STEP 3: Now we will look at the dyad relationships: 0 tie, 1-way tie, or mutual (2-way) tie.
-
-# now looking at dyad relationships - need to look at the direction of the relationships. Number of ties in a directed network is not symmetrical. 
+Now looking at dyad relationships - need to look at the direction of the relationships. Number of ties in a directed network is not symmetrical. 
+``` {r}
 matrix1G <- graph_from_adjacency_matrix(matrix1)
 class(matrix1G)
 plot(matrix1G)
 igraph::transitivity(matrix1G, type = "undirected")
 dyad_census(matrix1G)
 
+```
 
-# STEP 4: We will next look at triad census function: look at the different types of triad relationships
-## can look at empty dyads within triad: how many one-way and two-way relationships are there? how many are missing? 
-triad_census(matrix1G) #from igraph package, it relays the countes for each of the 16 different configurations for directed networks but it doesn't actually say the type of configuration
+
+**STEP 4: We will next look at triad census function: look at the different types of triad relationships**
+Can look at empty dyads within triad: how many one-way and two-way relationships are there? how many are missing? 
+``` {r}
+triad_census(matrix1G) #from igraph package, it relays the counts for each of the 16 different configurations for directed networks but it doesn't actually say the type of configuration
 
 install.packages("sna")
 library(sna)
@@ -109,9 +134,11 @@ triad.census(matrix1) #Option 1 for looking at the types of triad census functio
 
 triad_counts <- triad.census(as.matrix(as_adjacency_matrix(matrix1G))) #Option 2
 print(triad_counts)
+``` 
 
 
-# STEP 5: MAKE 100 ROW AND COLUMN MATRIX AND VISUALIZE DYADS AND TRIADS BOOM
+**STEP 5: MAKE 100 ROW AND COLUMN MATRIX AND VISUALIZE DYADS AND TRIADS BOOM**
+``` {r}
 set.seed(178376) #randomized start
 matrix100 <- matrix(sample(x=0:1, size = 10000, replace = TRUE), nrow = 100, ncol = 100)
 
@@ -121,16 +148,17 @@ plot(matrix100G)
 igraph::transitivity(matrix100G, type = "undirected")
 dyad_census(matrix100G)
 triad.census(matrix100) 
+``` 
 
 
 
 
+WORKSPACE BELOW - From working session in class 
+``` {r}
 
-##### WORKSPACE BELOW 
 
-
-if [1,2]=TRUE and [2,3]=TRUE and [3,1]=true
-if x=1 and 
+# if [1,2]=TRUE and [2,3]=TRUE and [3,1]=true
+# if x=1 and 
 
 ## Text From Working in Class: 
 library(igraph)
@@ -170,9 +198,9 @@ class(netQ)
 plot(netQ)
 igraph::transitivity(netQ, type = "undirected")
 
-
 ```
 
+From sample student notebook:
 ``` {r}
 require(igraph)
 g <- make_graph("Zachary")
@@ -183,7 +211,7 @@ gmat
 ```
 
 
-
+A different sample 
 ``` {r}
 require(MASS)
 set.seed(9864)  # We set a seed. In this we the random numbers we will generate be the same and we thus end up with the same dataset. Please not that to be absolutely sure to get the same dataset, we need to run the same R version (and packages).
@@ -205,12 +233,3 @@ attr(data, "description") <- "This is a simulated dataset to illustrate interdep
 summary(cars)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

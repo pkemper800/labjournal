@@ -1,0 +1,365 @@
+---
+title: "lab3"
+author: "Paige Kemper"
+date: "2025-09-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Workshop/Homework:
+
+-   Update your research questions
+
+-   Start writing your introduction in which you discuss your RQs, the relevance of a social network perspective
+
+-   Find one or two relevant papers with respect to your research question and focus on the type of data they use.
+
+-   Make a list of the type of data you will need (actor attributes, relational attributes, etc.) in order to answer your RQs from a social network perspective.
+
+-   Update your lab journal / website
+
+Read Before Class:
+
+-   Chapter 8 (up to section 8.4)
+
+-   Chapter 1
+
+-   Chapter 2
+
+-   Chapter 4 (up to 4.3.2.5)
+
+-   Chapter 6 (Look at Moran’s I.)
+
+```{r}
+#test 1
+
+
+
+```
+
+# Homework
+
+**Updated Research Questions**
+
+-   What impact does ethnic diversity within in departments have on cross department collaboration? –\> How does ethnic diversity within academic departments influence collaboration patterns among researchers in dutch universities, and how is this relationship moderated by researchers' institutional tenure?
+
+    -   How does ethnic diversity impact individual researchers proportion of inter-department collaborations as opposed to cross department (or cross-univerisyt) collaborations in Dutch universities?
+
+    -   How does inter-department ethnic diversity impact intra-department collaborations, across universities in the Netherlands?
+
+    -   How are these effects amplified or reduced by the time the researcher has been at the department (or mean tenure of department)?
+
+**Preliminary Introduction**
+
+-   The relationship between diversity and collaboration in academic contexts is multifaceted. Diversity in higher education is associated with positive personal, societal and educational outcomes, with benefits best achieved when diverse groups interact meaningfully. However, the mechanisms through which ethnic diversity influences collaboration patterns remain underexplored, particularly regarding the distinction between intra-departmental and inter-departmental collaborations.
+
+-   Social network analysis provides a robust theoretical and methodological foundation for understanding collaboration patterns in academic settings. Social network analysis offers the necessary toolkit for investigating questions involving relational data, making it particularly well-suited for examining academic collaboration networks. Central to this analysis is the concept of homophily—the tendency for similar individuals to connect with one another more frequently than with dissimilar others.
+
+-   The Netherlands presents a particularly compelling context for examining these dynamics. Dutch universities have experienced significant internationalization in recent decades, leading to increasingly diverse academic communities. The establishment of interuniversity networks focused on diversity, equity, and inclusion demonstrates the growing recognition of these issues among Dutch higher education institutions. As an international student myself, I’m curious to explore this area.
+
+**Preliminary Literature**
+
+-   The Influence of Ethnic Diversity on Social Network Structure in a Common-Pool Resource System: Implications for Collaborative Management - <https://www.jstor.org/stable/26269269?seq=1>
+
+-   The preeminence of ethnic diversity in scientific collaboration - <https://www.researchgate.net/publication/329348345_The_preeminence_of_ethnic_diversity_in_scientific_collaboration>
+
+-   Opportunities for intra-university collaborations in the new research environment - <https://www.tandfonline.com/doi/full/10.1080/07294360.2018.1549537>
+
+-   A Study of Role and Importance of Academic Collaborations/Memorandum of Understanding in Higher Education Institutions - <https://www.researchgate.net/publication/366143020_A_Study_of_Role_and_Importance_of_Academic_CollaborationsMemorandum_of_Understanding_in_Higher_Education_Institutions>
+
+-   Academic engagement and commercialisation: A review of the literature on university–industry relations - <https://www.sciencedirect.com/science/article/pii/S0048733312002235>
+
+**Data Needed**
+
+-   OpenAlex database
+
+**Summaries from Readings**
+
+1.  Chapter 8 (up to section 8.4)
+
+    -   Webscraping upsides:
+
+        -   Longitudinal Data
+
+        -   Behavioral measures hard to come by (ex. "honest" emotions online)
+
+        -   Large sample sizes
+
+    -   Downsides:
+
+        -   Sampling bias
+
+        -   Data Wrangling
+
+        -   Blanks
+
+2.  Chapter 1
+
+    -   Lab 1
+
+3.  Chapter 2
+
+    -   2 dyad configurations in undirected network, 4 dyan configurations in directed network
+
+    -   Homophily
+
+    -   Assortive mating
+
+    -   Three types of dyadic influence: positive (actors -\> more similar), negative (actors -\> more distinct/separate), and positive feedback (characteristics develop in same direction).
+
+4.  Chapter 4 (up to 4.3.2.5)
+
+    -   **Triad Configurations**: Multiple configurations exist including unconnected triads, triads with connected pairs, open triads (forbidden triads), and closed triads, with 16 different configurations for directed networks'
+
+    -   **Network Size Constraints**: Core Discussion Networks commonly consist of maximum 5 confidants, and Dunbar's number suggests people maintain stable relations with approximately 150 people in hierarchical layers (5 loved ones, 15 good friends, 50 friends, 150 meaningful contacts)
+
+    -    **Network Structure Measures**: Key centrality measures including:
+
+        -   Density (observed relations divided by all possible relations)
+
+        -   Degree centrality, closeness centrality, and betweenness centrality
+
+        -   Clustering coefficients measuring transitivity
+
+5.  Chapter 6 (Look at Moran’s I.)
+
+    -   **Network Types**: Networks can be two-mode, multiplex, weighted, and directed, with research questions grouped into descriptive (composition and structure) and explanatory (causes and consequences) categories
+
+    -   **Path Length Analysis**: Average shortest path length measures network connectivity, with small-world networks having low density but short path lengths despite clustering
+
+    -   **Segregation Measurement**: Multiple methods exist including inter-/intra-group densities and Moran's I for spatial autocorrelation, measuring whether nodes closer in the network are more alike
+
+    -   **Random Graph Comparison**: Network significance is assessed by comparing observed characteristics to random graphs with same size and density, with smallworldlyness defined as σ = (C/Cr)/(L/Lr) where σ \> 1 indicates small-world properties
+
+**Assignments**:
+
+1.  Chapter 8 (up to section 8.4)
+    1.  N/A (yet)
+2.  Chapter 1
+    1.  (Lab 1)
+3.  Chapter 2
+    1.   (Lab 2)
+4.  Chapter 4 (up to 4.3.2.5)
+5.  Chapter 6 (Look at Moran’s I.)
+
+
+
+# Class work
+
+From Class: starting with web scraping
+```{r}
+#lpol_staff <- rvest::read_html()
+#head(lpol_staff)
+
+```
+
+
+```{r}
+#view(lpol_staff)
+
+#lpol_staff <- lpol_staff %/%
+  #html_nodes("body") %/%
+  #html_nodes(xpath = "//a") %/%
+  #html_text()
+
+# select for strings that start with file path for list
+
+
+
+```
+
+
+logic of web scraping: find elements in the website that you are trying to 
+```{r}
+#lpol_staff_names <- 
+#  read_html("link for staff leiden") %/%
+#  html_element("section") %/%
+#  html_elements("ul.table-list")  %/%
+#  html_elements("li")  %/%
+#  html_elements("a")  %/%
+#  html_elements("div")  %/%
+
+
+# collect all 'a', 'div' 
+
+
+```
+
+
+Now: try RU website 
+
+Note: site looks different depending on the size. We want to mimic a person, and browse the webpage as a human would. Want a free port. There are different packages you can use for more complicated/technical webscraping. 
+
+``` {r}
+#install.packages(selenider)
+# session <- selenider_session
+
+# open URL, open a different one; -> controlling web-browser
+
+#open_url("XXX")
+
+#back()
+#forward()
+#reload()
+#s(".blurb") |> # |> is piping operator, similar to %/% in 'tidyverse' package
+  #scrolling to element, and can find "a" (hyperlink) and select it! 
+#  find_element("a") |>
+#  elem_scroll_to() |>
+  
+
+``` 
+
+
+Then, try it with an even stronger package - Java!
+
+```{r}
+#open_url("")
+
+#navigate to website - can see robot - is a robo browser
+#remDr$navigate("link - staff")
+
+#handle cookies, like a person would
+#remDr$findElement(using = "css", value =
+#                    ".agree-button")$highlightElement()
+#remDr$findElement(using = "css", value =
+#                    ".agree-button")$clickElement()
+
+#make sure website is expanded, too :) 
+
+
+```
+
+
+
+**Next: Test Webscraper**
+
+```{r}
+#check packages 
+
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+
+## CUSTOM FUNCTIONS
+
+##NOW: CHECK PACKAGES
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+fpackage.check(packages)
+```
+
+
+
+Note: You get more rights when you give your email: more commercial options (limited queries without email)
+``` {r}
+#install.packages()
+#install.packages()
+#library()
+#library()
+
+
+options(openalexR.mailto = "paige.kemper@ru.nl")
+
+
+url <- "https://api.openalex.org/authors?search=Jochem Tolsma"
+
+# based on what you have learned so far, you would probably first try:
+jt <- read_html("https://api.openalex.org/authors?search=Jochem+Tolsma") %>%
+    html_text2()
+
+substr(jt, 1, 100)
+
+
+## SINCE THIS IS PROBLEMATIC, TRY SOMETHING ELSE
+jt_json <- fromJSON("https://api.openalex.org/authors?search=Jochem+Tolsma", simplifyVector = FALSE)
+glimpse(jt_json, max.level = 1)
+
+jt_json[["results"]][[1]][["display_name"]]
+
+df_jt <- jt_json %>%
+    .$results %>%
+    .[[1]] %>%
+    discard(is_empty)
+
+  ## find then the affiliations within th environment - go to environment, jt_json dataframe, and then look through to find where 'affiliations' are!
+
+jt_json[[2]]
+
+  # results=named list
+
+jt_json[["results"]][[1]][["display_name"]]
+  # OR
+## - not sure how to do this -- jt_json$results[1]("display_name")
+
+
+df_jt
+  # can look at this object, see elements
+  # use brackets to retrieve elements from list
+
+
+df_jt$affiliations
+# is the same results as
+jt_json[["results"]][[1]][["affiliations"]]
+jt_json
+
+
+# from here, I want to filter to only have the institution names. Even though I can see that there are "3" associations, I dont 'know' that as a code 
+
+jt_json[["results"]][[1]][["affiliations"]][[1]][["institution"]][["display_name"]] # first affiliation
+jt_json[["results"]][[1]][["affiliations"]][[2]][["institution"]][["display_name"]] # second affiliation
+
+df_jt <- jt_json %>%
+    .$results %>%
+    .[[1]] %>%
+    .$affiliations %>%
+    .[[1]] %>%
+    discard(is_empty)
+
+
+df <- oa_fetch(entity = "author", search = "Jochem Tolsma")
+fshowdf(df)
+
+```
+NOTE: wrappers make life easier - construct right url, retrieves right json file!
+
+```{r}
+#install.packages("openalexR")
+#library(openalexR)
+
+#oa_query() #constructs correct url, which sends to API - and then can download json file produced on website
+#oa_fetch() #sends and retrieves file into nice dataset 
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

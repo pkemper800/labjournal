@@ -6,15 +6,6 @@ bibliography: references.bib
  
 ---
 
-testing formatting 
-```{r}
-output:
-  html_document:
-    css: styles.css
-
-```
-
-
 ```{r, install remotely, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
 # install.packages("remotes")
 # remotes::install_github("rlesur/klippy")
@@ -59,12 +50,15 @@ But please note, we are not here to make a beautiful website, our intention is j
 Last compiled on `r format(Sys.time(), '%B, %Y')`  
 
 *Describe lab journal here.*
+This is a notebook compiling homework, assignments, reflections, and a final project for the Social Networks course. 
 
 <br>
 
 ----
 
 ## Open Science  
+
+Note from contributors:
 
 Everyone can fork this repository. Use this example to journal your lab work and assignments. 
 

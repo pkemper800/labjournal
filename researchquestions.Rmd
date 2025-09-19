@@ -27,35 +27,50 @@ klippy::klippy(position = c('top', 'right'))
 
 
 
-Last compiled on `r format(Sys.time(), '%B, %Y')`
-
-<br>
+------------------------------------------------------------------------
+`r colorize("Research Questions Tab", "red")`
 
 ------------------------------------------------------------------------
 
-This is an example page of your `r colorize("Research Questions Tab", "red")`. You can journal the assignments of the first day here too.
+### **Preliminary Research Questions**
+What impact does ethnic diversity in departments have on cross department collaboration?
+
+Do the researcher’s # of collaborations within department vs. across departments differ depending on their ethnic diversity across Dutch universities? 
+
+Do the department's proportion of within-department collaboration vs beyond department collaboration change depening on the ethnic diversity of the department across universities in the netherlands? 
+
+How is this impacted by how long researchers have been at the university? 
+
+
+
+------------------------------------------------------------------------
+`r colorize("Revised Research Questions", "red")`
 
 ------------------------------------------------------------------------
 
+### **Updated Research Questions**
+
+-   What impact does ethnic diversity within in departments have on cross department collaboration? –\> **How does ethnic/nationality diversity within academic departments influence collaboration patterns among researchers in dutch universities, and how is this relationship moderated by researchers' institutional tenure?**
+
+notes from class: 
+
+-   _ethnic diversity doable manually -- but macro level -- department level -- need to include a lot of departments to compare _
+ 
+-   _descriptive question for all departments, and then pick 2 departments (high in diversity vs low in diversity (intersectionality)) to compare -- think of creative ways to use the data we have, ex. native dutch vs non-native dutch_
+ 
+-   _affiliations observed in open alex -- if ethnicity of scholar is difficult, look at if first affiliation is non-dutch university!!! as a proxy_ 
+ 
+
+Additional research questions/sub-research questions:
+ 
+    -   How does ethnic diversity impact individual researchers proportion of inter-department collaborations as opposed to cross department (or cross-univerisyt) collaborations in Dutch universities?
+
+    -   How does inter-department ethnic diversity impact intra-department collaborations, across universities in the Netherlands?
+
+    -   How are these effects amplified or reduced by the time the researcher has been at the department (or mean tenure of department)?
 
 
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+## ref
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

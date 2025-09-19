@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Paige Kemper" />
+
+<meta name="date" content="2025-09-16" />
+
+<title>lab3</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+<link rel="stylesheet" href="tweaks.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    My journal
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="lab1.html">Page 1</a>
+    </li>
+    <li>
+      <a href="lab2.html">Page 2</a>
+    </li>
+    <li>
+      <a href="lab3.html">Page 3</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Assignments
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="assignment1.html">Assignment 1</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Research
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="researchquestions.html">Research Questions</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    codereview
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="codereview.html">codereview</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/pkemper800/labjournal">
+    <span class="fab fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">lab3</h1>
+<h4 class="author">Paige Kemper</h4>
+<h4 class="date">2025-09-16</h4>
+
+</div>
+
+
+<p>Workshop/Homework:</p>
+<ul>
+<li><p>Update your research questions</p></li>
+<li><p>Start writing your introduction in which you discuss your RQs,
+the relevance of a social network perspective</p></li>
+<li><p>Find one or two relevant papers with respect to your research
+question and focus on the type of data they use.</p></li>
+<li><p>Make a list of the type of data you will need (actor attributes,
+relational attributes, etc.) in order to answer your RQs from a social
+network perspective.</p></li>
+<li><p>Update your lab journal / website</p></li>
+</ul>
+<p>Read Before Class:</p>
+<ul>
+<li><p>Chapter 8 (up to section 8.4)</p></li>
+<li><p>Chapter 1</p></li>
+<li><p>Chapter 2</p></li>
+<li><p>Chapter 4 (up to 4.3.2.5)</p></li>
+<li><p>Chapter 6 (Look at Moran’s I.)</p></li>
+</ul>
+<pre class="r"><code>#test 1</code></pre>
+<div id="homework" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Homework</h1>
+<p><strong>Updated Research Questions</strong></p>
+<ul>
+<li></li>
+</ul>
+<p><strong>Preliminary Introduction</strong></p>
+<ul>
+<li></li>
+</ul>
+<p><strong>Preliminary Literature</strong></p>
+<ul>
+<li></li>
+</ul>
+<p><strong>Data Needed</strong></p>
+<ul>
+<li>OpenAlex database</li>
+</ul>
+<p><strong>Summaries from Readings</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Chapter 8 (up to section 8.4)</p>
+<ul>
+<li><p>Webscraping upsides:</p>
+<ul>
+<li><p>Longitudinal Data</p></li>
+<li><p>Behavioral measures hard to come by (ex. “honest” emotions
+online)</p></li>
+<li><p>Large sample sizes</p></li>
+</ul></li>
+<li><p>Downsides:</p>
+<ul>
+<li><p>Sampling bias</p></li>
+<li><p>Data Wrangling</p></li>
+<li><p>Blanks</p></li>
+</ul></li>
+</ul></li>
+<li><p>Chapter 1</p>
+<ul>
+<li>Lab 1</li>
+</ul></li>
+<li><p>Chapter 2</p>
+<ul>
+<li><p>2 dyad configurations in undirected network, 4 dyan
+configurations in directed network</p></li>
+<li><p>Homophily</p></li>
+<li><p>Assortive mating</p></li>
+<li><p>Three types of dyadic influence: positive (actors -&gt; more
+similar), negative (actors -&gt; more distinct/separate), and positive
+feedback (characteristics develop in same direction).</p></li>
+</ul></li>
+<li><p>Chapter 4 (up to 4.3.2.5)</p>
+<ul>
+<li><p><strong>Triad Configurations</strong>: Multiple configurations
+exist including unconnected triads, triads with connected pairs, open
+triads (forbidden triads), and closed triads, with 16 different
+configurations for directed networks’</p></li>
+<li><p><strong>Network Size Constraints</strong>: Core Discussion
+Networks commonly consist of maximum 5 confidants, and Dunbar’s number
+suggests people maintain stable relations with approximately 150 people
+in hierarchical layers (5 loved ones, 15 good friends, 50 friends, 150
+meaningful contacts)</p></li>
+<li><p><strong>Network Structure Measures</strong>: Key centrality
+measures including:</p></li>
+</ul>
+<pre><code>-   Density (observed relations divided by all possible relations)
+
+-   Degree centrality, closeness centrality, and betweenness centrality
+
+-   Clustering coefficients measuring transitivity</code></pre></li>
+<li><p>Chapter 6 (Look at Moran’s I.)</p>
+<ul>
+<li><p><strong>Network Types</strong>: Networks can be two-mode,
+multiplex, weighted, and directed, with research questions grouped into
+descriptive (composition and structure) and explanatory (causes and
+consequences) categories</p></li>
+<li><p><strong>Path Length Analysis</strong>: Average shortest path
+length measures network connectivity, with small-world networks having
+low density but short path lengths despite clustering</p></li>
+<li><p><strong>Segregation Measurement</strong>: Multiple methods exist
+including inter-/intra-group densities and Moran’s I for spatial
+autocorrelation, measuring whether nodes closer in the network are more
+alike</p></li>
+<li><p><strong>Random Graph Comparison</strong>: Network significance is
+assessed by comparing observed characteristics to random graphs with
+same size and density, with smallworldlyness defined as σ =
+(C/Cr)/(L/Lr) where σ &gt; 1 indicates small-world properties</p></li>
+</ul></li>
+</ol>
+<p><strong>Assignments</strong>:</p>
+<ol style="list-style-type: decimal">
+<li>Chapter 8 (up to section 8.4)
+<ol style="list-style-type: decimal">
+<li>N/A (yet)</li>
+</ol></li>
+<li>Chapter 1
+<ol style="list-style-type: decimal">
+<li>(Lab 1)</li>
+</ol></li>
+<li>Chapter 2
+<ol style="list-style-type: decimal">
+<li>(Lab 2)</li>
+</ol></li>
+<li>Chapter 4 (up to 4.3.2.5)</li>
+<li>Chapter 6 (Look at Moran’s I.)</li>
+</ol>
+</div>
+<div id="class-work" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Class work</h1>
+<p>Note that the <code>echo = FALSE</code> parameter was added to the
+code chunk to prevent printing of the R code that generated the
+plot.</p>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogImxhYjMiDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQpkYXRlOiAiMjAyNS0wOS0xNiINCm91dHB1dDogaHRtbF9kb2N1bWVudA0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCldvcmtzaG9wL0hvbWV3b3JrOg0KDQotICAgVXBkYXRlIHlvdXIgcmVzZWFyY2ggcXVlc3Rpb25zDQoNCi0gICBTdGFydCB3cml0aW5nIHlvdXIgaW50cm9kdWN0aW9uIGluIHdoaWNoIHlvdSBkaXNjdXNzIHlvdXIgUlFzLCB0aGUgcmVsZXZhbmNlIG9mIGEgc29jaWFsIG5ldHdvcmsgcGVyc3BlY3RpdmUNCg0KLSAgIEZpbmQgb25lIG9yIHR3byByZWxldmFudCBwYXBlcnMgd2l0aCByZXNwZWN0IHRvIHlvdXIgcmVzZWFyY2ggcXVlc3Rpb24gYW5kIGZvY3VzIG9uIHRoZSB0eXBlIG9mIGRhdGEgdGhleSB1c2UuDQoNCi0gICBNYWtlIGEgbGlzdCBvZiB0aGUgdHlwZSBvZiBkYXRhIHlvdSB3aWxsIG5lZWQgKGFjdG9yIGF0dHJpYnV0ZXMsIHJlbGF0aW9uYWwgYXR0cmlidXRlcywgZXRjLikgaW4gb3JkZXIgdG8gYW5zd2VyIHlvdXIgUlFzIGZyb20gYSBzb2NpYWwgbmV0d29yayBwZXJzcGVjdGl2ZS4NCg0KLSAgIFVwZGF0ZSB5b3VyIGxhYiBqb3VybmFsIC8gd2Vic2l0ZQ0KDQpSZWFkIEJlZm9yZSBDbGFzczoNCg0KLSAgIENoYXB0ZXIgOCAodXAgdG8gc2VjdGlvbiA4LjQpDQoNCi0gICBDaGFwdGVyIDENCg0KLSAgIENoYXB0ZXIgMg0KDQotICAgQ2hhcHRlciA0ICh1cCB0byA0LjMuMi41KQ0KDQotICAgQ2hhcHRlciA2IChMb29rIGF0IE1vcmFu4oCZcyBJLikNCg0KYGBge3J9DQojdGVzdCAxDQoNCg0KDQpgYGANCg0KIyBIb21ld29yaw0KDQoqKlVwZGF0ZWQgUmVzZWFyY2ggUXVlc3Rpb25zKioNCg0KLSAgIA0KDQoqKlByZWxpbWluYXJ5IEludHJvZHVjdGlvbioqDQoNCi0gICANCg0KKipQcmVsaW1pbmFyeSBMaXRlcmF0dXJlKioNCg0KLSAgIA0KDQoqKkRhdGEgTmVlZGVkKioNCg0KLSAgIE9wZW5BbGV4IGRhdGFiYXNlDQoNCioqU3VtbWFyaWVzIGZyb20gUmVhZGluZ3MqKg0KDQoxLiAgQ2hhcHRlciA4ICh1cCB0byBzZWN0aW9uIDguNCkNCg0KICAgIC0gICBXZWJzY3JhcGluZyB1cHNpZGVzOg0KDQogICAgICAgIC0gICBMb25naXR1ZGluYWwgRGF0YQ0KDQogICAgICAgIC0gICBCZWhhdmlvcmFsIG1lYXN1cmVzIGhhcmQgdG8gY29tZSBieSAoZXguICJob25lc3QiIGVtb3Rpb25zIG9ubGluZSkNCg0KICAgICAgICAtICAgTGFyZ2Ugc2FtcGxlIHNpemVzDQoNCiAgICAtICAgRG93bnNpZGVzOg0KDQogICAgICAgIC0gICBTYW1wbGluZyBiaWFzDQoNCiAgICAgICAgLSAgIERhdGEgV3JhbmdsaW5nDQoNCiAgICAgICAgLSAgIEJsYW5rcw0KDQoyLiAgQ2hhcHRlciAxDQoNCiAgICAtICAgTGFiIDENCg0KMy4gIENoYXB0ZXIgMg0KDQogICAgLSAgIDIgZHlhZCBjb25maWd1cmF0aW9ucyBpbiB1bmRpcmVjdGVkIG5ldHdvcmssIDQgZHlhbiBjb25maWd1cmF0aW9ucyBpbiBkaXJlY3RlZCBuZXR3b3JrDQoNCiAgICAtICAgSG9tb3BoaWx5DQoNCiAgICAtICAgQXNzb3J0aXZlIG1hdGluZw0KDQogICAgLSAgIFRocmVlIHR5cGVzIG9mIGR5YWRpYyBpbmZsdWVuY2U6IHBvc2l0aXZlIChhY3RvcnMgLVw+IG1vcmUgc2ltaWxhciksIG5lZ2F0aXZlIChhY3RvcnMgLVw+IG1vcmUgZGlzdGluY3Qvc2VwYXJhdGUpLCBhbmQgcG9zaXRpdmUgZmVlZGJhY2sgKGNoYXJhY3RlcmlzdGljcyBkZXZlbG9wIGluIHNhbWUgZGlyZWN0aW9uKS4NCg0KNC4gIENoYXB0ZXIgNCAodXAgdG8gNC4zLjIuNSkNCg0KICAgIC0gICAqKlRyaWFkIENvbmZpZ3VyYXRpb25zKio6IE11bHRpcGxlIGNvbmZpZ3VyYXRpb25zIGV4aXN0IGluY2x1ZGluZyB1bmNvbm5lY3RlZCB0cmlhZHMsIHRyaWFkcyB3aXRoIGNvbm5lY3RlZCBwYWlycywgb3BlbiB0cmlhZHMgKGZvcmJpZGRlbiB0cmlhZHMpLCBhbmQgY2xvc2VkIHRyaWFkcywgd2l0aCAxNiBkaWZmZXJlbnQgY29uZmlndXJhdGlvbnMgZm9yIGRpcmVjdGVkIG5ldHdvcmtzJw0KDQogICAgLSAgICoqTmV0d29yayBTaXplIENvbnN0cmFpbnRzKio6IENvcmUgRGlzY3Vzc2lvbiBOZXR3b3JrcyBjb21tb25seSBjb25zaXN0IG9mIG1heGltdW0gNSBjb25maWRhbnRzLCBhbmQgRHVuYmFyJ3MgbnVtYmVyIHN1Z2dlc3RzIHBlb3BsZSBtYWludGFpbiBzdGFibGUgcmVsYXRpb25zIHdpdGggYXBwcm94aW1hdGVseSAxNTAgcGVvcGxlIGluIGhpZXJhcmNoaWNhbCBsYXllcnMgKDUgbG92ZWQgb25lcywgMTUgZ29vZCBmcmllbmRzLCA1MCBmcmllbmRzLCAxNTAgbWVhbmluZ2Z1bCBjb250YWN0cykNCg0KICAgIC0gICAgKipOZXR3b3JrIFN0cnVjdHVyZSBNZWFzdXJlcyoqOiBLZXkgY2VudHJhbGl0eSBtZWFzdXJlcyBpbmNsdWRpbmc6DQoNCiAgICAgICAgLSAgIERlbnNpdHkgKG9ic2VydmVkIHJlbGF0aW9ucyBkaXZpZGVkIGJ5IGFsbCBwb3NzaWJsZSByZWxhdGlvbnMpDQoNCiAgICAgICAgLSAgIERlZ3JlZSBjZW50cmFsaXR5LCBjbG9zZW5lc3MgY2VudHJhbGl0eSwgYW5kIGJldHdlZW5uZXNzIGNlbnRyYWxpdHkNCg0KICAgICAgICAtICAgQ2x1c3RlcmluZyBjb2VmZmljaWVudHMgbWVhc3VyaW5nIHRyYW5zaXRpdml0eQ0KDQo1LiAgQ2hhcHRlciA2IChMb29rIGF0IE1vcmFu4oCZcyBJLikNCg0KICAgIC0gICAqKk5ldHdvcmsgVHlwZXMqKjogTmV0d29ya3MgY2FuIGJlIHR3by1tb2RlLCBtdWx0aXBsZXgsIHdlaWdodGVkLCBhbmQgZGlyZWN0ZWQsIHdpdGggcmVzZWFyY2ggcXVlc3Rpb25zIGdyb3VwZWQgaW50byBkZXNjcmlwdGl2ZSAoY29tcG9zaXRpb24gYW5kIHN0cnVjdHVyZSkgYW5kIGV4cGxhbmF0b3J5IChjYXVzZXMgYW5kIGNvbnNlcXVlbmNlcykgY2F0ZWdvcmllcw0KDQogICAgLSAgICoqUGF0aCBMZW5ndGggQW5hbHlzaXMqKjogQXZlcmFnZSBzaG9ydGVzdCBwYXRoIGxlbmd0aCBtZWFzdXJlcyBuZXR3b3JrIGNvbm5lY3Rpdml0eSwgd2l0aCBzbWFsbC13b3JsZCBuZXR3b3JrcyBoYXZpbmcgbG93IGRlbnNpdHkgYnV0IHNob3J0IHBhdGggbGVuZ3RocyBkZXNwaXRlIGNsdXN0ZXJpbmcNCg0KICAgIC0gICAqKlNlZ3JlZ2F0aW9uIE1lYXN1cmVtZW50Kio6IE11bHRpcGxlIG1ldGhvZHMgZXhpc3QgaW5jbHVkaW5nIGludGVyLS9pbnRyYS1ncm91cCBkZW5zaXRpZXMgYW5kIE1vcmFuJ3MgSSBmb3Igc3BhdGlhbCBhdXRvY29ycmVsYXRpb24sIG1lYXN1cmluZyB3aGV0aGVyIG5vZGVzIGNsb3NlciBpbiB0aGUgbmV0d29yayBhcmUgbW9yZSBhbGlrZQ0KDQogICAgLSAgICoqUmFuZG9tIEdyYXBoIENvbXBhcmlzb24qKjogTmV0d29yayBzaWduaWZpY2FuY2UgaXMgYXNzZXNzZWQgYnkgY29tcGFyaW5nIG9ic2VydmVkIGNoYXJhY3RlcmlzdGljcyB0byByYW5kb20gZ3JhcGhzIHdpdGggc2FtZSBzaXplIGFuZCBkZW5zaXR5LCB3aXRoIHNtYWxsd29ybGRseW5lc3MgZGVmaW5lZCBhcyDPgyA9IChDL0NyKS8oTC9Mcikgd2hlcmUgz4MgXD4gMSBpbmRpY2F0ZXMgc21hbGwtd29ybGQgcHJvcGVydGllcw0KDQoqKkFzc2lnbm1lbnRzKio6DQoNCjEuICBDaGFwdGVyIDggKHVwIHRvIHNlY3Rpb24gOC40KQ0KICAgIDEuICBOL0EgKHlldCkNCjIuICBDaGFwdGVyIDENCiAgICAxLiAgKExhYiAxKQ0KMy4gIENoYXB0ZXIgMg0KICAgIDEuICAgKExhYiAyKQ0KNC4gIENoYXB0ZXIgNCAodXAgdG8gNC4zLjIuNSkNCjUuICBDaGFwdGVyIDYgKExvb2sgYXQgTW9yYW7igJlzIEkuKQ0KDQojIENsYXNzIHdvcmsNCg0KYGBge3J9DQoNCg0KDQpgYGANCg0KTm90ZSB0aGF0IHRoZSBgZWNobyA9IEZBTFNFYCBwYXJhbWV0ZXIgd2FzIGFkZGVkIHRvIHRoZSBjb2RlIGNodW5rIHRvIHByZXZlbnQgcHJpbnRpbmcgb2YgdGhlIFIgY29kZSB0aGF0IGdlbmVyYXRlZCB0aGUgcGxvdC4NCg==</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("lab3.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

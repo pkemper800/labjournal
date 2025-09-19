@@ -28,324 +28,183 @@ Last compiled on `r format(Sys.time(), '%B, %Y')`
 
 <br>
 
-------------------------------------------------------------------------
-### Date: `r colorize("12 September 2025", "navy")` 
+Date: `r colorize("12 September 2025", "navy")`
+
+_This page will first review the course homework assignments (to have prepared on 12 September), and then assignments from class will follow._
 
 **Week 2 Assignments:**
 
-1.  Review: Chapter 2, 3,3 and 5
+1.  Review: Chapter 2, 3,3 and 4
 
 2.  Assignment from Chapter 2
 
+# Homework Review
 
-## Review
-### Chapter 2 
--    
+## Chapter 2
 
-### Chapter 3 
--   Homogamy: 
+-   Ego: Individual / node / agent / actor
+
+## Chapter 3.3
+
+-   Homogamy:
 -   Homophily: . When looking at it as a consequence of the tie in dyads, focus on dynamic characteristics (like political opinion) and the shared context and influence processes
 
+## Chapter 4
 
-
-### Chapter 5 
-Assignment code: 
-``` #{r}
-load("C:/Users/paigek/Downloads/liss_cdn.Rdata")
-
-
-#### clean the environment ####.
-rm(list = ls())
-load("C:/Users/paigek/Downloads/liss_cdn.Rdata")
-
-#### packages ####.
-require(tidyverse)
-require(lavaan)
-
-##### Data input ###.
-load("addfiles/liss_cdn.Rdata")
-
-liss_l <- liss_cdn[[1]]
-liss_w <- liss_cdn[[2]]
-
-
-# we need to disaggregate our data. thus each ego, wave, alter per row.
-liss_ll <- rbind(liss_l, liss_l, liss_l, liss_l, liss_l)
-liss_ll$index_alter <- rep(1:5, each = length(liss_l[, 1]))
-liss_ll$educ_alter <- NA
-
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 1, liss_ll$educ_alter1, liss_ll$educ_alter)
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 2, liss_ll$educ_alter2, liss_ll$educ_alter)
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 3, liss_ll$educ_alter3, liss_ll$educ_alter)
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 4, liss_ll$educ_alter4, liss_ll$educ_alter)
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 5, liss_ll$educ_alter5, liss_ll$educ_alter)
-
-liss_ll_sel <- liss_ll %>%
-    filter(survey_wave == 11)
-
-model1 <- "
-  euthanasia ~ educ_alter
-  euthanasia ~ 1
-  euthanasia ~~ euthanasia
-  "
-
-fit1 <- lavaan(model1, data = liss_ll_sel)
-summary(fit1)
-
-
-## AGGREGATION METHOD
-liss_l <- liss_l %>%
-    mutate(educ_alter_mean = rowMeans(cbind(educ_alter1, educ_alter2, educ_alter3, educ_alter4, educ_alter5),
-        na.rm = TRUE))  #calculate the mean educational level of the alters. 
-
-liss_l_sel <- liss_l %>%
-    filter(survey_wave == 11)
-
-model1 <- "
-  euthanasia ~ educ_alter_mean
-  euthanasia ~ 1
-  euthanasia ~~ euthanasia
-  "
-
-fit2 <- lavaan(model1, data = liss_l_sel, missing = "fiml")
-summary(fit2)
-
-
-## MICRO-MACRO MODEL
-liss_l_sel <- liss_l %>%
-    filter(survey_wave == 11)
-
-model <- "
-  #latent variable
-  FX =~ 1*educ_alter1
-  FX =~ 1*educ_alter2
-  FX =~ 1*educ_alter3
-  FX =~ 1*educ_alter4
-  FX =~ 1*educ_alter5
-  
-  #variances
-  educ_alter1 ~~ b*educ_alter1
-  educ_alter2 ~~ b*educ_alter2
-  educ_alter3 ~~ b*educ_alter3
-  educ_alter4 ~~ b*educ_alter4
-  educ_alter5 ~~ b*educ_alter5
-  
-  
-  FX ~~ FX
-  euthanasia ~~ euthanasia
-  
-  #regression model
-  euthanasia ~ FX
-  euthanasia ~ 1
-  
-  #intercepts/means
-  educ_alter1 ~ e*1
-  educ_alter2 ~ e*1
-  educ_alter3 ~ e*1
-  educ_alter4 ~ e*1
-  educ_alter5 ~ e*1
-"
-
-fit3 <- lavaan(model, data = liss_l_sel, missing = "fiml", fixed.x = FALSE)
-summary(fit3)
-
-
-## MEASUREMENT MODEL
-myModel <- '
-
-FX6 =~ 1*educ_alter1.6 + 1*educ_alter2.6 + 1*educ_alter3.6 + 1*educ_alter4.6 + 1*educ_alter5.6   
-FX7 =~ 1*educ_alter1.7 + 1*educ_alter2.7 + 1*educ_alter3.7 + 1*educ_alter4.7 + 1*educ_alter5.7   
-FX8 =~ 1*educ_alter1.8 + 1*educ_alter2.8 + 1*educ_alter3.8 + 1*educ_alter4.8 + 1*educ_alter5.8   
-FX9 =~ 1*educ_alter1.9 + 1*educ_alter2.9 + 1*educ_alter3.9 + 1*educ_alter4.9 + 1*educ_alter5.9   
-
-#variances of latent variables
-FX6 ~~ FX6
-FX7 ~~ FX7
-FX8 ~~ FX8
-FX9 ~~ FX9
-
-#constrained variances of manifest variables
-educ_alter1.6 ~~ a*educ_alter1.6
-educ_alter2.6 ~~ a*educ_alter2.6
-educ_alter3.6 ~~ a*educ_alter3.6
-educ_alter4.6 ~~ a*educ_alter4.6
-educ_alter5.6 ~~ a*educ_alter5.6
-
-educ_alter1.7 ~~ b*educ_alter1.7
-educ_alter2.7 ~~ b*educ_alter2.7
-educ_alter3.7 ~~ b*educ_alter3.7
-educ_alter4.7 ~~ b*educ_alter4.7
-educ_alter5.7 ~~ b*educ_alter5.7
-
-educ_alter1.8 ~~ c*educ_alter1.8
-educ_alter2.8 ~~ c*educ_alter2.8
-educ_alter3.8 ~~ c*educ_alter3.8
-educ_alter4.8 ~~ c*educ_alter4.8
-educ_alter5.8 ~~ c*educ_alter5.8
-
-educ_alter1.9 ~~ d*educ_alter1.9
-educ_alter2.9 ~~ d*educ_alter2.9
-educ_alter3.9 ~~ d*educ_alter3.9
-educ_alter4.9 ~~ d*educ_alter4.9
-educ_alter5.9 ~~ d*educ_alter5.9
-
-
-
-#contrained intercepts of the manifest variables (structural changes are picked up by the latent variables)
-educ_alter1.6 ~ e*1
-educ_alter2.6 ~ e*1
-educ_alter3.6 ~ e*1
-educ_alter4.6 ~ e*1
-educ_alter5.6 ~ e*1
-
-educ_alter1.7 ~ e*1
-educ_alter2.7 ~ e*1
-educ_alter3.7 ~ e*1
-educ_alter4.7 ~ e*1
-educ_alter5.7 ~ e*1
-
-educ_alter1.8 ~ e*1
-educ_alter2.8 ~ e*1
-educ_alter3.8 ~ e*1
-educ_alter4.8 ~ e*1
-educ_alter5.8 ~ e*1
-
-educ_alter1.9 ~ e*1
-educ_alter2.9 ~ e*1
-educ_alter3.9 ~ e*1
-educ_alter4.9 ~ e*1
-educ_alter5.9 ~ e*1
-
-
-
-#free the means of the latent variables
-
-FX7 ~ 1
-FX8 ~ 1
-FX9 ~ 1
-'
-fit <- lavaan(myModel, data = liss_w, missing = 'ML', fixed.x=FALSE, meanstructure = T)
-summary(fit, standardized = T)
-
-
-
-## THE STRUCTURAL MODEL 
-
-RICLPM <- '
-  # Create between components (random intercepts)
-  RIx =~ 1*FX6 + 1*FX7 + 1*FX8 + 1*FX9 
-  RIy =~ 1*euthanasia.6 + 1*euthanasia.7 + 1*euthanasia.8 + 1*euthanasia.9
-  
-  # Create within-person centered variables
-  wx6 =~ 1*FX6
-  wx7 =~ 1*FX7
-  wx8 =~ 1*FX8 
-  wx9 =~ 1*FX9
-  
-  wy6 =~ 1*euthanasia.6
-  wy7 =~ 1*euthanasia.7
-  wy8 =~ 1*euthanasia.8
-  wy9 =~ 1*euthanasia.9
-  
-  # Estimate the lagged effects between the within-person centered variables.
-  wx7 ~ a*wx6 + b*wy6
-  wx8 ~ a*wx7 + b*wy7
-  wx9 ~ a*wx8 + b*wy8
-  
-  wy7 ~ c*wx6 + d*wy6
-  wy8 ~ c*wx7 + d*wy7
-  wy9 ~ c*wx8 + d*wy8
-  
-  # Estimate the (residual) covariance between the within-person centered variables
-  wx6 ~~ wy6
-  wx7 ~~ wy7
-  wx8 ~~ wy8
-  wx9 ~~ wy9
-  
-  # Estimate the variance and covariance of the random intercepts. 
-  RIx ~~ RIx
-  RIy ~~ RIy
-  RIx ~~ RIy
-
-  # Estimate the (residual) variance of the within-person centered variables.
-  wx6 ~~ wx6
-  wy6 ~~ wy6
-  wx7 ~~ wx7
-  wy7 ~~ wy7 
-  wx8 ~~ wx8 
-  wy8 ~~ wy8 
-  wx9 ~~ wx9 
-  wy9 ~~ wy9 
-
-  #include intercepts 
-  FX6 ~ 1
-  FX7 ~ 1
-  FX8 ~ 1
-  FX9 ~ 1
-  
-  euthanasia.6 ~ 1
-  euthanasia.7 ~ 1
-  euthanasia.8 ~ 1
-  euthanasia.9 ~ 1
-'  
-
-fit5 <- lavaan(RICLPM, data=liss_w, missing = "fiml.x", meanstructure = T )
-summary(fit5, standardized = T)
-
-
-
-```
-
--   
-
-
-## Assignment from Chapter 2 ## 
-
-1.    Formulate a hypothesis on how cultural modernisation (e.g. more equal gender norms) may have affected assortative mating. Please focus on the impact of cultural modernisation on ‘preferences’. Motivate your answer.
-
-2.    Formulate a hypothesis on how continuing educational expansion (which has been more pronounced for women than for men) may have affected patterns of homogamy. Please focus on the impact of educational expansion on ‘the structure of search’. Motivate your answer.
-    This question is about intermarriage.
-    A. Why would people prefer to marry someone who is similar?
-    B. Why would people prefer to marry someone who is dissimilar?
-    C. To what extent do you expect these reasons – mentioned in 3A and 3B to hold with respect to online relations (e.g. ‘friend’ relations on Facebook or ‘follower’ relations on Twitter)? Thus, with online relations I do not mean ‘romantic’ relations but simply forming a tie (e.g. befriending someone on Facebook; @-mention someone on twitter; etc.). Please motivate your answer.
-
-4.    What does Kalmijn (1998) mean with the by-product hypothesis?
-
-5.    What does Schwartz (2013) mean with the economic inequality hypothesis and what role do returns to schooling play in this idea/hypothesis?
-
-6.    Please give at least two reasons why increased assortative mating could increase economic inequality. See also Gonalons-Pons and Schwartz (2017).
-
-7.    Read Verbakel and De Graaf (2009) and answer the following questions:
-    A. What social problem(s) do the authors address?
-    B. How do the authors deal with interdependencies?
-    C. What macro-micro and micro-macro links are discussed?
-
-8.    Have a look at all the papers citing the paper of Verbakel and De Graaf (2009). How did the social-network perspective in the field addressing the same (or similar) social problems evolve?
-
-
-
-
-
-This is another example page of your `r colorize("lab journal", "red")`. You can journal the assignments of the first day here too.
+Assignment code:
 
 ------------------------------------------------------------------------
 
-## R Markdown
+# Assignment from Chapter 2
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+1.  Formulate a hypothesis on how cultural modernisation (e.g. more equal gender norms) may have affected assortative mating. Please focus on the impact of cultural modernisation on ‘preferences’. Motivate your answer.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+    1.  Cultural modernisation may affect assortative mating in that, as gender roles become more equal, individual characteristics such as compatibility of education level or career aspirations becomes more favored. So, there would be greater homophily / similarity in pairs regarding educational bac
 
-```{r cars}
-summary(cars)
+    2.  Alternatively, cultural modernisation in the sense that gender roles are becoming more equal may still have a negligable effect on "attractive" characteristics: as "attractiveness" to a degree is informed by cultural norms, males are becoming increasingly conservative while women are not (likely from media exposure as cultural learning), there is a greater divide in shared qualities found attractive in partners regardless of pay and education gaps closing. This potentially could explain the notable decrease in fertility rates.
+
+        1.  Modernisation encourages similar preferences across genders, particularly valuing traits like education, intellectual compatibility, and mutual support in career development. With more women in higher education and professional fields, networks become more integrated across genders in educational settings (e.g., universities, workplaces), increasing the likelihood of same-education partnership.
+
+2.  Formulate a hypothesis on how continuing educational expansion (which has been more pronounced for women than for men) may have affected patterns of homogamy. Please focus on the impact of educational expansion on ‘the structure of search’. Motivate your answer. This question is about intermarriage.
+
+    1.  A. Why would people prefer to marry someone who is similar? Shared social network: similarity in interests and background implies compatibility in social groups (and potentially a lot of shared alters within each of their egonets),
+
+    2.  B. Why would people prefer to marry someone who is dissimilar? Because it could expand or change their egonet composition, and particularly if their existing egonet experiences negative influence between an individuals ego and their alters, then the agent may be inclined to look for alters that have more of a positive or positive feedback influence.
+
+    3.  C. To what extent do you expect these reasons – mentioned in 3A and 3B to hold with respect to online relations (e.g. ‘friend’ relations on Facebook or ‘follower’ relations on Twitter)? Thus, with online relations I do not mean ‘romantic’ relations but simply forming a tie (e.g. befriending someone on Facebook; \@-mention someone on twitter; etc.). Please motivate your answer.
+
+        1.  I would expect this to happen much less, because the cost of having and maintaining social media relationships (not friend relationships via a remote connection, but alters connected by a social media following and not much else) is much lower, and the threshold of similarities (or intentional differences) is lower....
+
+3.  What does Kalmijn (1998) mean with the by-product hypothesis?
+
+    1.  That the tendency for people to partner with similar people may be more a result of system/structural constraints (especially social networks) than a result of active preferences. (Analysed marriage patterns)
+
+4.  What does Schwartz (2013) mean with the economic inequality hypothesis and what role do returns to schooling play in this idea/hypothesis?
+
+    1.  Schwartz reviews the increasing tendency for individuals to marry others with similar education levels. The economic inequality hypothesis suggests that rising economic inequality increases educational assortative mating, because returns to education have grown (in career path and partner selections).
+
+5.  Please give at least two reasons why increased assortative mating could increase economic inequality. See also Gonalons-Pons and Schwartz (2017).
+
+    1.  Gonalons-Pons and Schwartz argue that educational assortative mating amplifies household income inequality because education is strongly associated with earnings. I would reason that there is a positive influence within dyads (as partners), and increasing clustering by education and economic level (due to exposure or preference - I'm a little unclear?) reinforces the negative influence across different dyads (intragroup differences).. high income households can maintain wealth or expand it (working together), while low income households can maintain or lose economic standing as wealth concentrates upward.
+
+6.  Read Verbakel and De Graaf (2009) and answer the following questions: A. What social problem(s) do the authors address? B. How do the authors deal with interdependencies? C. What macro-micro and micro-macro links are discussed?
+
+    1.  A. They are looking more at inequality between genders, particularly in partners (and households) in respect to labor market interactions and opportunities.
+
+    2.  They look at interdependencies in different ways: looking at partner effects as each partner engages with the labor market, extent of labor market participation (over time - i think there is a longitudinal element?), and they really try to isolate the variables of interest.
+
+    3.  they look at social movement and cultural norm changes effects on individual behavior, and within-household interactions implications are larger labor-market engagement patterns.
+
+7.  Have a look at all the papers citing the paper of Verbakel and De Graaf (2009). How did the social-network perspective in the field addressing the same (or similar) social problems evolve?
+
+------------------------------------------------------------------------
+
+# **Tutorial R**
+
+Reading Data:
+
+## load data from sav file
+
+```{r}
+library(haven) 
+#note: it is better coding practice to put all packages in a separate code chunk at the beginning of your script. 
+cv08 <- read_sav(file = "C:/Github/labjournal/Cultural_Changes_2008.sav")
+cv10 <- read_sav(file = "C:/Github/labjournal/Cultural_Changes_2010.sav")
 ```
 
-## Including Plots
+------------------------------------------------------------------------
 
-You can also embed plots, for example:
+## inspect the data
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+names(cv08) #lists all variable names
+head(names(cv08))  #lists header/column names for variables 
+summary(cv08) #lists all of the Min/median/first quartile of variables
+head(cv08) #lists header and first six rows
+str(cv08, 1) #lists dimensions of data table
+str(cv08, 2) #Not clear: what happens if you change the 1 with a 2 or 3? Check the help function or just try and see.
+class(cv08) #classifications for table?
+attributes(cv08) #counds number of inputs?
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+------------------------------------------------------------------------
+
+## Look at specific variables
+
+```{r}
+names(cv08$lftop)
+summary(cv08$lftop)
+head(cv08$lftop)
+str(cv08$lftop)
+class(cv08$lftop)
+attributes(cv08$lftop)
+# to access specific attributes
+attr(cv08$lftop, "labels")
+```
+
+------------------------------------------------------------------------
+
+## Next: Practice data wrangling
+
+Select variable: 'lftop'
+
+```{r}
+str(cv08$lftop)
+summary(cv08$lftop)
+attr(cv08$lftop, "labels")
+
+#then try to clean data
+table(cv08$lftop, useNA = "always")
+```
+
+------------------------------------------------------------------------
+
+## Next, create new variable, and then recode 99 -\> N/A
+
+```{r}
+cv08$lftop_new <-  cv08$lftop #add to existing df
+cv08$lftop_new[cv08$lftop_new == 99] <- NA #then clean variable 
+table(cv08$lftop_new, useNA = "always") #Test the recode -- 4 N/A now! :)
+
+
+attributes(cv08$lftop_new)
+attr(cv08$lftop, "labels") #recoding worked, but attributes not correct 
+```
+
+------------------------------------------------------------------------
+
+Recoding worked, but attributes no longer correct. Next: mutate variables with tidy verse. Add to your cheat sheet: [], as.character() and as.numeric().
+
+## We will ‘mutate’ the original data set and copy the original variable in a new one.
+
+```{r}
+library(tidyverse)
+cv08 <- mutate(.data = cv08, lftop_new = lftop)
+
+#Next, replace the missings ("99")
+cv08$lftop_new <- na_if(cv08$lftop_new, 99)
+```
+
+------------------------------------------------------------------------
+
+## Combine above 2 steps into 1 step:
+
+```{R}
+#Combine above steps into 1: 
+cv08 <- mutate(.data = cv08, lftop_new = na_if(lftop, 99))
+```
+
+------------------------------------------------------------------------
+
+## Check Results
+
+```{R}
+table(cv08$lftop_new, useNA = "always") #Check results
+```
+
+|                                            |
+|:-------------------------------------------|
+| \## The above could also be re-written as: |
+
+**In class work: Code Review**

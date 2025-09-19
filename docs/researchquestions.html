@@ -355,6 +355,9 @@ div.tocify {
     <li>
       <a href="lab2.html">Page 2</a>
     </li>
+    <li>
+      <a href="lab3.html">Page 3</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -378,6 +381,18 @@ div.tocify {
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="researchquestions.html">Research Questions</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    codereview
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="codereview.html">codereview</a>
     </li>
   </ul>
 </li>
@@ -418,42 +433,77 @@ div.tocify {
   addClassKlippyTo("pre.r, pre.markdown");
   addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
 </script>
-<p>Last compiled on September, 2025</p>
-<p><br></p>
-<hr />
-<p>This is an example page of your <span style="color: red;">Research
-Questions Tab</span>. You can journal the assignments of the first day
-here too.</p>
-<hr />
-<div id="r-markdown" class="section level2" number="1">
-<h2><span class="header-section-number">1</span> R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting
-syntax for authoring HTML, PDF, and MS Word documents. For more details
-on using R Markdown see <a href="http://rmarkdown.rstudio.com"
-class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be
-generated that includes both content as well as the output of any
-embedded R code chunks within the document. You can embed an R code
-chunk like this:</p>
-<pre class="r test"><code>summary(cars)</code></pre>
-<pre class="test2"><code>#&gt;      speed           dist       
-#&gt;  Min.   : 4.0   Min.   :  2.00  
-#&gt;  1st Qu.:12.0   1st Qu.: 26.00  
-#&gt;  Median :15.0   Median : 36.00  
-#&gt;  Mean   :15.4   Mean   : 42.98  
-#&gt;  3rd Qu.:19.0   3rd Qu.: 56.00  
-#&gt;  Max.   :25.0   Max.   :120.00</code></pre>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><span style="color: red;">Research Questions
+Tab</span></td>
+</tr>
+</tbody>
+</table>
+<div id="preliminary-research-questions" class="section level3"
+number="1">
+<h3><span class="header-section-number">1</span> <strong>Preliminary
+Research Questions</strong></h3>
+<p>What impact does ethnic diversity in departments have on cross
+department collaboration?</p>
+<p>Do the researcher’s # of collaborations within department vs. across
+departments differ depending on their ethnic diversity across Dutch
+universities?</p>
+<p>Do the department’s proportion of within-department collaboration vs
+beyond department collaboration change depening on the ethnic diversity
+of the department across universities in the netherlands?</p>
+<p>How is this impacted by how long researchers have been at the
+university?</p>
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><span style="color: red;">Revised Research
+Questions</span></td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="including-plots" class="section level2" number="2">
-<h2><span class="header-section-number">2</span> Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="researchquestions_files/figure-html/pressure-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the
-code chunk to prevent printing of the R code that generated the
-plot.</p>
+<div id="updated-research-questions" class="section level3" number="2">
+<h3><span class="header-section-number">2</span> <strong>Updated
+Research Questions</strong></h3>
+<ul>
+<li>What impact does ethnic diversity within in departments have on
+cross department collaboration? –&gt; <strong>How does
+ethnic/nationality diversity within academic departments influence
+collaboration patterns among researchers in dutch universities, and how
+is this relationship moderated by researchers’ institutional
+tenure?</strong></li>
+</ul>
+<p>notes from class:</p>
+<ul>
+<li><p><em>ethnic diversity doable manually – but macro level –
+department level – need to include a lot of departments to compare
+</em></p></li>
+<li><p><em>descriptive question for all departments, and then pick 2
+departments (high in diversity vs low in diversity (intersectionality))
+to compare – think of creative ways to use the data we have, ex. native
+dutch vs non-native dutch</em></p></li>
+<li><p><em>affiliations observed in open alex – if ethnicity of scholar
+is difficult, look at if first affiliation is non-dutch university!!! as
+a proxy</em></p></li>
+</ul>
+<p>Additional research questions/sub-research questions:</p>
+<pre><code>-   How does ethnic diversity impact individual researchers proportion of inter-department collaborations as opposed to cross department (or cross-univerisyt) collaborations in Dutch universities?
+
+-   How does inter-department ethnic diversity impact intra-department collaborations, across universities in the Netherlands?
+
+-   How are these effects amplified or reduced by the time the researcher has been at the department (or mean tenure of department)?</code></pre>
+<pre class="r test"><code>## ref</code></pre>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlJlc2VhcmNoIFF1ZXN0aW9ucyINCiNiaWJsaW9ncmFwaHk6IHJlZmVyZW5jZXMuYmliDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQotLS0NCg0KYGBge3IsIGdsb2JhbHNldHRpbmdzLCBlY2hvPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCByZXN1bHRzPSdoaWRlJ30NCmxpYnJhcnkoa25pdHIpDQoNCmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSkNCm9wdHNfY2h1bmskc2V0KHRpZHkub3B0cz1saXN0KHdpZHRoLmN1dG9mZj0xMDApLHRpZHk9VFJVRSwgd2FybmluZyA9IEZBTFNFLCBtZXNzYWdlID0gRkFMU0UsY29tbWVudCA9ICIjPiIsIGNhY2hlPVRSVUUsIGNsYXNzLnNvdXJjZT1jKCJ0ZXN0IiksIGNsYXNzLm91dHB1dD1jKCJ0ZXN0MiIpKQ0Kb3B0aW9ucyh3aWR0aCA9IDEwMCkNCnJnbDo6c2V0dXBLbml0cigpDQoNCg0KY29sb3JpemUgPC0gZnVuY3Rpb24oeCwgY29sb3IpIHtzcHJpbnRmKCI8c3BhbiBzdHlsZT0nY29sb3I6ICVzOyc+JXM8L3NwYW4+IiwgY29sb3IsIHgpIH0NCg0KDQpgYGANCg0KDQpgYGB7ciBrbGlwcHksIGVjaG89RkFMU0UsIGluY2x1ZGU9VFJVRX0NCmtsaXBweTo6a2xpcHB5KHBvc2l0aW9uID0gYygndG9wJywgJ3JpZ2h0JykpDQoja2xpcHB5OjprbGlwcHkoY29sb3IgPSAnZGFya3JlZCcpDQoja2xpcHB5OjprbGlwcHkodG9vbHRpcF9tZXNzYWdlID0gJ0NsaWNrIHRvIGNvcHknLCB0b29sdGlwX3N1Y2Nlc3MgPSAnRG9uZScpDQpgYGANCg0KDQoNCkxhc3QgY29tcGlsZWQgb24gYHIgZm9ybWF0KFN5cy50aW1lKCksICclQiwgJVknKWANCg0KPGJyPg0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KVGhpcyBpcyBhbiBleGFtcGxlIHBhZ2Ugb2YgeW91ciBgciBjb2xvcml6ZSgiUmVzZWFyY2ggUXVlc3Rpb25zIFRhYiIsICJyZWQiKWAuIFlvdSBjYW4gam91cm5hbCB0aGUgYXNzaWdubWVudHMgb2YgdGhlIGZpcnN0IGRheSBoZXJlIHRvby4NCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoNCg0KDQoNCiMjIFIgTWFya2Rvd24NCg0KVGhpcyBpcyBhbiBSIE1hcmtkb3duIGRvY3VtZW50LiBNYXJrZG93biBpcyBhIHNpbXBsZSBmb3JtYXR0aW5nIHN5bnRheCBmb3IgYXV0aG9yaW5nIEhUTUwsIFBERiwgYW5kIE1TIFdvcmQgZG9jdW1lbnRzLiBGb3IgbW9yZSBkZXRhaWxzIG9uIHVzaW5nIFIgTWFya2Rvd24gc2VlIDxodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tPi4NCg0KV2hlbiB5b3UgY2xpY2sgdGhlICoqS25pdCoqIGJ1dHRvbiBhIGRvY3VtZW50IHdpbGwgYmUgZ2VuZXJhdGVkIHRoYXQgaW5jbHVkZXMgYm90aCBjb250ZW50IGFzIHdlbGwgYXMgdGhlIG91dHB1dCBvZiBhbnkgZW1iZWRkZWQgUiBjb2RlIGNodW5rcyB3aXRoaW4gdGhlIGRvY3VtZW50LiBZb3UgY2FuIGVtYmVkIGFuIFIgY29kZSBjaHVuayBsaWtlIHRoaXM6DQoNCmBgYHtyIGNhcnN9DQpzdW1tYXJ5KGNhcnMpDQpgYGANCg0KIyMgSW5jbHVkaW5nIFBsb3RzDQoNCllvdSBjYW4gYWxzbyBlbWJlZCBwbG90cywgZm9yIGV4YW1wbGU6DQoNCmBgYHtyIHByZXNzdXJlLCBlY2hvPUZBTFNFfQ0KcGxvdChwcmVzc3VyZSkNCmBgYA0KDQpOb3RlIHRoYXQgdGhlIGBlY2hvID0gRkFMU0VgIHBhcmFtZXRlciB3YXMgYWRkZWQgdG8gdGhlIGNvZGUgY2h1bmsgdG8gcHJldmVudCBwcmludGluZyBvZiB0aGUgUiBjb2RlIHRoYXQgZ2VuZXJhdGVkIHRoZSBwbG90Lg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlJlc2VhcmNoIFF1ZXN0aW9ucyINCiNiaWJsaW9ncmFwaHk6IHJlZmVyZW5jZXMuYmliDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQotLS0NCg0KYGBge3IsIGdsb2JhbHNldHRpbmdzLCBlY2hvPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCByZXN1bHRzPSdoaWRlJ30NCmxpYnJhcnkoa25pdHIpDQoNCmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSkNCm9wdHNfY2h1bmskc2V0KHRpZHkub3B0cz1saXN0KHdpZHRoLmN1dG9mZj0xMDApLHRpZHk9VFJVRSwgd2FybmluZyA9IEZBTFNFLCBtZXNzYWdlID0gRkFMU0UsY29tbWVudCA9ICIjPiIsIGNhY2hlPVRSVUUsIGNsYXNzLnNvdXJjZT1jKCJ0ZXN0IiksIGNsYXNzLm91dHB1dD1jKCJ0ZXN0MiIpKQ0Kb3B0aW9ucyh3aWR0aCA9IDEwMCkNCnJnbDo6c2V0dXBLbml0cigpDQoNCg0KY29sb3JpemUgPC0gZnVuY3Rpb24oeCwgY29sb3IpIHtzcHJpbnRmKCI8c3BhbiBzdHlsZT0nY29sb3I6ICVzOyc+JXM8L3NwYW4+IiwgY29sb3IsIHgpIH0NCg0KDQpgYGANCg0KDQpgYGB7ciBrbGlwcHksIGVjaG89RkFMU0UsIGluY2x1ZGU9VFJVRX0NCmtsaXBweTo6a2xpcHB5KHBvc2l0aW9uID0gYygndG9wJywgJ3JpZ2h0JykpDQoja2xpcHB5OjprbGlwcHkoY29sb3IgPSAnZGFya3JlZCcpDQoja2xpcHB5OjprbGlwcHkodG9vbHRpcF9tZXNzYWdlID0gJ0NsaWNrIHRvIGNvcHknLCB0b29sdGlwX3N1Y2Nlc3MgPSAnRG9uZScpDQpgYGANCg0KDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KYHIgY29sb3JpemUoIlJlc2VhcmNoIFF1ZXN0aW9ucyBUYWIiLCAicmVkIilgDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQojIyMgKipQcmVsaW1pbmFyeSBSZXNlYXJjaCBRdWVzdGlvbnMqKg0KV2hhdCBpbXBhY3QgZG9lcyBldGhuaWMgZGl2ZXJzaXR5IGluIGRlcGFydG1lbnRzIGhhdmUgb24gY3Jvc3MgZGVwYXJ0bWVudCBjb2xsYWJvcmF0aW9uPw0KDQpEbyB0aGUgcmVzZWFyY2hlcuKAmXMgIyBvZiBjb2xsYWJvcmF0aW9ucyB3aXRoaW4gZGVwYXJ0bWVudCB2cy4gYWNyb3NzIGRlcGFydG1lbnRzIGRpZmZlciBkZXBlbmRpbmcgb24gdGhlaXIgZXRobmljIGRpdmVyc2l0eSBhY3Jvc3MgRHV0Y2ggdW5pdmVyc2l0aWVzPyANCg0KRG8gdGhlIGRlcGFydG1lbnQncyBwcm9wb3J0aW9uIG9mIHdpdGhpbi1kZXBhcnRtZW50IGNvbGxhYm9yYXRpb24gdnMgYmV5b25kIGRlcGFydG1lbnQgY29sbGFib3JhdGlvbiBjaGFuZ2UgZGVwZW5pbmcgb24gdGhlIGV0aG5pYyBkaXZlcnNpdHkgb2YgdGhlIGRlcGFydG1lbnQgYWNyb3NzIHVuaXZlcnNpdGllcyBpbiB0aGUgbmV0aGVybGFuZHM/IA0KDQpIb3cgaXMgdGhpcyBpbXBhY3RlZCBieSBob3cgbG9uZyByZXNlYXJjaGVycyBoYXZlIGJlZW4gYXQgdGhlIHVuaXZlcnNpdHk/IA0KDQoNCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpgciBjb2xvcml6ZSgiUmV2aXNlZCBSZXNlYXJjaCBRdWVzdGlvbnMiLCAicmVkIilgDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQojIyMgKipVcGRhdGVkIFJlc2VhcmNoIFF1ZXN0aW9ucyoqDQoNCi0gICBXaGF0IGltcGFjdCBkb2VzIGV0aG5pYyBkaXZlcnNpdHkgd2l0aGluIGluIGRlcGFydG1lbnRzIGhhdmUgb24gY3Jvc3MgZGVwYXJ0bWVudCBjb2xsYWJvcmF0aW9uPyDigJNcPiAqKkhvdyBkb2VzIGV0aG5pYy9uYXRpb25hbGl0eSBkaXZlcnNpdHkgd2l0aGluIGFjYWRlbWljIGRlcGFydG1lbnRzIGluZmx1ZW5jZSBjb2xsYWJvcmF0aW9uIHBhdHRlcm5zIGFtb25nIHJlc2VhcmNoZXJzIGluIGR1dGNoIHVuaXZlcnNpdGllcywgYW5kIGhvdyBpcyB0aGlzIHJlbGF0aW9uc2hpcCBtb2RlcmF0ZWQgYnkgcmVzZWFyY2hlcnMnIGluc3RpdHV0aW9uYWwgdGVudXJlPyoqDQoNCm5vdGVzIGZyb20gY2xhc3M6IA0KDQotICAgX2V0aG5pYyBkaXZlcnNpdHkgZG9hYmxlIG1hbnVhbGx5IC0tIGJ1dCBtYWNybyBsZXZlbCAtLSBkZXBhcnRtZW50IGxldmVsIC0tIG5lZWQgdG8gaW5jbHVkZSBhIGxvdCBvZiBkZXBhcnRtZW50cyB0byBjb21wYXJlIF8NCiANCi0gICBfZGVzY3JpcHRpdmUgcXVlc3Rpb24gZm9yIGFsbCBkZXBhcnRtZW50cywgYW5kIHRoZW4gcGljayAyIGRlcGFydG1lbnRzIChoaWdoIGluIGRpdmVyc2l0eSB2cyBsb3cgaW4gZGl2ZXJzaXR5IChpbnRlcnNlY3Rpb25hbGl0eSkpIHRvIGNvbXBhcmUgLS0gdGhpbmsgb2YgY3JlYXRpdmUgd2F5cyB0byB1c2UgdGhlIGRhdGEgd2UgaGF2ZSwgZXguIG5hdGl2ZSBkdXRjaCB2cyBub24tbmF0aXZlIGR1dGNoXw0KIA0KLSAgIF9hZmZpbGlhdGlvbnMgb2JzZXJ2ZWQgaW4gb3BlbiBhbGV4IC0tIGlmIGV0aG5pY2l0eSBvZiBzY2hvbGFyIGlzIGRpZmZpY3VsdCwgbG9vayBhdCBpZiBmaXJzdCBhZmZpbGlhdGlvbiBpcyBub24tZHV0Y2ggdW5pdmVyc2l0eSEhISBhcyBhIHByb3h5XyANCiANCg0KQWRkaXRpb25hbCByZXNlYXJjaCBxdWVzdGlvbnMvc3ViLXJlc2VhcmNoIHF1ZXN0aW9uczoNCiANCiAgICAtICAgSG93IGRvZXMgZXRobmljIGRpdmVyc2l0eSBpbXBhY3QgaW5kaXZpZHVhbCByZXNlYXJjaGVycyBwcm9wb3J0aW9uIG9mIGludGVyLWRlcGFydG1lbnQgY29sbGFib3JhdGlvbnMgYXMgb3Bwb3NlZCB0byBjcm9zcyBkZXBhcnRtZW50IChvciBjcm9zcy11bml2ZXJpc3l0KSBjb2xsYWJvcmF0aW9ucyBpbiBEdXRjaCB1bml2ZXJzaXRpZXM/DQoNCiAgICAtICAgSG93IGRvZXMgaW50ZXItZGVwYXJ0bWVudCBldGhuaWMgZGl2ZXJzaXR5IGltcGFjdCBpbnRyYS1kZXBhcnRtZW50IGNvbGxhYm9yYXRpb25zLCBhY3Jvc3MgdW5pdmVyc2l0aWVzIGluIHRoZSBOZXRoZXJsYW5kcz8NCg0KICAgIC0gICBIb3cgYXJlIHRoZXNlIGVmZmVjdHMgYW1wbGlmaWVkIG9yIHJlZHVjZWQgYnkgdGhlIHRpbWUgdGhlIHJlc2VhcmNoZXIgaGFzIGJlZW4gYXQgdGhlIGRlcGFydG1lbnQgKG9yIG1lYW4gdGVudXJlIG9mIGRlcGFydG1lbnQpPw0KDQoNCmBgYHtyfQ0KIyMgcmVmDQpgYGANCg0K</div>
 
 
 </div>

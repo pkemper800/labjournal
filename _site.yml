@@ -19,6 +19,11 @@ navbar:
       - text: "Page 2"
         href: lab2.html
         
+        
+      - text: "Page 3"
+        href: lab3.html
+        
+        
     - text: "Assignments"
       menu:
       - text: "Assignment 1"
@@ -28,7 +33,11 @@ navbar:
       menu:
       - text: "Research Questions"
         href: researchquestions.html
-
+        
+    - text: "codereview"
+      menu:
+      - text: "codereview"
+        href: codereview.html
 
   right:
   - icon: fab fa-github

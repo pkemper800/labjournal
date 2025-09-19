@@ -6,8 +6,9 @@ author: "Paige Kemper"
 # output:
   # html_document:
     # css: styles.css
-
 ---
+
+```{r}
 
 library(knitr)
 knitr::opts_chunk$set(
@@ -19,7 +20,9 @@ knitr::opts_chunk$set(
 )
 
 options(width = 100)
-``` {r}
+```
+
+```{r}
 # Setup for interactive 3D plots (optional)
 if (requireNamespace("rgl", quietly = TRUE)) {
   rgl::setupKnitr()
@@ -40,16 +43,12 @@ options(width = 100)
 rgl::setupKnitr()
 
 
-
-
-```
-
 colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
 
 ```
 
 ```{r klippy, echo=FALSE, include=TRUE}
-klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(position = c('top', 'right'))
 #klippy::klippy(color = 'darkred')
 #klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
 ```
@@ -62,26 +61,33 @@ Last compiled on `r format(Sys.time(), '%B, %Y')`
 
 **Date: `r colorize("5 September 2025", "navy")`**
 
-Week 1 Assignments:
+## \# Week 1 Assignments:
 
-1.  Review: Chapter 1, Appendix Z
+Review:
+
+1.  Chapter 1, Appendix A
 
 2.  Assignment 1.6
 
 3.  Appendix B
 
-4.  Formulate research questions
+4.  Variance and Covariance
 
-5.  Find relevant research articles/literature
+|                        |
+|:-----------------------|
+| Beginning of research: |
 
-6.  Variance and Covariance
+5.  Formulate research questions
 
-_This is just an example page of your `r colorize("lab journal", "red")`. You can journal the assignments of the first day here._
+6.  Find relevant research articles/literature
+
+*This is just an example page of your `r colorize("lab journal", "red")`. You can journal the assignments of the first day here.*
 
 ------------------------------------------------------------------------
 
-# Chapter 1 and Appendix A
-Key Terms 
+## Chapter 1 and Appendix A
+
+Key Terms
 
 -   Social Network: "a finite set of actors and the relation(s) defined on this set. The actors are social entities (people, organizations, countries, etc.) whose specific ties (friendship, competition, collaboration, etc.), constitute the network. (, as quoted from Wasserman and Faust 1994 : 20)."
 
@@ -95,54 +101,59 @@ Key Terms
 
 -   Directed relationships: Have 4 configurations, depending on the presence and direction of the relation.
 
--   Egonets: Type of social network, comprised of nodes/actors that have relationships with ego. 
+-   Egonets: Type of social network, comprised of nodes/actors that have relationships with ego.
 
 -   Ego: The node/actor of focus within a social network
 
 -   Alter: The other nodes/actors relating to an ego within a social network
 
--   1 Degree Network: When there is one type of tie; for example, one ego connected to several alters. 
+-   1 Degree Network: When there is one type of tie; for example, one ego connected to several alters.
 
 -   1.5 Degree Network: When the alters of a 1 degree network become connected.
 
 -   2 Degree Network: When, in mapping the alters, additional nodes are included that are not directly connected to the ego.
 
--   Complete nets ("Socionets"): Type of social network, full and complete in the sense that we know all the nodes and connections of nodes; 
+-   Complete nets ("Socionets"): Type of social network, full and complete in the sense that we know all the nodes and connections of nodes;
 
 -   Multiple-mode networks: Networks with two different types of nodes, such that relationships between two different types of nodes are present.
 
--   Multiplex networks: Multiple types of relationships are present. 
+-   Multiplex networks: Multiple types of relationships are present.
 
--   Weighted networks: When the relationships between nodes are not binary, but can vary in strength;    
+-   Weighted networks: When the relationships between nodes are not binary, but can vary in strength;
 
+::: Citations:
+Wasserman, S., and K. Faust. 1994. Social Network Analysis: Methods and Applications. Structural Analysis in the Social Sciences. Cambridge University Press. <https://books.google.nl/books?id=wsMgAwAAQBAJ>.
+:::
 
-::: Citations: 
-Wasserman, S., and K. Faust. 1994. Social Network Analysis: Methods and Applications. Structural Analysis in the Social Sciences. Cambridge University Press. https://books.google.nl/books?id=wsMgAwAAQBAJ. 
-::: 
+------------------------------------------------------------------------
 
 ## **Assignment 1.6**
 
+-   Go back to your latest paper, assignment or theses in which you investigated a research topic fitting the broad research themes of inequality, cohesion and diversity. You could also take one of your current projects you are working on if you like. Identify the social problem.
+
+-   Please describe what a naive approach would be to take on this social problem. Thus, being oblivious of a social network perspective.
+
+<!-- -->
+
+-   Please try to identify how your project could be improved by taking a social network perspective. Make sure to discuss the theoretical, data, and methodological consequences.
+
+-   Can you discover a trend in the existing literature with respect to taking a social network perspective
+
 Topic of Interest: Renewable energy adoption on a meso-level
 
-_Background: Renewable energy adoption is an integral base of phasing out fossil-fuel dependence and developing a circular economy, ideal for both environmental health and climate goals as well as closing equity and opportunity gaps. This comes with the increasing dependence on modern technologies as well as electricity based production methods._
+*Background: Renewable energy adoption is an integral base of phasing out fossil-fuel dependence and developing a circular economy, ideal for both environmental health and climate goals as well as closing equity and opportunity gaps. This comes with the increasing dependence on modern technologies as well as electricity based production methods.*
 
 Research Question: To what extent are municipalities able to adopt and deploy renewable energy projects within their domain across the Netherlands?
 
 -   Naive Approach: Looking at the richest municipalities vs the poorest municipalities within a country that is known for renewable energy adoption, and compare it to their rate of renewable energy adoption/investment in circularity initiatives.
 
--   Social Network Perspective: Develop a multiple-mode weighted network, looking at both municipality (one type of node) and household within that municipality (another type of node) amounts of investment per average income in the municipality, with relationships conveyed by the amount of investment. This could then compare across municipalities within a province, or across the Netherlands. Separately, a policy analysis informing province and municipal renewable energy adoption would be conducted as critical context. Equity and income gaps would also be assessed as notable influences on household ability to invest in renewables. This would be an improvement, as it takes into account the complex web of nodes influencing each other, as well as considers the non-social elements that impact renewable energy adoption. 
+-   Social Network Perspective: Develop a multiple-mode weighted network, looking at both municipality (one type of node) and household within that municipality (another type of node) amounts of investment per average income in the municipality, with relationships conveyed by the amount of investment. This could then compare across municipalities within a province, or across the Netherlands. Separately, a policy analysis informing province and municipal renewable energy adoption would be conducted as critical context. Equity and income gaps would also be assessed as notable influences on household ability to invest in renewables. This would be an improvement, as it takes into account the complex web of nodes influencing each other, as well as considers the non-social elements that impact renewable energy adoption.
 
-
-Sample Questions: 
--   Descriptive Questions: What types of ties exist between municipalities that have adopted similar renewable energy policies (geographic proximity, political affiliation, economic partnerships)?
-   -   How do renewable energy adoption rates vary across different network positions for both municipalities and households? (does adoption ever win out over finances?)
--   Explanatory Questions: Do municipalities learn from their network neighbors' policy experiences, and does this learning improve policy effectiveness? 
--   Looking at Multilevel Dynamics: Do municipalities with stronger internal household networks show different patterns of policy learning from external municipal networks? (do household-household ties influence strength of municipality-household ties?)
-    
+Sample Questions: - Descriptive Questions: What types of ties exist between municipalities that have adopted similar renewable energy policies (geographic proximity, political affiliation, economic partnerships)? - How do renewable energy adoption rates vary across different network positions for both municipalities and households? (does adoption ever win out over finances?) - Explanatory Questions: Do municipalities learn from their network neighbors' policy experiences, and does this learning improve policy effectiveness? - Looking at Multilevel Dynamics: Do municipalities with stronger internal household networks show different patterns of policy learning from external municipal networks? (do household-household ties influence strength of municipality-household ties?)
 
 ## **Appendix B**
 
-### Variance and Covariance
+## Variance and Covariance
 
 ```{r}
 install.packages("magick")
@@ -153,49 +164,45 @@ print(img)
 
 ```
 
-
+------------------------------------------------------------------------
 
 # Beginning of Research
 
 ### **Dataset Background**
-Data on sociologists and political scientists collected from all Universities in the Netherlands, with faculty members are the nodes. Includes characteristics of nodes (gender, age, position), research output/publications, and collaborations. Also have time-stamped data on ego level, with all the papers also time stamped for publication date. Data collected over 3 years. Prioritize investigations of inequalities in networks (gender inequality, segregation, etc). 
-  
+
+Data on sociologists and political scientists collected from all Universities in the Netherlands, with faculty members are the nodes. Includes characteristics of nodes (gender, age, position), research output/publications, and collaborations. Also have time-stamped data on ego level, with all the papers also time stamped for publication date. Data collected over 3 years. Prioritize investigations of inequalities in networks (gender inequality, segregation, etc).
 
 ### **Preliminary Research Questions**
+
 What impact does ethnic diversity in departments have on cross department collaboration?
 
-Do the researcher’s # of collaborations within department vs. across departments differ depending on their ethnic diversity across Dutch universities? 
+Do the researcher’s \# of collaborations within department vs. across departments differ depending on their ethnic diversity across Dutch universities?
 
-Do the department's proportion of within-department collaboration vs beyond department collaboration change depening on the ethnic diversity of the department across universities in the netherlands? 
+Do the department's proportion of within-department collaboration vs beyond department collaboration change depening on the ethnic diversity of the department across universities in the netherlands?
 
-How is this impacted by how long researchers have been at the university? 
+How is this impacted by how long researchers have been at the university?
 
+Researcher - \# of collabarations within department \# of collaborations across department Ethnic background
 
+## Questions for the group:
 
-Researcher -
-# of collabarations within department
-# of collaborations across department 
-Ethnic background
+-   
 
-
-
-Questions for the group: 
-
-
+-   
 
 ### **Relevant Literature**
-https://doi.org/10.1371/journal.pone.0283106 
 
-Fagan, J., Eddens, K. S., Dolly, J., Vanderford, N. L., Weiss, H., & Levens, J. S. (2018). Assessing Research Collaboration through Co-authorship Network Analysis. The journal of research administration, 49(1), 76–99.  https://pmc.ncbi.nlm.nih.gov/articles/PMC6703830/ 
+<https://doi.org/10.1371/journal.pone.0283106>
 
+Fagan, J., Eddens, K. S., Dolly, J., Vanderford, N. L., Weiss, H., & Levens, J. S. (2018). Assessing Research Collaboration through Co-authorship Network Analysis. The journal of research administration, 49(1), 76–99. <https://pmc.ncbi.nlm.nih.gov/articles/PMC6703830/>
 
-Santos, J.M., Horta, H. & Feng, S. Homophily and its effects on collaborations and repeated collaborations: a study across scientific fields. Scientometrics 129, 1801–1823 (2024). https://doi.org/10.1007/s11192-024-04950-3
+Santos, J.M., Horta, H. & Feng, S. Homophily and its effects on collaborations and repeated collaborations: a study across scientific fields. Scientometrics 129, 1801–1823 (2024). <https://doi.org/10.1007/s11192-024-04950-3>
 
-https://www.sciencedirect.com/science/article/abs/pii/S0378873315000453?via%3Dihub
+<https://www.sciencedirect.com/science/article/abs/pii/S0378873315000453?via%3Dihub>
 
+------------------------------------------------------------------------
 
-
-
+#Testing in class
 
 test code
 

@@ -1,0 +1,293 @@
+---
+title: "lab4"
+author: "Paige Kemper"
+date: "2025-09-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Chapter 5
+
+``` {r}
+load("C:/Users/paigek/Downloads/liss_cdn.Rdata")
+
+
+#### clean the environment ####.
+rm(list = ls())
+load("C:/Users/paigek/Downloads/liss_cdn.Rdata")
+
+#### packages ####.
+require(tidyverse)
+require(lavaan)
+
+##### Data input ###.
+load("addfiles/liss_cdn.Rdata")
+
+liss_l <- liss_cdn[[1]]
+liss_w <- liss_cdn[[2]]
+
+
+# we need to disaggregate our data. thus each ego, wave, alter per row.
+liss_ll <- rbind(liss_l, liss_l, liss_l, liss_l, liss_l)
+liss_ll$index_alter <- rep(1:5, each = length(liss_l[, 1]))
+liss_ll$educ_alter <- NA
+
+liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 1, liss_ll$educ_alter1, liss_ll$educ_alter)
+liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 2, liss_ll$educ_alter2, liss_ll$educ_alter)
+liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 3, liss_ll$educ_alter3, liss_ll$educ_alter)
+liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 4, liss_ll$educ_alter4, liss_ll$educ_alter)
+liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 5, liss_ll$educ_alter5, liss_ll$educ_alter)
+
+liss_ll_sel <- liss_ll %>%
+    filter(survey_wave == 11)
+
+model1 <- "
+  euthanasia ~ educ_alter
+  euthanasia ~ 1
+  euthanasia ~~ euthanasia
+  "
+
+fit1 <- lavaan(model1, data = liss_ll_sel)
+summary(fit1)
+
+
+## AGGREGATION METHOD
+liss_l <- liss_l %>%
+    mutate(educ_alter_mean = rowMeans(cbind(educ_alter1, educ_alter2, educ_alter3, educ_alter4, educ_alter5),
+        na.rm = TRUE))  #calculate the mean educational level of the alters. 
+
+liss_l_sel <- liss_l %>%
+    filter(survey_wave == 11)
+
+model1 <- "
+  euthanasia ~ educ_alter_mean
+  euthanasia ~ 1
+  euthanasia ~~ euthanasia
+  "
+
+fit2 <- lavaan(model1, data = liss_l_sel, missing = "fiml")
+summary(fit2)
+
+
+## MICRO-MACRO MODEL
+liss_l_sel <- liss_l %>%
+    filter(survey_wave == 11)
+
+model <- "
+  #latent variable
+  FX =~ 1*educ_alter1
+  FX =~ 1*educ_alter2
+  FX =~ 1*educ_alter3
+  FX =~ 1*educ_alter4
+  FX =~ 1*educ_alter5
+  
+  #variances
+  educ_alter1 ~~ b*educ_alter1
+  educ_alter2 ~~ b*educ_alter2
+  educ_alter3 ~~ b*educ_alter3
+  educ_alter4 ~~ b*educ_alter4
+  educ_alter5 ~~ b*educ_alter5
+  
+  
+  FX ~~ FX
+  euthanasia ~~ euthanasia
+  
+  #regression model
+  euthanasia ~ FX
+  euthanasia ~ 1
+  
+  #intercepts/means
+  educ_alter1 ~ e*1
+  educ_alter2 ~ e*1
+  educ_alter3 ~ e*1
+  educ_alter4 ~ e*1
+  educ_alter5 ~ e*1
+"
+
+fit3 <- lavaan(model, data = liss_l_sel, missing = "fiml", fixed.x = FALSE)
+summary(fit3)
+
+
+## MEASUREMENT MODEL
+myModel <- '
+
+FX6 =~ 1*educ_alter1.6 + 1*educ_alter2.6 + 1*educ_alter3.6 + 1*educ_alter4.6 + 1*educ_alter5.6   
+FX7 =~ 1*educ_alter1.7 + 1*educ_alter2.7 + 1*educ_alter3.7 + 1*educ_alter4.7 + 1*educ_alter5.7   
+FX8 =~ 1*educ_alter1.8 + 1*educ_alter2.8 + 1*educ_alter3.8 + 1*educ_alter4.8 + 1*educ_alter5.8   
+FX9 =~ 1*educ_alter1.9 + 1*educ_alter2.9 + 1*educ_alter3.9 + 1*educ_alter4.9 + 1*educ_alter5.9   
+
+#variances of latent variables
+FX6 ~~ FX6
+FX7 ~~ FX7
+FX8 ~~ FX8
+FX9 ~~ FX9
+
+#constrained variances of manifest variables
+educ_alter1.6 ~~ a*educ_alter1.6
+educ_alter2.6 ~~ a*educ_alter2.6
+educ_alter3.6 ~~ a*educ_alter3.6
+educ_alter4.6 ~~ a*educ_alter4.6
+educ_alter5.6 ~~ a*educ_alter5.6
+
+educ_alter1.7 ~~ b*educ_alter1.7
+educ_alter2.7 ~~ b*educ_alter2.7
+educ_alter3.7 ~~ b*educ_alter3.7
+educ_alter4.7 ~~ b*educ_alter4.7
+educ_alter5.7 ~~ b*educ_alter5.7
+
+educ_alter1.8 ~~ c*educ_alter1.8
+educ_alter2.8 ~~ c*educ_alter2.8
+educ_alter3.8 ~~ c*educ_alter3.8
+educ_alter4.8 ~~ c*educ_alter4.8
+educ_alter5.8 ~~ c*educ_alter5.8
+
+educ_alter1.9 ~~ d*educ_alter1.9
+educ_alter2.9 ~~ d*educ_alter2.9
+educ_alter3.9 ~~ d*educ_alter3.9
+educ_alter4.9 ~~ d*educ_alter4.9
+educ_alter5.9 ~~ d*educ_alter5.9
+
+
+
+#contrained intercepts of the manifest variables (structural changes are picked up by the latent variables)
+educ_alter1.6 ~ e*1
+educ_alter2.6 ~ e*1
+educ_alter3.6 ~ e*1
+educ_alter4.6 ~ e*1
+educ_alter5.6 ~ e*1
+
+educ_alter1.7 ~ e*1
+educ_alter2.7 ~ e*1
+educ_alter3.7 ~ e*1
+educ_alter4.7 ~ e*1
+educ_alter5.7 ~ e*1
+
+educ_alter1.8 ~ e*1
+educ_alter2.8 ~ e*1
+educ_alter3.8 ~ e*1
+educ_alter4.8 ~ e*1
+educ_alter5.8 ~ e*1
+
+educ_alter1.9 ~ e*1
+educ_alter2.9 ~ e*1
+educ_alter3.9 ~ e*1
+educ_alter4.9 ~ e*1
+educ_alter5.9 ~ e*1
+
+
+
+#free the means of the latent variables
+
+FX7 ~ 1
+FX8 ~ 1
+FX9 ~ 1
+'
+fit <- lavaan(myModel, data = liss_w, missing = 'ML', fixed.x=FALSE, meanstructure = T)
+summary(fit, standardized = T)
+
+
+
+## THE STRUCTURAL MODEL 
+
+RICLPM <- '
+  # Create between components (random intercepts)
+  RIx =~ 1*FX6 + 1*FX7 + 1*FX8 + 1*FX9 
+  RIy =~ 1*euthanasia.6 + 1*euthanasia.7 + 1*euthanasia.8 + 1*euthanasia.9
+  
+  # Create within-person centered variables
+  wx6 =~ 1*FX6
+  wx7 =~ 1*FX7
+  wx8 =~ 1*FX8 
+  wx9 =~ 1*FX9
+  
+  wy6 =~ 1*euthanasia.6
+  wy7 =~ 1*euthanasia.7
+  wy8 =~ 1*euthanasia.8
+  wy9 =~ 1*euthanasia.9
+  
+  # Estimate the lagged effects between the within-person centered variables.
+  wx7 ~ a*wx6 + b*wy6
+  wx8 ~ a*wx7 + b*wy7
+  wx9 ~ a*wx8 + b*wy8
+  
+  wy7 ~ c*wx6 + d*wy6
+  wy8 ~ c*wx7 + d*wy7
+  wy9 ~ c*wx8 + d*wy8
+  
+  # Estimate the (residual) covariance between the within-person centered variables
+  wx6 ~~ wy6
+  wx7 ~~ wy7
+  wx8 ~~ wy8
+  wx9 ~~ wy9
+  
+  # Estimate the variance and covariance of the random intercepts. 
+  RIx ~~ RIx
+  RIy ~~ RIy
+  RIx ~~ RIy
+
+  # Estimate the (residual) variance of the within-person centered variables.
+  wx6 ~~ wx6
+  wy6 ~~ wy6
+  wx7 ~~ wx7
+  wy7 ~~ wy7 
+  wx8 ~~ wx8 
+  wy8 ~~ wy8 
+  wx9 ~~ wx9 
+  wy9 ~~ wy9 
+
+  #include intercepts 
+  FX6 ~ 1
+  FX7 ~ 1
+  FX8 ~ 1
+  FX9 ~ 1
+  
+  euthanasia.6 ~ 1
+  euthanasia.7 ~ 1
+  euthanasia.8 ~ 1
+  euthanasia.9 ~ 1
+'  
+
+fit5 <- lavaan(RICLPM, data=liss_w, missing = "fiml.x", meanstructure = T )
+summary(fit5, standardized = T)
+
+
+
+```
+
+-   
+
+
+
+
+
+
+
+
+This is another example page of your `r colorize("lab journal", "red")`. You can journal the assignments of the first day here too.
+
+------------------------------------------------------------------------
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

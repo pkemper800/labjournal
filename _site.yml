@@ -23,6 +23,9 @@ navbar:
       - text: "Page 3"
         href: lab3.html
         
+      - text: "Page 4"
+        href: lab4.html
+        
         
     - text: "Assignments"
       menu:
@@ -33,6 +36,9 @@ navbar:
       menu:
       - text: "Research Questions"
         href: researchquestions.html
+        
+      - text: "Developing Database"
+        href: databasedraft.html
         
     - text: "codereview"
       menu:

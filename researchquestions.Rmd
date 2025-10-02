@@ -52,6 +52,7 @@ How is this impacted by how long researchers have been at the university?
 
 -   What impact does ethnic diversity within in departments have on cross department collaboration? –\> **How does ethnic/nationality diversity within academic departments influence collaboration patterns among researchers in dutch universities, and how is this relationship moderated by researchers' institutional tenure?**
 
+
 notes from class: 
 
 -   _ethnic diversity doable manually -- but macro level -- department level -- need to include a lot of departments to compare _
@@ -59,6 +60,9 @@ notes from class:
 -   _descriptive question for all departments, and then pick 2 departments (high in diversity vs low in diversity (intersectionality)) to compare -- think of creative ways to use the data we have, ex. native dutch vs non-native dutch_
  
 -   _affiliations observed in open alex -- if ethnicity of scholar is difficult, look at if first affiliation is non-dutch university!!! as a proxy_ 
+
+
+-- list describptive questions: clusters, clustering by dept? clust
  
 
 Additional research questions/sub-research questions:

@@ -9,11 +9,272 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+DURING CLASS:
+
+``` {r}
+require(igraph)
+g <- make_graph("Zachary")
+plot(g)
+
+# measures of centrality 
+# degrees - is the most simple term for centrality is the degrees of connections 
+# if want to describe network, what dimensions describe? if it is complete, the size of it, what kind of relationship (un/directed), if the tie is weighed (and the node type)
+# So: degree centrality, then bridges -- so, if the story is that there are differences in degree centrality, could illustrate nodes by differing size
+``` 
+
+
+``` {r}
+gmat <- as_adjacency_matrix(g, type = "both", sparse = FALSE)
+gmat
+
+#THEN - LOOK AT DESCRIPTIVE STATISTICS
+#SIZE
+# number of nodes
+vcount(g)
+# number of edges
+ecount(g) 
+
+#DEGREE
+igraph::degree(g)
+# hist(table(degree(g)), xlab='indegree', main= 'Histogram of indegree') - every number is the degree level of each actor -- and see it is heavily skewed -- 
+
+#TRANSITIVITY
+# be aware that directed graphs are considered as undirected. but g is undirected.
+igraph::transitivity(g, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+
+#BETWEENNES
+# be aware that directed graphs are considered as undirected. but g is undirected.
+igraph::transitivity(g, type = c("localundirected"), isolates = c("NaN", "zero"))
+
+
+  # with this we see big differences in transivity and betweenness
+
+
+``` 
+
+Next, moving from local to global transitivity - look at triads. Global transitivity 
+* reviewing dyad - then triad - and since it is undirected, it is less difficult to calculate. now, triad census vs triad allegation
+* global: number of observed over possible - can identify all transitive triads and all possible triads 
+``` {r}
+igraph::dyad.census(g)
+
+igraph::triad.census(g)
+# I will use sna because it shows the names of the triads as well.
+
+install.packages("sna")
+library(sna)
+
+sna::triad.census(gmat)
+unloadNamespace("sna")  #I will detach this package again, otherwise it will interfere with all kind of functions from igraph, and my students will hate me for that.
+
+####
+
+
+igraph::transitivity(g, type = "global")
+sna::gtrans(gmat) #triad census a different way 
+
+triad_g <- data.frame(sna::triad.census(gmat)) #save as df
+
+transitivity_g <- (3 * triad_g$X300)/(triad_g$X201 + 3 * triad_g$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_g
+
+``` 
+
+Network visualisation: Let’s make size proportional to betweenness score
+``` {r}
+# changing V
+V(g)$size = betweenness(g, normalized = T, directed = FALSE) * 60 + 10  #after some trial and error
+ ## multiplication - changing 60 changes the difference in size,, adding 10 makes the smallest visible
+plot(g, mode = "undirected")
+
+
+``` 
+
+
+``` {r}
+# igraph, want no pverlap - igraph plotting no overlap -- a lot of layout functions -- want to hold printing device constant, and then reduce overlap...the idea is to push least central egos out 
+
+set.seed(2345)
+l <- layout_with_mds(g)  #https://igraph.org/r/doc/layout_with_mds.html
+plot(g, layout = l)
+# story in second plot: 3 clusters, around 1, around 34 - and in between (which wasn't as clear before)
+
+``` 
+
+**can save coordinates of layout, and then tweak coordinates ourself - but that is no longer an objective layout function**
+
+``` {r}
+l  #let us take a look at the coordinates -- and now we save them
+l[1, 1] <- 4
+l[34, 1] <- -3.5 # the coordinates are the x and y, and this makes the 1 and the 34 more positive / more negative
+plot(g, layout = l)
+
+``` 
+
+looking at this, maybe 1, 33 and 34 are instructures, and numbers closer to 1 are more similar to 1 and 34, 34. 
+
+Last step, manipulate data more and get final picture
+``` {r}
+plot(g, layout = l, margin = c(0, 0, 0, 0))
+legend(x = -2, y = -1.5, c("Note: the position of nodes 1 and 34 have been set by Jochem Tolsma \n for visualisation purposes only and do not reflect network properties"),
+    bty = "n", cex = 0.8)
+``` 
+
+
+Notes: size ---> degree of centrality! 
+
+
+jochemtolsma.github.io/Twitter/figures.html
+
+looking at data of parliament from twitter -- some type of segmentation by party - coloring the different parties makes it much easier to discern differences. can look at directed / undirected (mutual)
+
+then used same plots, differed by algorithm - same colors (party) cluster together - prove to reviewer that algorithm outputs cluster. 
+
+Then, take home message: clustering by party. PVV is outlier. proves that there is differing levels of segmentation, too. 
+
+
+descriptive: macro level, ego, triad, etc. 
+descriptive research question - 50-75% of final project assignment 
+
+
+
+
+
+``` {r}
+``` 
+
+
+``` {r}
+``` 
+
+
+
+BEFORE CLASS: 
+
+First Open Alex Attempt
+
+``` {r}
+# start with clean workspace
+rm(list = ls())
+
+#install.packages('data.table')
+library(data.table)  # mainly for faster data handling
+
+library(tidyverse)  # I assume you already installed this one!
+#install.packages('httr') # we don't need this for now require(httr)
+#install.packages("xml2")
+require(xml2)
+#install.packages("rvest")
+require(rvest)
+#install.packages("devtools")
+require(devtools)
+
+#RSelenium usefull for websites where the data is 'loaded in', rvest cant handle that
+#packages: "RSelenium", "rvest", "tidyverse", "netstat", "pingr", "stringr"
+#install.packages("RSelenium")
+#install.packages("netstat")
+#install.packages("pingr")
+
+install.packages("RSelenium")
+install.packages("rvest")
+install.packages("tidyverse")
+install.packages("netstat")
+install.packages("pingr")
+install.packages("stringr")
+install.packages("selenider")
+
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(stringr)
+
+```
+
+
+``` {r}
+options(openalexR.mailto = "paige.kemper@ru.nl") 
+
+library(openalexR)
+df_test <- oa_fetch(entity= "author", search = "Jochem+Tolsma", mailto = "paige.kemper@ru.nl")
+df_test
+
+require(openalexR)
+fshowdf(df_test)
+
+#test finding radboud university institution in Open Alex 
+
+df_ru <-oa_fetch(entity = "institution", search = "Radboud+University+Nijmegen", mailto="paige.kemper@ru.nl") #author.id = df_test$id)
+df_ru
+
+df_insts <- oa_fetch(entity = "institutions", search = "radboud", verbose = TRUE)$id[1]
+df_insts
+
+f_inst <- function(x) {
+    oa_fetch(entity = "institutions", search = x)$id[1]
+}
+df_insts
+
+
+
+
+## find authors with specific names
+#start with column
+authors <- c("Jochem Tolsma", "Tom van der Meer", "Maurice Gesthuizen", "Michael Savelkoul")
+
+df_authors <- NA
+for (i in 1:length(authors)) {
+    df_authors[i] <- oa_fetch(entity = "authors", search = authors[i], affiliations.institution.id = df_insts)[1,
+        ] %>%
+        select(id)
+}
+df_authors <- unlist(df_authors)
+df_authors #returns websites for each author
+
+
+#Scrap code
+#df_ru1 <- oa_fetch(entity = "Raboud Univeristy Nijmegen", search = "authors", mailto = "paige.kemper@ru.nl" )
+#df_ru1 <- oa_fetch(entity = "Radboud University Nijmegen", author.id=df_ru1$id )
+#df_papers$id[1] #website it is coming from...
+#df_papers <- oa_fetch(entity = "works", author.id = df$id)
+#df_papers$author[1]
+```
+
+
+``` {r}
+#can search institutions within openalex
+df_institution <- oa_fetch(entity = "institutions", search = "radboud university nijmegen")$id[1]
+df_institution
+
+df_institution2 <- oa_fetch()
+
+#can search authors
+df_author <- oa_fetch(entity = "author", search = "Tolsma")
+
+
+# searching radboud
+ru_id <- institutions <- oa_fetch(entity = "institutions", search = "Radboud University") #get the id of the radboud university 
+ru_id
+
+# searching UvA
+uva_id <- oa_fetch(entity = "institutions", search = "Universiteit van Amsterdam") #get uva's id 
+uva_id
+```
+
+
+``` {r}
+
+
+```
+
 
 
 # Chapter 5
 
 ``` {r}
+```
 load("C:/Users/paigek/Downloads/liss_cdn.Rdata")
 
 
@@ -256,7 +517,7 @@ fit5 <- lavaan(RICLPM, data=liss_w, missing = "fiml.x", meanstructure = T )
 summary(fit5, standardized = T)
 
 
-
+```{r}
 ```
 
 -   
@@ -268,7 +529,6 @@ summary(fit5, standardized = T)
 
 
 
-This is another example page of your `r colorize("lab journal", "red")`. You can journal the assignments of the first day here too.
 
 ------------------------------------------------------------------------
 

@@ -1,0 +1,573 @@
+---
+title: "Developing Database"
+author: "Paige Kemper"
+date: "2025-09-25"
+output: html_document
+---
+
+## Goals:
+
+-   Compile list of professors names and their respective departments and universities across the Netherlands
+
+    -   Flag: Compile international academic experience/background of professors.
+
+        -   *To gather: 1) could look at CV/LinkedIn for each professor, within 1 department of 1 university; 2) could see if their PhD registered with dutch national registry, only looking at if PhD done in or outside of the Netherlands.*
+
+-   Search OpenAlex for each Dutch professor's publications, making dataframe of alters/collaborations for each professor's publications.
+
+-   Check if collaborators are affiliated with same university, different dutch university, or international university.
+
+-   Look at international vs non-international professors to see if there is difference in international collaborations
+
+-   Then, return to department/university, and see if proportion of professors with international experience has an impact on international collaborations (or potentially research outputs in general)
+
+To make this scalable, we will break this into many smaller parts.
+
+-   
+
+# Review
+
+### Collect set of Radboud Sociology Professors
+
+Try webscraping
+
+```{r}
+
+url <- "https://www.ru.nl/en/departments/faculty-of-social-sciences/sociology/all-employees-from-sociology/" 
+
+soc_staff_ru <- read_html("http://web.archive.org/web/20230528153336/https://www.ru.nl/sociology/research/staff/")
+str(soc_staff_ru)
+
+ru_soc_staff <- read_html("https://www.ru.nl/en/search/scope/staff/staff-department/992") %>%    
+    html_elements("body") %>%
+    html_elements("div") %>%
+    html_elements("div") %>%
+    html_elements("div") %>%
+    html_elements("div") %>%
+    html_elements("main") %>%
+    html_elements("div") %>%
+    html_elements("div") %>%
+    html_elements("div.block-ru-content") %>%
+    html_elements("div") %>%
+    html_elements("div") %>%
+    html_elements("div") %>%
+    html_elements("div") %>%
+    html_elements("ul") %>%
+    html_elements("li") %>% ## this is where the comprensive list is
+    html_elements("div") %>%
+    html_elements("span") %>%
+    html_elements("div") %>%
+    html_elements("div.list-item__content-top") %>%
+    html_elements("h2") %>%
+    html_elements("a") %>%
+    html_elements("span") %>%
+    html_text()
+
+
+str(ru_soc_staff)
+
+ru_soc_staff <- ru_soc_staff %>%
+  rvest::html_element("body")
+ru_soc_staff <- ru_soc_staff %>%
+  rvest::html_table()
+view(soc_staff)
+
+```
+
+For reference: Leiden Pol Staff scraping review
+
+```{r}
+lei_pol_staff <- read_html("https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1")
+    html_element("section.tab.active") %>%
+    html_elements("ul.table-list") %>%
+    html_elements("li") %>%
+    html_elements("a") %>%
+    html_elements("div") %>%
+    html_elements("strong") %>%
+    html_text()")
+
+```
+
+Difficulty scraping: instead dummy database to start
+
+```{r}
+install.packages("readxl")
+library(readxl)
+
+# My manual data set, including manual review of professor experience abroad
+ru_soc_profs <- read_excel("C:/Github/labjournal/ru_soc_profs.xlsx")
+ru_soc_profs
+
+
+# from tutorial
+socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
+socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
+#now have list of scholars for all dutch universities 
+
+```
+
+
+Next: review calling names in openalex
+```{r}
+#check packages are installed
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+
+
+# Next, test calling 1 professor
+options(openalexR.mailto = "paige.kemper@ru.nl") 
+df_test <- oa_fetch(entity= "author", search = "Jochem+Tolsma")
+  # TO DO: CROSS CHECK JOCHEM TOLSMA AFFILIATION WITH RADBOUD UNIVERSITY 
+  # Repeat action: df_test <- oa_fetch(entity= "author", search = "Jochem+Tolsma", mailto = "paige.kemper@ru.nl")
+df_test
+
+
+# Alternative viewing
+require(openalexR)
+fshowdf(df_test) #Nicer way to check recall of one professor
+
+
+# Next, look at list of all of the example professor's publications
+df_test_papers <- oa_fetch(entity = "works", author.id = df_test$id) 
+# str(df_test_papers)
+  # within this new dataset, $authorships includes the dataframes of the coauthors (alters)
+
+
+df_test_papers[1,] #look at row 1: first publication listed by Jochem
+
+
+# Then: Create loop. First make empty column. Then, for every row in the set of the professor's publications (for i:nrow(df), look at the data frame of 'affiliations' (coauthors). Make dataframe ("df"), and then save $display_name variable to the empty column.)
+savedata <- NA
+for (i in 1:nrow(df_test_papers)) {
+  print(i)
+  df <- as.data.frame(df_test_papers[i,4][[1]])
+  savedata <- c(savedata, df$display_name)
+}
+
+savedata #see: all of the authors for all of the papers by Jochem Tolsma are listed
+
+savedata <- savedata[-1] #remove the empty cell at the begining 
+
+savedata <- savedata[-c(which(savedata=="Jochem Tolsma"))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+
+savedata #check it again
+
+unique(savedata) #look at a list of the authors without repeats
+
+# authors = do.call(rbind, df_test_papers$authorships) #list of alters #Jos' code 
+```
+
+
+Now: Instead of trying with only 1 author, try with list of authors
+```{r}
+## 3 authors 
+options(openalexR.mailto = "paige.kemper@ru.nl") 
+four_authors <- oa_fetch(entity= "author", search = "Jochem+Tolsma")
+  # TO DO: CROSS CHECK JOCHEM TOLSMA AFFILIATION WITH RADBOUD UNIVERSITY 
+  # Repeat action: df_test <- oa_fetch(entity= "author", search = "Jochem+Tolsma", mailto = "paige.kemper@ru.nl")
+df_test
+
+df_test_papers <- oa_fetch(entity = "works", author.id = df_test$id) 
+
+
+
+
+## make sure that author is from correct university
+
+ru_id <- institutions <- oa_fetch(entity = "institutions", search = "Radboud University") #get Radboud's ID
+ru_id <- ru_id[1,]
+ru_id
+
+## then get right authors
+jochem_tolsma <- oa_fetch(entity = "author", search = "Jochem Tolsma", affiliations.institution.id = ru_id$id) #jochem info
+jochem_tolsma
+
+maurice_gesthuizen <- oa_fetch(entity = "author", search = "Maurice Gesthuizen", affiliations.institution.id = ru_id$id) #maurice
+maurice_gesthuizen
+
+michael_savelkoul <- oa_fetch(entity = "author", search = "Michael Savelkoul", affiliations.institution.id = ru_id$id) #michael
+
+
+## mini list of authors
+mini_list <- rbind(jochem_tolsma, maurice_gesthuizen, michael_savelkoul)
+mini_list
+
+just_names <- mini_list$display_name
+just_names
+
+
+## Make double loop 
+list1 <- data.frame()
+list2 <- data.frame()
+
+for (i in 1:nrow(just_names)) {
+  print(i)
+  list1 <- oa_fetch(entity = "works", author.id = just_names[i])
+  df1 <- c(df1, list1$display_name)
+  for (j in 1:nrow(list1)) {
+    print(j)
+    df2 <- as.data.frame(list1[i,4][[1]])
+    list2 <- c(list2, df2$display_name)
+  }
+}
+
+
+
+uva_id <- oa_fetch(entity = "institutions", search = "Universiteit van Amsterdam") #get uva's id 
+uva_id
+
+
+tom_vd_meer  <- oa_fetch(entity = "author", search = "Tom van der Meer", affiliations.institution.id = uva_id$id) #Toni is in there, but let's ignore him because we are only using Tom-1  (get tom info)
+tom_vd_meer <- tom_vd_meer[1,] #get the RIGHT tom 
+
+
+
+## Database of 41 authors: 
+
+
+
+```
+
+
+
+
+
+Next, try the same thing, but make it cleaner: make sure it is the Jochem Tolsma from Radboud, and return a df with both a list of coauthors and their affiliate institutions 
+```{r}
+install.packages("tibble")
+library(tibble)
+
+df_test2 <- NA
+
+df_test2 <- oa_fetch(entity= "author", search = "Jochem+Tolsma") ## ADD FILTER FOR UNIVERSITY)
+df_test2
+
+
+# Next, look at list of all of the example professor's publications
+df_papers2 <- oa_fetch(entity = "works", author.id = df_test2$id) ### FOR FUTURE REF: for i:(end of list of authors)
+df_papers2 # look at list of publications
+df_papers2[1,] #look at row 1: first publication listed by Jochem, check that matches above
+
+#First code:
+# Next: Make loop. First make empty df. 
+# Then, for every row in the set of the professor's publications (for i:nrow(df), look at the data frame of 'affiliations' (coauthors). Make dataframe ("df"), and then save $display_name variable to the empty column.)
+testdf <- NA
+testdf <- data.frame()
+
+
+
+
+for (i in 1:nrow(df_papers2)) { #for each of jochem's publications
+  print(i)
+  df <- as.data.frame(df_papers2[i,4][[1]]) #for every author
+  testdf <- c(testdf, df$display_name)
+}
+testdf
+testdf <- testdf[-1] #remove the empty cell at the beginning 
+  # testdf$affiliation <- add_column(c(testdf, df$affiliations[[1]][[2]]))
+
+
+
+testdf2 <- NA
+df2 <- NA
+
+for (i in 1:nrow(df_papers2)) { #for each of jochem's publications
+  print(i)
+  df2 <- as.data.frame(df_papers2[i,4][[1]]) #for every author
+  testdf2 <- data.frame(testdf2, df2$affiliations[[1,]][[2]])
+}
+
+
+testdf
+testdf <- testdf[-1]
+
+
+#New Code: 
+results_list <- list()
+
+for (i in 1:nrow(df_papers2)) {
+  authors_list <- df_papers2[[i,4]][[1]]
+  print(authors_list)
+  for (i in 1:nrow(df_papers2[[i,4]][[1]])) {
+    author_name <- authors_list$display_name
+    if (length(df_papers2[[4]][[1]][[6]]) > 0) {
+      first_affiliation <- authors_list$affiliations[[1]][[2]]
+    } else {
+      first_affiliation <- NA
+    }
+    results_list <- append(results_list, list(
+      data.frame(author_name, first_affiliation, stringsAsFactors = FALSE)
+      ))
+    }
+}
+
+
+for (i in 1:nrow(df_test_papers)) {
+  print(i)
+  df <- as.data.frame(df_test_papers[i,4][[1]])
+  savedata <- c(savedata, df$display_name)
+}
+
+  df2 <- data.frame(results, authors_list$display_name)
+    (df_papers2[[j,4]][[1]])[[6]][[1]]){
+
+
+results <- data.frame()
+
+for (i in 1:nrow(df_papers2)) {
+  authors_list <- as.data.frame(df_papers2[i,4][[1]])
+  for (j in 1:nrow(authors_list)){
+    affiliations <- as.data.frame(authors_list[[j,6]][[1]])
+    
+    author_name <- as.data.frame(authors_list$display_name)
+    
+    if (length(affiliations$display_name) > 0) {
+      first_affiliation <- affiliations$display_name
+    } else {
+      first_affiliation <- NA
+    }
+    
+    results[[length(results) + 1]] <- data.frame(
+      display_name = author_name,
+      first_affiliation = first_affiliation,
+      stringsAsFactors = FALSE
+    )
+  }
+}
+
+# Combine all rows into a data frame
+results_df <- do.call(rbind, results)
+
+# View the results
+head(results_df)
+
+
+    
+    df2 <- append(results, authors_list$display_name, affiliations$display_name)
+  }
+
+  print(affiliations)
+  for (i in 1:nrow(authors_list)) {
+    author_name <- data.frame(results, authors_list$display_name)
+    affiliation_name <- data.fram(results, affiliations$display_name)
+    results <- append(results, list(
+      data.frame(author_name, affiliation_name, stringsAsFactors = FALSE)
+      ))
+    }
+  }
+
+results
+
+#for (i in 1:nrow(df_papers2)) { #for each of jochem's publications
+
+#  print(i)
+#  df <- as.data.frame(df_papers2[i,4][[1]]) #for every author
+#  # df <- as.data.frame(df_papers2[i,4][[1]][[6]][[2]])
+#  testdf <- c(testdf, df$display_name, df$affiliations[[1]][[2]])
+#}
+
+
+df <- as.data.frame(df_test_papers[1,4][[1]])
+df
+
+testdf
+unique(testdf)
+
+```
+
+
+Okay honestly that was annoying and didn't work so I am just going to make a second df for each author's instutions, and call that good enough, using the original code. 
+
+```{r}
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+
+
+# Call 1 professor
+options(openalexR.mailto = "paige.kemper@ru.nl") 
+dfaaa <- oa_fetch(entity= "author", search = "Jochem+Tolsma")
+  # TO DO: CROSS CHECK JOCHEM TOLSMA AFFILIATION WITH RADBOUD UNIVERSITY 
+  # Repeat action: df_test <- oa_fetch(entity= "author", search = "Jochem+Tolsma", mailto = "paige.kemper@ru.nl")
+dfaaa
+
+# Next, look at list of all of the example professor's publications
+papers_aaa <- oa_fetch(entity = "works", author.id = dfaaa$id) 
+str(papers_aaa)
+
+papers_aaa[1,] #look at row 1: first publication listed by Jochem
+
+
+# Then: Create loop. First make empty column. Then, for every row in the set of the professor's publications (for i:nrow(df), look at the data frame of 'affiliations' (coauthors). Make dataframe ("df"), and then save $display_name variable to the empty column.)
+authors_aaa <- NA
+for (i in 1:nrow(papers_aaa)) {
+  print(i)
+  df <- as.data.frame(papers_aaa[i,4][[1]])
+  authors_aaa <- c(authors_aaa, df$display_name)
+}
+authors_aaa #see: all of the authors for all of the papers by Jochem Tolsma are listed
+
+authors_aaa <- authors_aaa[-1] #remove the empty cell at the begining 
+
+authors_aaa <- authors_aaa[-c(which(authors_aaa=="Jochem Tolsma"))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+
+authors_aaa #check it again
+
+
+# MAKING DF FOR AUTHORS + THEIR INSTITUTIONS: 
+options(openalexR.mailto = "paige.kemper@ru.nl")
+
+dfbbb <- oa_fetch(entity= "author", search = authors_aaa[1])
+dfbbb
+
+
+
+for (j in 1:nrow(authors_aaa)) {
+  print(j)
+  affil_df <- oa_fetch(entity = "author", search = authors_aaa[j])
+  affil_aaa <- as.data.frame(oa_fetch(entity = "author", affiliation = affil_df$last_known_institutions))
+  affiliation_aaa <- c(affiliation_aaa, affil_aaa$last_known_institutions[[3]][[1]])
+}
+
+
+
+name_and_inst <- 
+
+
+```
+
+chatty 1
+```{r}
+
+df_test3 <- NA
+
+df_test3 <- oa_fetch(entity= "author", search = "Jochem+Tolsma") ## ADD FILTER FOR UNIVERSITY)
+df_test3
+
+
+# Next, look at list of all of the example professor's publications
+df_papers3 <- oa_fetch(entity = "works", author.id = df_test3$id) ### FOR FUTURE REF: for i:(end of list of authors)
+df_papers3 # look at list of publications
+df_papers3[1,] #look at row 1: first publication listed by Jochem, check that matches above
+
+
+
+# Create an empty list to collect rows
+results_list <- list()
+
+# Loop through each publication
+for (i in 1:nrow(df_papers3)) {
+  authorships <- df_papers3$authorships[[i]]
+  
+  # Loop through each author in the publication
+  for (j in seq_along(authorships)) {
+    author_info <- authorships[[j]]
+    
+    # Get author name
+    author_name <- author_info$author$display_name
+    
+    # Get first institution name, if it exists
+    if (length(author_info$institutions) > 0) {
+      first_affiliation <- author_info$institutions[[1]]$display_name
+    } else {
+      first_affiliation <- NA
+    }
+    
+    # Append to list
+    results_list[[length(results_list) + 1]] <- data.frame(
+      display_name = author_name,
+      first_affiliation = first_affiliation,
+      stringsAsFactors = FALSE
+    )
+  }
+}
+
+# Combine all rows into a data frame
+results_df <- do.call(rbind, results_list)
+
+# View the results
+head(results_df)
+
+
+
+```
+
+
+
+
+```{r}
+# Then, look at list of all of example professor's coauthors (alters)
+df_test_coauthors1 <- oa_fetch(entity = "authors", authors=df_test_papers$authorships[[1]][[1]]) #check on this later
+
+
+# Next, test loop by calling multiple professors
+
+
+```
+
+```{r}
+
+ru_id <- institutions <- oa_fetch(entity = "institutions", search = "Radboud University") #get the id of the radboud university 
+ru_id
+
+uva_id <- oa_fetch(entity = "institutions", search = "Universiteit van Amsterdam") #get uva's id 
+uva_id
+
+
+
+```
+
+```{r}
+jochem_tolsma_papers <- oa_fetch(entity = "works", author.id = jochem_tolsma$id) #jochem
+tom_vd_meer_papers <- oa_fetch(entity = "works", author.id = tom_vd_meer$id) #tom
+maurice_gesthuizen_papers <- oa_fetch(entity = "works", author.id = maurice_gesthuizen$id) #maurice
+michael_savelkoul_papers <- oa_fetch(entity = "works", author.id = michael_savelkoul$id) #michael
+
+all_works <- rbind(jochem_tolsma_papers, tom_vd_meer_papers)
+all_works <- rbind(all_works, maurice_gesthuizen_papers)
+all_works <- rbind(all_works, michael_savelkoul_papers)
+
+all_works <- all_works %>% #filter out years 
+  filter(
+    publication_year >= 2019) %>%
+  filter(
+    publication_year <= 2023)
+
+adjacency_matrix <- matrix(0, nrow = 4, ncol = 4) #first we make an empty matrix 
+  
+dimnames(adjacency_matrix) #then we ask for the names of the rows and columns 
+
+
+
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```

@@ -382,6 +382,9 @@ div.tocify {
     <li>
       <a href="researchquestions.html">Research Questions</a>
     </li>
+    <li>
+      <a href="databasedraft.html">Developing Database</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -450,10 +453,10 @@ numbers &lt;- sample(x=0:1, size = 16, replace = TRUE)
 net1 &lt;- matrix(numbers, 4, 4, TRUE)
 net1</code></pre>
 <pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]    0    1    1    1
-## [2,]    0    1    0    1
-## [3,]    1    0    1    1
-## [4,]    0    0    0    0</code></pre>
+## [1,]    0    0    1    1
+## [2,]    0    0    1    0
+## [3,]    1    1    1    0
+## [4,]    1    0    0    1</code></pre>
 <p>Set the diagonal to 0: This will start process of making data
 symmetrical, and would represent undirected ties/an undirected network.
 If you flip the columns and rows, the matrix will look the same (upper
@@ -461,17 +464,17 @@ triangle of the matrix becomes symmetric).</p>
 <pre class="r"><code>diag(net1) &lt;- 0
 net1</code></pre>
 <pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]    0    1    1    1
-## [2,]    0    0    0    1
-## [3,]    1    0    0    1
-## [4,]    0    0    0    0</code></pre>
+## [1,]    0    0    1    1
+## [2,]    0    0    1    0
+## [3,]    1    1    0    0
+## [4,]    1    0    0    0</code></pre>
 <pre class="r"><code>#undirected network -- symmetric matrix
 #symmetry - triangle (transpose didn&#39;t work) - if flip columns and rows, will have the same matrix
 # upper triangle of matrix -- as AS SYMMETRIC</code></pre>
 <p>Then review the descriptive statistics</p>
 <pre class="r"><code># descriptive statistics
 rowSums(net1)</code></pre>
-<pre><code>## [1] 3 1 2 0</code></pre>
+<pre><code>## [1] 2 1 2 1</code></pre>
 <pre class="r"><code>mean(net1)</code></pre>
 <pre><code>## [1] 0.375</code></pre>
 <p>Now things speed up.</p>
@@ -573,10 +576,15 @@ there? how many are missing?</p>
 <pre class="r"><code>install.packages(&quot;sna&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/paigek/AppData/Local/R/win-library/4.5&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
-<pre><code>## package &#39;sna&#39; successfully unpacked and MD5 sums checked
-## 
+<pre><code>## package &#39;sna&#39; successfully unpacked and MD5 sums checked</code></pre>
+<pre><code>## Warning: cannot remove prior installation of package &#39;sna&#39;</code></pre>
+<pre><code>## Warning in file.copy(savedcopy, lib, recursive = TRUE): problem copying
+## C:\Users\paigek\AppData\Local\R\win-library\4.5\00LOCK\sna\libs\x64\sna.dll to
+## C:\Users\paigek\AppData\Local\R\win-library\4.5\sna\libs\x64\sna.dll: Permission denied</code></pre>
+<pre><code>## Warning: restored &#39;sna&#39;</code></pre>
+<pre><code>## 
 ## The downloaded binary packages are in
-##  C:\Users\paigek\AppData\Local\Temp\RtmpOuacvA\downloaded_packages</code></pre>
+##  C:\Users\paigek\AppData\Local\Temp\RtmpaQAlXD\downloaded_packages</code></pre>
 <pre class="r"><code>library(sna)</code></pre>
 <pre><code>## Loading required package: statnet.common</code></pre>
 <pre><code>## 

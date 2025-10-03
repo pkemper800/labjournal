@@ -1,0 +1,172 @@
+---
+title: "lab6"
+author: "Paige Kemper"
+date: "2025-10-02"
+output: html_document
+---
+```{r}
+# Load author IDs or names from Excel
+author_list <- read_excel("authors.xlsx", sheet = "Sheet1")
+head(author_list)
+
+
+# step 2
+get_coauthors <- function(author_id) {
+  # Get author's works (first 200, adjust as needed)
+  works <- OAfetch::oa_query(
+    endpoint = "works",
+    filter = list(author.id = author_id),
+    per_page = 200
+  )
+  
+  # For each work, extract co-authors and affiliations
+  coauthors_info <- map_df(works$results, function(work) {
+    # Skip if authorship info is missing
+    if (is.null(work$authorships)) return(NULL)
+    
+    tibble(
+      work_id = work$id,
+      work_title = work$title,
+      primary_author = author_id,
+      coauthor_id = map_chr(work$authorships, ~ .x$author$id %||% NA_character_),
+      coauthor_name = map_chr(work$authorships, ~ .x$author$display_name %||% NA_character_),
+      coauthor_affiliation = map_chr(work$authorships, ~ {
+        if (!is.null(.x$institutions) && length(.x$institutions) > 0) {
+          paste(map_chr(.x$institutions, "display_name"), collapse = "; ")
+        } else {
+          NA_character_
+        }
+      })
+    )
+  })
+  
+  return(coauthors_info)
+}
+
+
+
+
+
+```
+
+
+
+Get authors and affiliations
+```{r}
+get_coauthors <- function(author_id) {
+  # Get author's works (first 200, adjust as needed)
+  works <- OAfetch::oa_query(
+    endpoint = "works",
+    filter = list(author.id = author_id),
+    per_page = 200
+  )
+  
+  # For each work, extract co-authors and affiliations
+  coauthors_info <- map_df(works$results, function(work) {
+    # Skip if authorship info is missing
+    if (is.null(work$authorships)) return(NULL)
+    
+    tibble(
+      work_id = work$id,
+      work_title = work$title,
+      primary_author = author_id,
+      coauthor_id = map_chr(work$authorships, ~ .x$author$id %||% NA_character_),
+      coauthor_name = map_chr(work$authorships, ~ .x$author$display_name %||% NA_character_),
+      coauthor_affiliation = map_chr(work$authorships, ~ {
+        if (!is.null(.x$institutions) && length(.x$institutions) > 0) {
+          paste(map_chr(.x$institutions, "display_name"), collapse = "; ")
+        } else {
+          NA_character_
+        }
+      })
+    )
+  })
+  
+  return(coauthors_info)
+}
+
+
+
+# loop over all authors
+# Combine all coauthor data
+all_coauthors <- map_df(author_list$author_id, function(aid) {
+  message("Processing author: ", aid)
+  tryCatch({
+    get_coauthors(aid)
+  }, error = function(e) {
+    message("Error for author ", aid, ": ", e$message)
+    NULL
+  })
+})
+
+
+# coauthorship matrix
+coauthorship_matrix <- all_coauthors %>%
+  filter(!is.na(primary_author), !is.na(coauthor_id)) %>%
+  count(primary_author, coauthor_id) %>%
+  pivot_wider(names_from = coauthor_id, values_from = n, values_fill = 0)
+
+head(coauthorship_matrix)
+
+```
+
+
+
+
+random other code: 
+
+
+chatty 1
+```{r}
+
+df_test3 <- NA
+
+df_test3 <- oa_fetch(entity= "author", search = "Jochem+Tolsma") ## ADD FILTER FOR UNIVERSITY)
+df_test3
+
+
+# Next, look at list of all of the example professor's publications
+df_papers3 <- oa_fetch(entity = "works", author.id = df_test3$id) ### FOR FUTURE REF: for i:(end of list of authors)
+df_papers3 # look at list of publications
+df_papers3[1,] #look at row 1: first publication listed by Jochem, check that matches above
+
+
+
+# Create an empty list to collect rows
+results_list <- list()
+
+# Loop through each publication
+for (i in 1:nrow(df_papers3)) {
+  authorships <- df_papers3$authorships[[i]]
+  
+  # Loop through each author in the publication
+  for (j in seq_along(authorships)) {
+    author_info <- authorships[[j]]
+    
+    # Get author name
+    author_name <- author_info$author$display_name
+    
+    # Get first institution name, if it exists
+    if (length(author_info$institutions) > 0) {
+      first_affiliation <- author_info$institutions[[1]]$display_name
+    } else {
+      first_affiliation <- NA
+    }
+    
+    # Append to list
+    results_list[[length(results_list) + 1]] <- data.frame(
+      display_name = author_name,
+      first_affiliation = first_affiliation,
+      stringsAsFactors = FALSE
+    )
+  }
+}
+
+# Combine all rows into a data frame
+results_df <- do.call(rbind, results_list)
+
+# View the results
+head(results_df)
+```
+
+

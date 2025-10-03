@@ -1,0 +1,289 @@
+---
+title: "codereview2"
+author: "Paige Kemper"
+date: "2025-10-02"
+output: html_document
+---
+
+
+```{r}
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, file, "_", datename, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+```
+
+
+```{r}
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+fpackage.check(packages)
+```
+
+
+Bring in Datafiles
+```{r}
+
+library(readxl)
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+
+# My manual data set, including manual review of professor experience abroad
+ru_soc_profs <- read_excel("C:/Github/labjournal/ru_soc_profs.xlsx")
+ru_soc_profs
+
+# from tutorial
+socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
+socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
+#now have list of scholars for all dutch universities 
+
+
+#FROM WEBSCRAPING MANUAL/TUTORIAL
+socprofs2022$Universiteit1.22[socprofs2022$Naam == "Duygu Uysal Dincol"] <- "Koc University"
+socprofs2022$Universiteit2.22[socprofs2022$Naam == "Duygu Uysal Dincol"] <- "UvA"
+
+# correct the type
+socprofs2022 <- socprofs2022 %>%
+    mutate(across(c(Universiteit1.22, Universiteit2.22, Universiteit1.24, Universiteit2.24), ~case_when(.x ==
+        "Uvt" ~ "UvT", .x == "UU?" ~ "UU", .x == "Leiden uni" ~ "Leiden", .x == "UvA?" ~ "UvA", .x ==
+        "Uva" ~ "UvA", .x == "UU?" ~ "UU", .x == "Tilburg" ~ "UvT", is.na(.x) ~ "", .default = as.character(.x))))
+fshowdf(socprofs2022)
+```
+
+
+
+```{r}
+#FROM WEBSCRAPING MANUAL - GET INSTITUTIONS
+instituties <- na.omit(unique(c(df_scholars$Universiteit1.22, df_scholars$Universiteit2.22, df_scholars$Universiteit1.24,
+    df_scholars$Universiteit2.24)))
+df_instituties <- data.frame(instituties)
+fshowdf(instituties)
+
+
+
+## INSTITUTIONS ID FROM WEBSRAPING TUTORIAL
+
+options(openalexR.mailto = "paige.kemper@ru.nl") 
+
+
+
+# I made a function so it is easier to use.
+f_inst <- function(x) {
+    # I am only interested in institution id and if I find multiple I only take the first one.
+    oa_fetch(entity = "institutions", search = x)$id[1]
+
+}
+
+df_instituties$inst.id[df_instituties$instituties == "UU" | df_instituties$instituties == "UU?"] <- f_inst("Utrecht University")
+df_instituties$inst.id[df_instituties$instituties == "Leiden" | df_instituties$instituties == "Leiden uni"] <- f_inst("Leiden University")
+df_instituties$inst.id[df_instituties$instituties == "RU"] <- f_inst("Radboud University Nijmegen")
+df_instituties$inst.id[df_instituties$instituties == "RUG"] <- f_inst("Rijksuniversiteit Groningen")
+df_instituties$inst.id[df_instituties$instituties == "UvA" | df_instituties$instituties == "Uva" | df_instituties$instituties ==
+    "UvA?"] <- f_inst("Universiteit van Amsterdam")
+df_instituties$inst.id[df_instituties$instituties == "Universita degli studi di Milano"] <- f_inst("University of Milan")
+df_instituties$inst.id[df_instituties$instituties == "VU"] <- f_inst("Vrije Universiteit Amsterdam")
+df_instituties$inst.id[df_instituties$instituties == "VU"] <- f_inst("Vrije Universiteit Amsterdam")
+df_instituties$inst.id[df_instituties$instituties == "EUR"] <- f_inst("Erasmus Universiteit Rotterdam")
+df_instituties$inst.id[df_instituties$instituties == "UvT" | df_instituties$instituties == "Uvt" | df_instituties$instituties ==
+    "Tilburg"] <- f_inst("Universiteit van Tilburg")
+df_instituties$inst.id[df_instituties$instituties == "TU Delft"] <- f_inst("Technische Universiteit Delft")
+df_instituties$inst.id[df_instituties$instituties == "TU Delft"] <- f_inst("Technische Universiteit Delft")
+df_instituties$inst.id[df_instituties$instituties == "WUR"] <- f_inst("Wageningen University & Research")
+
+# have to make complete
+
+
+
+# SCHOLARS ID FROM WEBSCRAPING
+df_scholars_list <- list()  #object where to save all author info
+
+for (i in 1:nrow(df_scholars)) {
+    naam <- df_scholars$Naam[i]  #retrieve name of scholar of interest
+
+    # retrieve the affiliations/universities of this scholar
+    universities <- unique(na.omit(c(df_scholars$Universiteit1.22[i], df_scholars$Universiteit2.22[i],
+        df_scholars$Universiteit1.24[i], df_scholars$Universiteit2.24[i])))
+
+    inst.ids <- na.omit(df_instituties$inst.id[df_instituties$instituties %in% universities])
+
+    # search for the id(s) of this name filtering on all possible affiliations
+    naam_list <- list()
+    if (length(inst.ids) > 0) {
+        # just to jump over scholars without affiliation (some external phds)
+        for (j in 1:length(inst.ids)) {
+            naam_list[[j]] <- oa_fetch(entity = "author", search = naam, affiliations.institution.id = inst.ids[j])
+        }
+        naam_list <- do.call(rbind.data.frame, naam_list)  #put everything in a dataframe
+        naam_list <- naam_list[!duplicated(naam_list), ]  #remove duplicates
+
+        # and save
+        df_scholars_list[[i]] <- naam_list
+    }
+}
+
+fsave(df_scholars_list, file = "df_scholars_list")
+
+
+# THEN DF WITH ID AND FIRST ID
+
+df_scholars$no_oa_id <- as.numeric(sapply(df_scholars_list, length) == 0)
+df_scholars$au_id <- sapply(df_scholars_list, function(l) {
+    if (is.null(l$id[1])) {
+        NA
+    } else {
+        l$id[1]
+    }
+})
+
+fshowdf(df_scholars)
+
+
+
+# MAKE LIST OF WORKS FROM WEBSCRAPING TUTORIAL
+works <- list()
+nrow(df_scholars)
+for (i in 1:nrow(df_scholars)) {
+    if (df_scholars$no_oa_id[i] == 0) {
+        id <- df_scholars_list[[i]]$id
+        works[[i]] <- oa_fetch(entity = "works", author.id = id)
+    }
+}
+
+# note that for quite some works we have a truncated author list. perhaps best to loop again ove
+# all papers to find all authors.  apply(c('W2097078822', 'W1680837216'), \(x) oa_fetch(identifier
+# = x))
+
+# also note that there are many duplicates in the publications because i query for each author
+# separately.
+fsave(works, "works")
+
+
+df_works <- fload("./data/processed/works_20240918.rda") # SAVE IT!!
+
+
+```
+
+
+COMBINE AND CLEAN DATA - 1.9.1
+```{r}
+no_id <- which(df_scholars$no_oa_id == 1)
+df_scholars_sel <- df_scholars[-no_id, ]
+df_scholars_list_sel <- df_scholars_list[-no_id]
+df_works_sel <- df_works[-no_id]
+
+duplicates <- which(duplicated(df_scholars_sel$au_id) == 1)
+df_scholars_sel <- df_scholars_sel[-duplicates, ]
+df_scholars_list_sel <- df_scholars_list_sel[-duplicates]
+df_works_sel <- df_works_sel[-duplicates]
+demographics <- split(df_scholars_sel, row(df_scholars_sel)[, 1])
+
+scholars <- list(demographics = demographics, scholars_oa = df_scholars_list_sel, works = df_works_sel)
+
+scholars$demographics[[1]]$Naam
+
+
+scholars$scholars_oa[[1]]$display_name
+
+scholars$demographics[[1]]$Naam %in% scholars$works[[1]]$author[[1]]$au_display_name
+
+scholars$demographics[[675]]$Naam
+
+scholars$scholars_oa[[675]]$display_name
+
+scholars$demographics[[675]]$Naam %in% scholars$works[[675]]$author[[1]]$au_display_name
+
+# matching seems in order.
+fsave(scholars, "scholars")
+
+```
+
+
+# Part 2 Nomination Networks
+```{r}
+rm(list = ls())
+
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, file, "_", datename, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+fpackage.check(packages)
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+

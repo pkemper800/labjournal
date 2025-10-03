@@ -1,0 +1,237 @@
+---
+title: "lab5"
+author: "Paige Kemper"
+date: "2025-10-02"
+output: html_document
+---
+
+
+
+#Drafting Paper 
+
+
+
+#Homework assignments review
+
+-- codereview 3 for Rsienna tutorial
+
+
+
+#Homework 
+## Goals:
+-   Make list of the 
+-   Compile list of professors names and their respective departments and universities across the Netherlands
+
+    -   Flag: Compile international academic experience/background of professors.
+
+        -   *To gather: 1) could look at CV/LinkedIn for each professor, within 1 department of 1 university; 2) could see if their PhD registered with dutch national registry, only looking at if PhD done in or outside of the Netherlands.*
+
+-   Search OpenAlex for each Dutch professor's publications, making dataframe of alters/collaborations for each professor's publications.
+
+-   Check if collaborators are affiliated with same university, different dutch university, or international university.
+
+-   Look at international vs non-international professors to see if there is difference in international collaborations
+
+-   Then, return to department/university, and see if proportion of professors with international experience has an impact on international collaborations (or potentially research outputs in general)
+
+To make this scalable, we will break this into many smaller parts.
+
+-   
+
+# Review
+
+### Collect set of Professors
+```{r}
+install.packages("readxl")
+library(readxl)
+
+# My manual data set, including manual review of professor experience abroad
+ru_soc_profs <- read_excel("C:/Github/labjournal/ru_soc_profs.xlsx")
+ru_soc_profs
+
+# from tutorial
+socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
+socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
+#now have list of scholars for all dutch universities 
+```
+
+
+Make list of co-authors for 1 professor (eg.Jochem)
+```{r}
+#check packages are installed
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+
+
+# Next, test calling 1 professor
+options(openalexR.mailto = "paige.kemper@ru.nl") 
+prof1 <- oa_fetch(entity= "author", search = "Jochem+Tolsma")
+
+
+# Next, look at list of all of the example professor's publications
+prof1_papers <- oa_fetch(entity = "works", author.id = prof1$id) 
+  # within this new dataset, $authorships includes the dataframes of the coauthors (alters)
+prof1_papers[1,] #look at row 1: first publication listed by Jochem
+
+
+# Then: Create loop. 1) Make empty column; 2) For every row in the set of the professor's publications (for i:nrow(df), look at the data frame of 'affiliations' (coauthors); 3) Make dataframe ("df"), and then save $display_name variable to the empty column.)
+collaborators1 <- NA
+for (i in 1:nrow(prof1_papers)) {
+  print(i)
+  df <- as.data.frame(prof1_papers[i,4][[1]])
+  collaborators1 <- c(collaborators1, df$display_name)
+}
+
+collaborators1 #see: all of the authors for all of the papers by Jochem Tolsma are listed
+collaborators1 <- collaborators1[-1] #remove the empty cell at the begining 
+collaborators1 <- collaborators1[-c(which(collaborators1=="Jochem Tolsma"))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+
+collaborators1 #check it again
+
+#unique(savedata) #to look at list of collaborators without repeats
+```
+
+
+Get list of affiliated institutions for each coauthor of 1 professor
+```{r}
+
+institutions <- NA
+for (i in 1:nrow(prof1_papers)) {
+  print(i)
+  df <- as.data.frame(prof1_papers[i,4][[1]])
+  df <- df[-c(which(df$display_name=="Jochem Tolsma"))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+  institutions <- c(institutions, df$affiliations[[1]][[2]])
+}
+
+institutions
+
+institutions <- institutions[-1] #smaller number - assumption that several of Jochems articles were published only by him, and am removing these articles. 
+
+```
+
+Now: try to do this for list of authors
+```{r}
+
+## make sure to reference correct university
+ru_id <- institutions <- oa_fetch(entity = "institutions", search = "Radboud University") #get Radboud's ID
+ru_id <- ru_id[1,]
+ru_id
+
+## then make sure to reference correct authors from correct university
+author1 <- oa_fetch(entity = "author", search = "Jochem Tolsma", affiliations.institution.id = ru_id$id) #jochem info
+author1
+
+author2 <- oa_fetch(entity = "author", search = "Maurice Gesthuizen", affiliations.institution.id = ru_id$id) #maurice
+author2
+
+author3 <- oa_fetch(entity = "author", search = "Michael Savelkoul", affiliations.institution.id = ru_id$id) #michael
+author3
+
+## mini list of authors
+mini_list <- rbind(author1, author2, author3)
+mini_list
+
+just_names <- data_frame(mini_list$display_name)
+just_names
+
+
+# search just one name from the list 
+
+institutions2 <- data.frame()
+for (i in 1:nrow(mini_list)) {
+  name1_papers <- oa_fetch(entity = "works", author.id = mini_list[i,1])
+  # name1_papers <- oa_fetch(entity = "works", author.display_name = mini_list[i,2], affiliations.institution.id = ru_id$id)
+  name1_papers[1,]
+  for (j in 1:nrow(name1_papers)) {
+    print(j)
+    df2 <- as.data.frame(name1_papers[j,4][[1]])
+    # df2 <- df2[-c(which(df2$display_name==mini_list[i,2]))]
+    # institutions2 <- c(institutions2, df2$affiliations[[1]][[2]])
+  }
+}
+
+authorships.affiliations.institution_ids
+
+institutions <- NA
+for (i in 1:nrow(prof1_papers)) {
+  print(i)
+  df <- as.data.frame(prof1_papers[i,4][[1]])
+  df <- df[-c(which(df$display_name=="Jochem Tolsma"))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+  institutions <- c(institutions, df$affiliations[[1]][[2]])
+}
+ 
+
+## Make double loop 
+list1 <- data.frame()
+list2 <- data.frame()
+
+for (i in 1:nrow(just_names)) {
+  print(i)
+  list1 <- oa_fetch(entity = "works", author.id = just_names[i])
+  df1 <- c(df1, list1$display_name)
+  for (j in 1:nrow(list1)) {
+    print(j)
+    df2 <- as.data.frame(list1[i,4][[1]])
+    list2 <- c(list2, df2$display_name)
+  }
+}
+
+
+
+
+
+
+# Next, test calling 1 professor
+options(openalexR.mailto = "paige.kemper@ru.nl") 
+prof1 <- oa_fetch(entity= "author", search = "Jochem+Tolsma")
+
+
+# Next, look at list of all of the example professor's publications
+prof1_papers <- oa_fetch(entity = "works", author.id = prof1$id) 
+  # within this new dataset, $authorships includes the dataframes of the coauthors (alters)
+prof1_papers[1,] #look at row 1: first publication listed by Jochem
+
+
+# Then: Create loop. 1) Make empty column; 2) For every row in the set of the professor's publications (for i:nrow(df), look at the data frame of 'affiliations' (coauthors); 3) Make dataframe ("df"), and then save $display_name variable to the empty column.)
+collaborators1 <- NA
+for (i in 1:nrow(prof1_papers)) {
+  print(i)
+  df <- as.data.frame(prof1_papers[i,4][[1]])
+  collaborators1 <- c(collaborators1, df$display_name)
+}
+
+collaborators1 #see: all of the authors for all of the papers by Jochem Tolsma are listed
+collaborators1 <- collaborators1[-1] #remove the empty cell at the begining 
+collaborators1 <- collaborators1[-c(which(collaborators1=="Jochem Tolsma"))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+
+collaborators1 #check it again
+
+
+
+
+
+# Load author IDs or names from Excel
+author_list <- read_excel("authors.xlsx", sheet = "Sheet1")
+head(author_list)
+```
+
+
+Now, try to do this with Excel 
+```{r}
+```
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+

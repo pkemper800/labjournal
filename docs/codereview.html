@@ -397,6 +397,18 @@ div.tocify {
     <li>
       <a href="codereview.html">codereview</a>
     </li>
+    <li>
+      <a href="codereview2.html">codereview2</a>
+    </li>
+    <li>
+      <a href="codereview3.html">codereview3</a>
+    </li>
+    <li>
+      <a href="rsiena.html">rsiena</a>
+    </li>
+    <li>
+      <a href="rsiena2.html">rsiena2</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -453,10 +465,10 @@ numbers &lt;- sample(x=0:1, size = 16, replace = TRUE)
 net1 &lt;- matrix(numbers, 4, 4, TRUE)
 net1</code></pre>
 <pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]    0    0    1    1
-## [2,]    0    0    1    0
-## [3,]    1    1    1    0
-## [4,]    1    0    0    1</code></pre>
+## [1,]    1    0    1    0
+## [2,]    0    0    0    0
+## [3,]    0    0    1    1
+## [4,]    0    1    1    1</code></pre>
 <p>Set the diagonal to 0: This will start process of making data
 symmetrical, and would represent undirected ties/an undirected network.
 If you flip the columns and rows, the matrix will look the same (upper
@@ -464,19 +476,19 @@ triangle of the matrix becomes symmetric).</p>
 <pre class="r"><code>diag(net1) &lt;- 0
 net1</code></pre>
 <pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]    0    0    1    1
-## [2,]    0    0    1    0
-## [3,]    1    1    0    0
-## [4,]    1    0    0    0</code></pre>
+## [1,]    0    0    1    0
+## [2,]    0    0    0    0
+## [3,]    0    0    0    1
+## [4,]    0    1    1    0</code></pre>
 <pre class="r"><code>#undirected network -- symmetric matrix
 #symmetry - triangle (transpose didn&#39;t work) - if flip columns and rows, will have the same matrix
 # upper triangle of matrix -- as AS SYMMETRIC</code></pre>
 <p>Then review the descriptive statistics</p>
 <pre class="r"><code># descriptive statistics
 rowSums(net1)</code></pre>
-<pre><code>## [1] 2 1 2 1</code></pre>
+<pre><code>## [1] 1 0 1 2</code></pre>
 <pre class="r"><code>mean(net1)</code></pre>
-<pre><code>## [1] 0.375</code></pre>
+<pre><code>## [1] 0.25</code></pre>
 <p>Now things speed up.</p>
 <p>Task: how model triad relationships?</p>
 <p>First think how this would play out: Directed relationships: per row,
@@ -584,7 +596,7 @@ there? how many are missing?</p>
 <pre><code>## Warning: restored &#39;sna&#39;</code></pre>
 <pre><code>## 
 ## The downloaded binary packages are in
-##  C:\Users\paigek\AppData\Local\Temp\RtmpaQAlXD\downloaded_packages</code></pre>
+##  C:\Users\paigek\AppData\Local\Temp\RtmpUTtN1z\downloaded_packages</code></pre>
 <pre class="r"><code>library(sna)</code></pre>
 <pre><code>## Loading required package: statnet.common</code></pre>
 <pre><code>## 

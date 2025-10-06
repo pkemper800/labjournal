@@ -1,0 +1,315 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# R Sienna example: 
+
+
+```{r}
+rm(list = ls())
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+colorize <- function(x, color) {
+    sprintf("<span style='color: %s;'>%s</span>", color, x)
+}
+```
+
+
+
+```{r}
+packages = c("RSiena", "devtools", "igraph")
+fpackage.check(packages)
+# devtools::install_github('JochemTolsma/RsienaTwoStep', build_vignettes=TRUE)
+packages = c("RsienaTwoStep")
+fpackage.check(packages)
+```
+
+NEED DATA - use build in datasets from RSIENNA 
+?s501
+Is adjacency matrix for network type 1. Goal: Follow steps in 7.1 for different data:
+
+# Step 1. Define data
+Dependent variable: ties 
+
+
+```{r}
+s501 #network at timepoint 1
+s502 #network at timepoint 2
+```
+
+
+Inspect networks. Remove NAs, make sure diagonal. Need to see binary (not weighted)
+```{r}
+
+```
+
+
+Put networks in an array
+```{r}
+
+dim(s501) #says 50x50: 50 rows, 50 columns in data. 
+
+nets <- array (data = c(s501, s502), dim = c(dim(s501), 2)) #
+c(dim(s501),2)
+
+# dimentions of array are number of columns and number of rows 
+```
+ could replace this with data set from last week 
+ 
+ 
+Define dependent - and independent - variable
+```{r}
+
+net <- sienaDependent(nets) #dependent variable 
+
+  # independent variable - s50a - we will take first way 
+alcohol <- s50a[,1]alcohol
+ # don't need wave 2 - just modeling at independent variable, influencing all ministeps between time 1 and time 2 
+alcohol 
+ 
+alcohol <- coCovar(alcohol)# at actor level - mean centered - is a time constant coVariate 
+```
+
+Now combine into dataset - if use Rsiena, need this. 
+```{r}
+mydata <- sienaDataCreate(net, alcohol)
+
+myeff <- getEffects(mydata) #have a look 
+myeff
+```
+Now can look at myeff - look at starting values - has density of two networks, reciprocity 
+
+
+Want much more statistics for model, though!! 
+
+# Step 2: 
+Can see all effects that could include in the dataset. Which is a lot. And this is a simple dataset. and yeah, its huge. Also can see that the type depends on weight function (evaluation (), endowment (), and creation ())
+
+Example. Jochem wants to make tie with Jos. Jochem's consideration to make a tie with Jos could be different than consideration to maintain a tie, could be different that decistions to break a tie. Can't estimate all three. Evalution: mechanisms the same for making as breaking, endowment = maintaining, creation = if there are none then what is the cost. 
+
+In this course: just use evaluation function. Assume mechanisms and functions to make/break ties are similar. include degree for evaluation. But what are all these effects? 
+-    should be able to calculate statistic for each effect for an ego in a network... Mathematical formula in chapter 12. 
+
+
+```{r}
+effectsDocumentation(myeff)
+```
+
+
+Make sure to understand out degree and reciprocity effects - statistics - will play around with this next week. Need to think of theory for which statistics are relevant. 
+-    Look at literature for statistics, think about it, play and see if effects exists 
+-    how work in reality? propose idea, write notation, see if effect exists in manual, etc. Lots of notation because everyone is looking for their own effects. 
+-    need to include more effects if what to. 
+
+```{r}
+
+```
+
+
+
+# Step 3: Look at intial data
+-    good for deciding statistics to use. 
+```{r}
+print01Report(mydata)
+
+# gives initial description of data 
+# reading network variables , covariates, density measures/changes in networks, tie changes between subsequent observations... calculate how much networks changed over time. 
+# dont use balance calculation 
+```
+
+# Step 4: Add effects
+
+```{r}
+myeff <- includeEffects(myeff, isolateNet, inPop, outAct)
+
+#outAct - outdegree related activity 
+```
+
+outAct
+- look at the number of times I have and square that: especially the people that have a lot of ties will send a lot of ties. 
+- evaluation function of tie1 0 ties, and tie1 4 ties - then at t2 people who have ties are more likely to send more ties 
+
+We know tie distributions are skewed, some people send a lot of ties and others dont. 
+
+inPop: in degree activity: people who reseive a lot of in-degrees send a lot of out-degrees 
+
+isolateNet: people without a lot of indegree nets. 
+
+
+
+Can see that starting values are 0 -- hypothesis testing 
+
+# Step 5: Estimation
+
+```{r}
+myAlgorithm <- sienaAlgorithmCreate(projname = "test")
+
+# define algorithm that says how I want to estimate my model. will use defaults. 
+
+ansM1 <- siena07(myAlgorithm, data = mydata, effects = myeff, returnDeps = TRUE)
+# then run it to see 
+
+ansM1
+
+```
+Now have first estimated Rsiena model! 
+
+
+- see:negative out degree 
+- 2.4 reciprocity: is important then in this model 
+- indegree populaty is popular but not significant... 
+
+if significant: more indegrees- more likely to send later. people with more out-degrees - more likely to send less (negative). isolate more likely to be alone. 
+
+
+Need to think of model that makes sense in this
+
+
+```{r}
+
+```
+
+REVIEWING RSIENA NOW
+-   negative degree - density is less than .5 
+-   interpretations 
+-   Mailing list for TOM
+
+-   Now: re-read chapter 2 and chapter 5 
+
+Afternoon: play with estimating our own models 
+Nice to do with our own data - collaboration networks. 
+Logic of RSIENA: took actor oriented approach - works if ties are directed. if undirected network, logic is different: the actor deciding on undirected tie is difficult. Advise: for now treat as undirected - and then evaluate tie. 
+undirected tie by reach consensus, forced into concensus, etc - reciprocity matters less now. 
+
+```{r}
+
+```
+
+# Now play with it 
+
+```{r}
+
+
+```
+
+
+```{r}
+```
+
+
+Now - referencing web scraping site 
+
+```{r}
+fcolnet <- function(data = scholars, university = "RU", discipline = "sociology", waves = list(c(2015,
+    2018), c(2019, 2023)), type = c("first")) {
+
+    # step 1
+    demographics <- do.call(rbind.data.frame, data$demographics)
+    demographics <- demographics %>%
+        mutate(Universiteit1.22 = replace(Universiteit1.22, is.na(Universiteit1.22), ""), Universiteit2.22 = replace(Universiteit2.22,
+            is.na(Universiteit2.22), ""), Universiteit1.24 = replace(Universiteit1.24, is.na(Universiteit1.24),
+            ""), Universiteit2.24 = replace(Universiteit2.24, is.na(Universiteit2.24), ""), discipline.22 = replace(discipline.22,
+            is.na(discipline.22), ""), discipline.24 = replace(discipline.24, is.na(discipline.24), ""))
+
+    sample <- which((demographics$Universiteit1.22 %in% university | demographics$Universiteit2.22 %in%
+        university | demographics$Universiteit1.24 %in% university | demographics$Universiteit2.24 %in%
+        university) & (demographics$discipline.22 %in% discipline | demographics$discipline.24 %in% discipline))
+
+    demographics_soc <- demographics[sample, ]
+    scholars_sel <- lapply(scholars, "[", sample)
+
+    # step 2
+    ids <- demographics_soc$au_id
+    nwaves <- length(waves)
+    nets <- array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works <- tibble(works_id = unlist(lapply(scholars_sel$work, function(l) l$id)), works_author = unlist(lapply(scholars_sel$work,
+        function(l) l$author), recursive = FALSE), works_year = unlist(lapply(scholars_sel$work, function(l) l$publication_year),
+        recursive = FALSE))
+
+    df_works <- df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == "first") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- df_works_w$works_author[i][[1]]$au_id[1]
+                alters <- df_works_w$works_author[i][[1]]$au_id[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "last") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- rev(df_works_w$works_author[i][[1]]$au_id)[1]
+                alters <- rev(df_works_w$works_author[i][[1]]$au_id)[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "all") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos <- df_works_w$works_author[i][[1]]$au_id
+                if (sum(ids %in% egos) > 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] <- 1
+                }
+            }
+        }
+    }
+    output <- list()
+    output$data <- scholars_sel
+    output$nets <- nets
+    return(output)
+}
+```
+
+
+
+

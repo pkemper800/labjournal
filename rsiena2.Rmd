@@ -1,0 +1,344 @@
+---
+title: "rsiena2"
+author: "Paige Kemper"
+date: "2025-10-03"
+output: html_document
+---
+
+```{r}
+
+```
+
+
+
+```{r}
+
+```
+
+
+
+
+```{r}
+
+```
+
+
+
+# Data - follow RSIENA procedure
+```{r}
+rm(list=ls()) #start clean
+```
+
+# define functions
+```{r}
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, file, "_", datename, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+```
+
+
+```{r}
+# load packages
+packages <- c("tidyverse", "RSiena", "RsienaTwoStep")
+packages <- c("devtools", "igraph")
+
+fpackage.check(packages)
+```
+
+
+# STEP 1: load data
+```{r}
+scholars <- fload("C:/Github/labjournal/scholars_20240924.rda")
+```
+
+# Webscraping script - fcolnet function
+# Publications II: nomination networks (2.3.1) construct adjacency network of scholars and publications of RU SOC
+
+```{r}
+fcolnet <- function(data = scholars, university = "RU", discipline = "sociology", waves = list(c(2015,
+    2018), c(2019, 2023)), type = c("first")) {
+
+    # step 1
+    demographics <- do.call(rbind.data.frame, data$demographics)
+    demographics <- demographics %>%
+        mutate(Universiteit1.22 = replace(Universiteit1.22, is.na(Universiteit1.22), ""), Universiteit2.22 = replace(Universiteit2.22,
+            is.na(Universiteit2.22), ""), Universiteit1.24 = replace(Universiteit1.24, is.na(Universiteit1.24),
+            ""), Universiteit2.24 = replace(Universiteit2.24, is.na(Universiteit2.24), ""), discipline.22 = replace(discipline.22,
+            is.na(discipline.22), ""), discipline.24 = replace(discipline.24, is.na(discipline.24), ""))
+
+    sample <- which((demographics$Universiteit1.22 %in% university | demographics$Universiteit2.22 %in%
+        university | demographics$Universiteit1.24 %in% university | demographics$Universiteit2.24 %in%
+        university) & (demographics$discipline.22 %in% discipline | demographics$discipline.24 %in% discipline))
+
+    demographics_soc <- demographics[sample, ]
+    scholars_sel <- lapply(scholars, "[", sample)
+
+    # step 2
+    ids <- demographics_soc$au_id
+    nwaves <- length(waves)
+    nets <- array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works <- tibble(works_id = unlist(lapply(scholars_sel$work, function(l) l$id)), works_author = unlist(lapply(scholars_sel$work,
+        function(l) l$author), recursive = FALSE), works_year = unlist(lapply(scholars_sel$work, function(l) l$publication_year),
+        recursive = FALSE))
+
+    df_works <- df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == "first") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- df_works_w$works_author[i][[1]]$au_id[1]
+                alters <- df_works_w$works_author[i][[1]]$au_id[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "last") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- rev(df_works_w$works_author[i][[1]]$au_id)[1]
+                alters <- rev(df_works_w$works_author[i][[1]]$au_id)[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "all") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos <- df_works_w$works_author[i][[1]]$au_id
+                if (sum(ids %in% egos) > 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] <- 1
+                }
+            }
+        }
+    }
+    output <- list()
+    output$data <- scholars_sel
+    output$nets <- nets
+    return(output)
+}
+```
+
+## use function for test object - custom function from above (fcolnet)
+```{r}
+test <- fcolnet(data = scholars, #use function on our data object, use default objects now (but customize later)
+                university = "RU",
+                discipline = "sociology",
+                waves = list(c(2015, 2018), c(2019, 2023)),
+                type = c("first")) #directed network - type first
+
+wave1 <- test$nets[1,,] #first wave stored here
+wave2 <- test$nets[2,,] #second wave stored here
+
+dim(wave2) #check it works 
+
+sum(is.na(wave2)) #check it is complete -- if 0 missing values
+
+sum(wave2>0) #input for rsiena = the array / adjacency matrix. need to check the diagonal: should all be 0 - check if larger than 1, should be 0/1/2
+
+
+```
+
+
+Now put in Array
+
+```{r}
+nets <- array(data = c(wave1, wave2), dim = c(dim(wave1), 2))
+net <- sienaDependent(nets)
+
+
+df <- test$data
+df_ego <- do.call(rbind.data.frame, df$demographics) 
+
+
+# what kind 
+unique(c(df_ego$Functie.22, df_ego$Functie.24))
+
+
+#replace missing values with empty string
+df_ego$Functie.22[is.na(df_ego$Functie.22)] <- " "
+df_ego$Functie.24[is.na(df_ego$Functie.24)] <- " "
+
+# 
+df_ego$functie <- ifelse(df_ego$Functie.22=="Hoogleraar", 1, 0)
+df_ego$functie <- ifelse(df_ego$Functie.24=="Hoogleraar", 1, df_ego$functie)
+df_ego$functie <- ifelse(df_ego$Functie.22=="Bijzoner hoogleraar", 1, df_ego$functie)
+df_ego$functie <- ifelse(df_ego$Functie.24=="Bijzoner hoogleraar", 1, df_ego$functie)
+
+table(df_ego$functie, useNA="always") #use as constant - 
+
+# should see variable is correct
+
+functie <- coCovar(df_ego$functie)
+functie
+
+```
+
+
+next gender
+```{r}
+
+mydata <- sienaDataCreate(net, functie)
+
+```
+
+# STEP 2 EFFECTS 
+```{r}
+myeff <-getEffects(mydata)
+myeff
+
+myeff <- includeEffects(myeff, egoXaltX, interaction1 = "functie")
+
+
+#alternative: 
+myeff <- includeEffects(myeff, egoX, interaction1 = "functie")
+
+#mathematical of egoX = V(i), tie = X(i)(j), want the sum of the ties --> X(i)(+) 
+# independent variable=ego, dependent variable = tie, covariate = functie, 
+
+
+#another alternative: 
+myeff <- includeEffects(myeff, altX, interaction1 = "functie" )# altX effect --- hypothesis: more likely to receive? model from ego perspectives, and ego sends ties -- therefore, formulation of tie different: should be more likely to send ties to professors 
+# altX = V(j) * Sum of Xij
+# altX = Alter * Sum of ties
+# Expect positive effect (opposite of ego X)
+
+
+```
+
+# STEP 3 LOOK AT INITIAL DATA AND GET DESCRIPTION
+```{r}
+ifelse(!dir.exists("results"), dir.create("results"), FALSE) #make directory to store results separately - less crowding for lab journal
+
+print01Report(mydata, modelname= "./results/soc_init")
+print01Report(mydata)
+
+# TO VIEW THIS - LOOK WITHIN FILE DIRECTORY - GITHUB - LAB JOURNAL - RESULTS :)
+
+
+```
+
+
+@ Data input.
+2 observations,
+50 actors,
+1 dependent network variables,
+0 dependent bipartite variables,
+0 dependent discrete behavior variables,
+0 dependent continuous behavior variables,
+1 constant actor covariates,
+0 exogenous changing actor covariates,
+0 constant dyadic covariates,
+0 exogenous changing dyadic covariates,
+0 no files with times of composition change.
+
+- 
+- 
+- 
+
+@ Change in networks
+Network density indicators:
+observation time              1      2
+density                    0.016  0.031
+average degree             0.780  1.520
+number of ties                39     76
+missing fraction           0.000  0.000
+
+What does the initial data mean? number of ties increasing rapidly --> 39 is high
+
+
+Tie changes between subsequent observations:
+ periods        0 =>  0   0 =>  1   1 =>  0   1 =>  1   Distance Jaccard   Missing
+  1 ==>   2      2354        57        20        19        77     0.198         0 (0%)
+
+Jaccard index low ** 
+Jaccard Index: counting all changes (1->1 / 0->1, 1->0, and 1->1 (not 0->0, because that is a very large number) : important measure of stability -- looking at difference between T1 and T2 -- want it somewhere between 0 and 1).
+
+
+# Step 4 Effects
+```{r}
+
+myeff <- includeEffects(myeff, isolateNet, inPop, outAct)
+
+
+```
+
+
+# Step 5 (assume happy with effects) - Estimation
+
+```{r}
+
+myAlgorithm <- sienaAlgorithmCreate(projname = "soc_init")
+ansM1 <- siena07(myAlgorithm, data = mydata, effects = myeff, returnDeps = TRUE)
+# if necessary estimate again!  ansM1 <- siena07(myAlgorithm, data = mydata, effects = myeff,
+# prevAns = ansM1, returnDeps=TRUE)
+ansM1
+
+```
+
+First author papers
+This makes sense - about 3 papers per year per author, that makes sense
+
+Density is negative: makes sense, sparse network 
+Reciprocity: have that, which makes sense (help eachother with papers)
+
+
+
+
+Given these statistics included in this model, this is able to replicate these statistics in T2 
+
+
+
+
+If we look at degree distribution or sensitivity, could be completely different. 
+```{r}
+
+```
+
+
+NOW : EGOX 
+Tweak model, try to interpret effects, include covariate effect 
+
+

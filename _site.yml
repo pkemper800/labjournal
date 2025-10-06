@@ -44,6 +44,20 @@ navbar:
       menu:
       - text: "codereview"
         href: codereview.html
+        
+      - text: "codereview2"
+        href: codereview2.html
+      
+      - text: "codereview3"
+        href: codereview3.html
+        
+      - text: "rsiena"
+        href: rsiena.html
+        
+      - text: "rsiena2"
+        href: rsiena2.html
+
+
 
   right:
   - icon: fab fa-github

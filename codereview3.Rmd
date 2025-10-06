@@ -4,23 +4,419 @@ output: html_notebook
 ---
 
 
+Chapter 7 SNASS - R SIENNA - CODE FOR NETWORKS
+ANALYZE STATIC DATA AND EVOLUTION OF NETWORKS 
++ Co-evolution 
+
+#Overview
+Rsienna: models network structure (dyads) -- important -- wants to explain observed network at T1 evolving over time. Important: how ties evolve over time. 
+
+Example. explaining how friendship relations evolve. Fo ex. 2 class rooms with very different friendship structures. The structure of T1 depends on before - therefore, the T2 moment is dependent on the T1 structure: T2 depends on what observed at T1. 
+
+Relevance may come from T1. Ex. segregation by gender --> homophily by gender. Universal mechanisms may be more or less relevant depending on observations of T1 - and even underlying theory. 
+
+Model: estimates rules for how to change ties and behavior. Trying to figure out- not transitive triads, but if an agent has preference to then form triad. Individual level mechanisms (not macro)- micro theory of action. Interdependent on decisions. Try to find rules of individual agents. 
+
+
+Now, suppose we know the rules. Then we could simulate mechanisms -- ex. 4 degrees, types of ties, evolution of network. 
+
+-   Thinking of rules of agents: need to make this manageable -- RSienna assumes agents make mini-steps. Mini-step: assumption is that one actor at a time is allowed to make one tie change at a time. This option could include no change. Can have thousands of mini steps to get from T1 to T2: could have lots. With several mini-steps, get to collaboration group. mini-step is smallest possible change in network: al changes can be decomposed into many steps 
+-   Sequential 
+-   Collaboration networks - mini steps less valid an assumption: meeting a lot of people at once, and then proceeding with mini=steps
+-   Also need to loop in: memory, re-activity - random mini-steps doesn't include: negotiation, memory, reactivity, future assumptions - which are mechanisms that can weight mini-steps 
+-   Assumption is a theory - how actors behave. Should more or less be confident assumption isn't crucial for research. Tie changes possible in collaboration, two mini-steps can be taken per time. 
+
+
+If ministep is smallest possible - if allow two-step ("I only want to help you if you help me") -- symptomatic -- only want reciprocated tie (RSienna underestimates reciprocity) - doesn't help with hypothesis testing. Mini-steps come with assumptions, need to be critical that inidividual ministeps may not assume / weight everything correctly. 
+
+
+#Now: RSienna Mini Logic
+-   Sample ego
+-   Construct possible alternative future networks based on all possible ministeps of ego 
+-   Calculate how sampled 
+
+
+
 
 ```{r}
-require(igraph)
-g <- make_graph("Zachary")
-plot(g)
+rm(list = ls())
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+```
+-   Stochastic: randomness 
+-   Actor orientated: model started with assumption that actors are nodes, and they make decisions (start from node level + what they do: links of actors) - why do we observe actors 
+-   Different than explaining tie structures in the network 
+
+
+
+# Starting RSienna Tutorial 
+
+```{r}
+rm(list = ls())
+
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+colorize <- function(x, color) {
+    sprintf("<span style='color: %s;'>%s</span>", color, x)
+}
+
+
+
+
+# GET JOCHEMS PACKAGE TOO 
+
+packages = c("RSiena", "devtools", "igraph")
+fpackage.check(packages)
+# devtools::install_github('JochemTolsma/RsienaTwoStep', build_vignettes=TRUE)
+packages = c("RsienaTwoStep")
+fpackage.check(packages)
+```
+
+
+```{r}
+ts_net1
+
+
+
+# 3.2.1.2
+net1g <- graph_from_adjacency_matrix(ts_net1, mode = "directed")
+coords <- layout_(net1g, nicely())  #let us keep the layout
+par(mar = c(0.1, 0.1, 0.1, 0.1))
+{
+    plot.igraph(net1g, layout = coords)
+    graphics::box()
+}
+
+# for every actor, there are 10 options - each actor can break tie, keep tie/do nothing, or add new tie. If tie, can break or keep. If there is no tie, can remain 0 tie or form a tie. 
+
+
+# Now, select 'random' agent: 
+set.seed(24553253)
+ego <- ts_select(net = ts_net1)
+ego
+
 
 ```
 
+
+Network: ts_net1, ego = ego4 (ego 4 allowed to make ministeps). package then will list all of the different adjacency matrices. Shows all of the different next ministep options for ego 4. 
 ```{r}
+options <- ts_alternatives_ministep(net = ts_net1, ego = ego)
+options
+
+plots <- lapply(options, graph_from_adjacency_matrix, mode = "directed")
+par(mar = c(0, 0, 0, 0) + 0.1)
+par(mfrow = c(2, 2))
+
+fplot <- function(x) {
+    plot.igraph(x, layout = coords, margin = 0)
+    graphics::box()
+}
+
+lapply(plots, fplot)
+```
+
+Now: how realistic is it to be able to see all of the options an ego has? With a small network in a class, it is relatively realistic. but if network is 300 - not realistic - these are the options. 
+
+
+Next, evaluate options: weigh them. Chapter 12 of manual (with 100s of effects) come into play: lots of rules/'statistics'/effects that are at play in evaluating next tie. 
+
+-   Example rule: I want to befriend whoever has the most friends. -> I want to make a tie where there is not one --> positively evaluate tie formation. Rule is "I like ties" -- then attach scores to networks? attach 
+-   Then: how to assess the different network options. Count how many ties in each option network. Favor / positively review the rules ("statistic") for every network - assess by counting potential ties - count the statistic for each network.
+-   However, the more the better is a rule that would saturate the network. Would need to reduce this over time. 
+
+-   Example 2: Preference for ties based on ego-level characteristics done later. Preference for Reciprocity! Calculate number of reciprocated ties. only one is favored less, based on reciprocity. 
+
+
+-   Then - can combine these statistics! 
+
+
+Calculate # degrees ego has 
+```{r}
+ts_degree(net = options[[1]], ego = ego)
+sapply(options, ts_degree, ego = ego)
 
 ```
 
 
+
+Can do the same for reciprocity
 ```{r}
+sapply(options, ts_recip, ego = ego)
 
 ```
 
+
+Now - can sum the scores for both results to weigh the best next step. 
+
+
+## Evaluation function
+
+Look at statistics + importance of statistics 
+
+Ex. Can then do this for certain paths - 'I prefer ties with people of have ties with my friends' -- Want to evaluate parameters with RSienna. 
+
+What RSienna does: 
+-   Ex. We like reciprocity. how important is reciprocity parameter? result could be zero -- could attach value to statistic. 
+
+-   For each actor - look at the network (f(x)) --> for the network, calculate the statistic (k (we have 2: tie formation and reciprocity)
+
+-   for evaluation of network x, agent i --> how is agent i evaluating the network? --> multiply by the importance of the statistic, and then sum the value of the statistic by the proportion of it to get the score. 
+
+-   Need to think about the statistics that ego would find important (could be positive or negative), and the importance of those statistics in evaluating the network. 
+```{r}
+#attach value to all possible options, and need to pick one. 
+
+option <- 4 #looking at actor 4
+ts_degree(options[[option]], ego = ego) * -1 + ts_recip(options[[option]], ego = ego) * 1.5
+
+# then get evaluation of network: 
+
+```
+
+
+Then can do this for the entire network. Get completely different rank orders depending on how weigh the statistics! and if, have a lot of mini steps, improved accuracy - importance is pos / neg, and what statistics important. Next, need to pick the networks. This is not too bad: weights to networks with highest score. 
+
+```{r}
+# alternative way to look at weights, vs. ts_degree
+eval <- ts_eval(net = options[[option]], ego = ego, statistics = list(ts_degree, ts_recip), parameters = c(-1,
+    1.5))
+eval
+
+
+
+
+# sum of evaluation scores ?
+eval <- sapply(options, FUN = ts_eval, ego = ego, statistics = list(ts_degree, ts_recip), parameters = c(-1,
+    1.5))
+eval
+print("network with maximum evaluation score:")
+which.max(eval)
+
+```
+
+Choice Function: 
+
+```{r}
+choice <- sample(1:length(eval), size = 1, prob = exp(eval)/sum(exp(eval)))
+print("choice:")
+choice
+# print('network:') options[[choice]]
+
+
+
+```
+
+Deterministic if select the BEST option. 
+
+this is a stochastic model - not deterministic model. If deterministic, then mistakes can't happen.Important to keep in mind. Sample from all options. 
+
+```{r}
+#can repeat this many times, sample how agent evaluates options 
+# If do that - have agent based model! 
+
+choice <- sample(1:length(eval), size = 1, prob = exp(eval)/sum(exp(eval))) #evaluation function
+print("choice:")
+choice
+# print('network:') options[[choice]]
+
+```
+
+
+
+Now need stopping rule: 
+Need to be aware that the ministeps are not observed: we observe network at T1 and then at T2, and need to make guesses/theory to model this. Would need models for ministeps. 
+
+Then could have option for multi-model model. Event models. If would have data, could use these techniques. 
+Need data - time stamped - similar to what we have , however our time stamps are messy, so the time stamped 
+
+Start of writing process - submission dates - Journals not always honest about this. 
+Time stamps - digital records, ex. doctor EMRs, twitter, video, -- data is rate -- time stamping of policy adoption, could also see it as a tie 
+
+Is statistics are wrong or weight of statistics wrong, models could spin out of control. Need stopping rule to see where problems might go wrong (ex saturation of network)
+
+Ex. set sample number of ministeps to compare endpoints. 
+```{r}
+
+simnet2 <- ts_sim(
+        net1=ts_net1, #this is our start netwwork
+        statistics=list(ts_degree, ts_recip), #we only include to statistics
+        startvalues = c(2,-1,1.5)) # the start values for our rate parameter (automatically included), and our two statistics
+
+simnet2
+
+
+```
+
+
+Will get different results for stochastic models - because decisions are random - if run simulations get different results
+
+
+## Estimation logic
+Informative start values - simulate network - then how did I do (sicilian animation?). Assume in T2, average degree is 4, but in simulated network then average degree is 2 -- need to increase importance of parameter for degree, increase it and simulate it to see average degree. Then need to go back and forth to simulate the statistics for getting to the actual degree in the network. 
+
+Complication: if degree should become more important, then potentially by chance of ending up with reciprocity is higher. Increasing degree has impact on degree for reciprocity. 
+
+Then: potentially counter balance the reciprocity statistic weight. 
+
+
+Methods of moments estimations -- Robins Monroe Algorithm - mimics RSienna program -- this is a tool we can use for this. Employs estimation logic. 
+
+
+Additionally, not predicting accuracy of degree -- not comparing to actual model. Is simulating for likely observed networks, not actual observed -- at aggregate statistics level, not the actual ties!!
+predict / estimate per average statistics 
+
+
+Now have parameters. Now need to account for statistics - standard errors of estimates. 
+
+```{r}
+
+# calculate the targets
+ts_targets(net1 = s501, net2 = s502, statistics = list(ts_degree, ts_recip))
+
+
+# if you set the argument `net2` to be equal to your simulated network, you count the values
+# observed in your simulated network`
+
+ts_transTrip
+
+
+
+```
+
+
+# Interpretation
+
+Now, interpretation is simple. 
+Rate/Estimate: On average, each actor made X mini-steps 
+Rate/SE: 
+
+Degree/Estimate: 
+Degree/SE: 
+Recip/Estimate: 
+Recip/SE:
+
+So, exponent of -2.25 = 0.1
+
+Can use results to make formula for a model. 
+
+## Network statistics 
+(skip 7.8.1)
+
+statistic defined as the number of degrees actor (i) has. x is network. Xij are ties. Value is 1 if tie, 0 if no tie. Sum for actor i and all alters j, whether or not there is a tie. 
+-    ex. is there a tie between i and j, i and k,etc. --> output one for yes
+
+So then, probability of networks that are chosen - is the evaluation function of 1 (exponent - of evaluation score - helps probabilities sum to one, then divided by the exponent of all the possible evaluation scores )
+
+Similar to how LOGIT works with odds ratio. take probability ratios (odds ratios)
+
+end up with more simplified fraction - evaluation function of Xb net 
+
+probability ratio of choosing network with 1 higher than -- assuming only statistic of interest increased by one - 
+The log probability ration is my parameter of interest.
+
+Degree/Estimate: 
+Degree/SE: 
+Recip/Estimate: 
+Recip/SE:
+
+So, exponent of -2.25 = 0.1 
+
+so probability of picking with 1 tie instead of 0 ties is .1. 
+
+If probability to send a tie or not send a tie is .1, how many will I send in a network of 100? --> 10! 
+
+.10 is very close to the density of our network. 
+
+Estimate of 0 -> is 1. The ratio of sending a tie and not sending a tie = 1!! 
+
+Probability of having a tie to not having a tie is 1 --> then density is 50 (just as likely to send a tie as to not send a tie). Probability >0 means more likely to send a tie then not, and <0 is less likely. most are less than .5. 
+
+
+Same interpretation holds for reciprocity
+-    is the same exponent for parameter. 
+
+
+The higher the score, th emore important the statistic. this is how report results from logistic regression, probability will be higher. Same holds here: the more positive, the more important, the more likely it will be. 
+Can also compare estimate sizes to one another - more weight to more important parameters -- ex. if reciprocity more positive than transitivity parameter, then the reciprocity is more important - AT TIME OF MEASURE FOR ACTOR. 
+
+In theory: need to be very specific about hypothesis - if issue at ego level (which model is) or aggregate. Transitivity parameter important at ego level -- but this isn't important to hypothesis/where test hypothesis. 
+Interpretation of estimates at micro level/actor/ego level. 
+
+
+NOTE:
+must interpret parameters in final product. can compare different statistics to eachother. last step is explaining in one sentence. Need to say log = X or probability ratio is XXX. 
+
+
+```{r}
+```
+
+
+
+```{r}
+```
+
+
+```{r}
+```
 
 
 

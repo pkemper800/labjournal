@@ -52,9 +52,56 @@ ru_soc_profs
 # from tutorial
 socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
 socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
+
+# big datafile with everything (*very important!*)
+scholars <- fload("C:/Github/labjournal/scholars_20240924.rda")
+
+
+# from all professors from all dutch universities - for reference, for now
+socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
+socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
+
 #now have list of scholars for all dutch universities 
 ```
 
+
+```{r}
+
+s = bind_rows(scholars$demographics) |>
+  filter(
+    Universiteit.22 == "RU",
+    Universiteit.24 == "RU"
+  )
+
+hold = c()
+for (authorid in s$au_id[1:2]){
+  print(authorid)
+  #res = oa_fetch(
+  #  entity = "works", 
+  #  author.id=authorid
+  #)
+  # # res = bind_rows(scholars$works) |> filter(id == authorid)
+  hold[[authorid]] = res
+}
+
+#s |> filter(Naam == "Katia Begall") |> pull(au_id)
+```
+
+```{r}
+papers = hold
+
+co_authors = c()
+for (authorid in names(papers)){
+  print(authorid)
+  tab = papers[[authorid]]
+  co_authors[[authorid]] = bind_rows(tab$authorships) |>
+    filter(id != authorid) |>
+    mutate(ego_id = authorid) |>
+    relocate(ego_id, .before = 1)
+}
+
+co_authors[[authorid]]
+```
 
 Make list of co-authors for 1 professor (eg.Jochem)
 ```{r}
@@ -98,6 +145,8 @@ collaborators1 #check it again
 ```
 
 
+```{r}
+
 Get list of affiliated institutions for each coauthor of 1 professor
 ```{r}
 
@@ -117,7 +166,10 @@ institutions <- institutions[-1] #smaller number - assumption that several of Jo
 
 Now: try to do this for list of authors
 ```{r}
+co_authors = bind_rows(prof1_papers$authorships)
+```
 
+```{r}
 ## make sure to reference correct university
 ru_id <- institutions <- oa_fetch(entity = "institutions", search = "Radboud University") #get Radboud's ID
 ru_id <- ru_id[1,]

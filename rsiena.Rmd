@@ -311,5 +311,102 @@ fcolnet <- function(data = scholars, university = "RU", discipline = "sociology"
 ```
 
 
+Example in class from 10 October
+Siena dependent variable 
+
+```{r}
+# Step 1: load data
+library(RSiena)
+?sienaDependent #look for examples - script for how to run stuff 
+
+
+# then check waves available
+s501 #network at timepoint 1
+s502 #network at timepoint 2
+s503 #network at timepoint 
+
+
+mynet1 <- sienaDependent(array(c(s501, s502, s503), dim=c(50, 50, 3)))
+mybeh <- sienaDependent(s50a, type="behavior")
+
+ # look for smoking and drinking behaviors
+
+smoke <- s50s #time varying covariate. Time constant covar - varCovar
+smoke <- varCovar(s50s)
+
+mydata_example <- sienaDataCreate(mynet1, mybeh, smoke)
+
+
+
+# Step 2: look at data
+#print report on data reports
+
+print01Report(mydata_example)
+
+
+# Step 3: add effects 
+myeff_example <- getEffects(mydata_example)
+myeff_example
+
+
+
+myeff_example <- includeEffects(myeff_example, unequalX, name="mynet1", interaction1 = "smoke")
+myeff_example
+
+
+#make algorithm to then estimate it
+algo_ex <- sienaAlgorithmCreate(projname = "test_ex")
+answer_ex <- siena07(algo_ex, data=mydata_example, effects=myeff_example, returnDeps = TRUE)
+
+answer_ex
+
+
+#does it change if dependent X 
+myeff_example <- includeEffects(myeff_example, unequalX, name="mynet1", interaction1 = "mybeh") #name = network dependent variable, interaction 1 is covariate (smoking) - if have multiple netowrks, then could have unequalX with respect to X. We replaced smoke with my behavior, and rerun the siena model. This is an algorithm, can ask RSiena to reference previous result with 'prevans=ANS' after returnDepts = TRUE
+answer_ex <- siena07(algo_ex, data=mydata_example, effects=myeff_example, returnDeps = TRUE)
+
+answer_ex
+# looking at results, mybeh = drinking -- ego less likely to spend time with people who drink more or less than them. ego also less likely to spend time with people who smoke more or less, to a lesser extent. Can use unequalX for dependent variables and covariates. key difference in estimation procedure: 
+# we are also modeling behavioral results - behavior changing over time, simulated via ministep logic (one step up or down). The crucial difference: during the algorithm 
+#If count statistic for smoke, then between time point 1 and 2 we use value from timepoint 1. between 2-3, use time point 2. But within the variable, the ego level behavior is changing. is not using the value as observed at t1 - it is using the value as is currently simulated. 
+
+
+
+
+
+#could exclude variable to then include as covariate effect. 
+
+mybeh <- sienaDependent(s50a, type="behavior") #defined as dependent variable 
+drinking <- varCovar(s50a) #defined as covariate variable 
+
+#update data object: 
+mydata_example <- sienaDataCreate(mynet1, mybeh, drinking, smoke)
+
+
+#and effects object: 
+myeff_example <- includeEffects(myeff_example, unequalX, name="mynet1", interaction1 = "smoke")
+
+myeff_example <- includeEffects(myeff_example, unequalX, name="mynet1", interaction1 = "drinking")
+
+algo_ex2 <- sienaAlgorithmCreate(projname = "test_ex")
+
+answer_ex <- siena07(algo_ex2, data=mydata_example, effects=myeff_example, returnDeps = TRUE)
+answer_ex
+
+#then the network dynamics change 
+# interpretation of the rate constant - the average amount of ministeps each ego is making between the two observations
+
+#behavioral dynamics: 
+# the rate constant: the number of steps in the behavioral aspect 
+
+#statistic for linear shape - linear shape effect - the value of the *centered* behavioral variable (average in the total sample). 
+# if positive, try to increase behavior. effect is z1 (zed score), with the options of 1, 0, or -1. behavior increases because positively evaluates 1 more than 0, more than -1. At some point, though, behavior will stop increasing - that is z2 (squared!). so, parameter moderates itself with time?? 
+
+# these are the minimum effects to include, because it predicts mean value observe in dataset. 2 parameters - estimate mean behavior. based on model results, what is the mean value. 
+
+# behavioral variables in dataset - everything observed that changes. ex., position (functie), citations, interdisciplinarity score. Problem: is time window large enought to see change? and over time, behavioral variable is only changing - which then must be calculated as continuous depended variable. 
+
+
+```
 
 

@@ -232,6 +232,13 @@ myeff
 myeff <- includeEffects(myeff, egoXaltX, interaction1 = "functie")
 
 
+#new statistic
+myeff <- includeEffects(myeff, diffXOutAct, interaction1 = "functie")
+
+#other new statistic
+myeff <- includeEffects(myeff, unequalX, interaction1 = "functie")
+myeff
+
 #alternative: 
 myeff <- includeEffects(myeff, egoX, interaction1 = "functie")
 
@@ -239,11 +246,14 @@ myeff <- includeEffects(myeff, egoX, interaction1 = "functie")
 # independent variable=ego, dependent variable = tie, covariate = functie, 
 
 
+
 #another alternative: 
 myeff <- includeEffects(myeff, altX, interaction1 = "functie" )# altX effect --- hypothesis: more likely to receive? model from ego perspectives, and ego sends ties -- therefore, formulation of tie different: should be more likely to send ties to professors 
 # altX = V(j) * Sum of Xij
 # altX = Alter * Sum of ties
 # Expect positive effect (opposite of ego X)
+
+
 
 
 ```
@@ -302,6 +312,8 @@ Jaccard Index: counting all changes (1->1 / 0->1, 1->0, and 1->1 (not 0->0, beca
 
 myeff <- includeEffects(myeff, isolateNet, inPop, outAct)
 
+
+myeff <- includeEffects(myeff, unequalX, egoX, alterX)
 
 ```
 

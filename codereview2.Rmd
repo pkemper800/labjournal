@@ -171,7 +171,6 @@ test <- fcolnet(data = scholars,
                 type = c("first"))
 
 
-
 # make adjacency matrix with first wave of data
 test_w1 <- igraph::graph_from_adjacency_matrix(
   test$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)

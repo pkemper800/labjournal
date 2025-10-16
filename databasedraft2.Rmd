@@ -1,0 +1,832 @@
+---
+title: "databasedraft2"
+author: "Paige Kemper"
+date: "2025-10-09"
+output: html_document
+---
+
+VISUALIZING NETWORK 
+
+
+**Goal: Visualize network of collaborations for RU Sociology professors with my own data**
+
+# Step 0: Load packages
+```{r}
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, file, "_", datename, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+```
+
+```{r}
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+packages <- c("devtools", "igraph")
+
+fpackage.check(packages)
+
+library(readxl)
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+```
+
+# Step 1: Pull data
+## Pull my data - with ethnic backgrounds
+```{r}
+#import my manual data set, including manual review of professor experience abroad
+ru_soc_profs <- read_excel("C:/Github/labjournal/ru_soc_profs.xlsx")
+ru_soc_profs
+
+
+#make sure my data is a simple dataframe
+df_rsp <- data.frame(ru_soc_profs[, c("Name", "beyond_dutch_exp")]) 
+df_rsp
+
+
+#make sure names match 
+df_rsp <- df_rsp %>%
+  rename(Naam = Name)
+df_rsp
+
+#using dataframe for radboud sociology professors, create replica that I can add my manual dataset to
+radboud_profs <- ego_df1r #is a dataframe for rad profs, to join personal dataset to 
+radboud_profs <- left_join(radboud_profs, df_rsp, by="Naam")
+radboud_profs
+
+# ru_soc_scholars <- fload("C:/Github/labjournal/ru_soc_profs.xlsx")
+# covariate to network stats. 
+
+
+```
+
+
+## Pull out professors I found from Jochem's data (with 2 years of data collection)
+```{r}
+# big datafile with everything (*very important!*)
+scholars <- fload("C:/Github/labjournal/scholars_20240924.rda")
+
+
+# from all professors from all dutch universities - for reference, for now
+socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
+socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
+```
+
+
+
+# Step 2: Look at it over several years 
+Have the option to loosen terms for university (RU -> Any dutch university)
+
+## Use with fcolnet
+transforming Jochem's code - adding other universities and disciplines to this function
+```{r}
+fcolnet <- function(data = scholars, university = "RU", discipline = "sociology", waves = list(c(2015,
+    2018), c(2019, 2023)), type = c("first")) {
+
+    # step 1
+    demographics <- do.call(rbind.data.frame, data$demographics)
+    demographics <- demographics %>%
+        mutate(Universiteit1.22 = replace(Universiteit1.22, is.na(Universiteit1.22), ""), Universiteit2.22 = replace(Universiteit2.22,
+            is.na(Universiteit2.22), ""), Universiteit1.24 = replace(Universiteit1.24, is.na(Universiteit1.24),
+            ""), Universiteit2.24 = replace(Universiteit2.24, is.na(Universiteit2.24), ""), discipline.22 = replace(discipline.22,
+            is.na(discipline.22), ""), discipline.24 = replace(discipline.24, is.na(discipline.24), ""))
+
+    sample <- which((demographics$Universiteit1.22 %in% university | demographics$Universiteit2.22 %in%
+        university | demographics$Universiteit1.24 %in% university | demographics$Universiteit2.24 %in%
+        university) & (demographics$discipline.22 %in% discipline | demographics$discipline.24 %in% discipline))
+
+    demographics_soc <- demographics[sample, ]
+    scholars_sel <- lapply(scholars, "[", sample)
+
+    # step 2
+    ids <- demographics_soc$au_id
+    nwaves <- length(waves)
+    nets <- array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works <- tibble(works_id = unlist(lapply(scholars_sel$work, function(l) l$id)), works_author = unlist(lapply(scholars_sel$work,
+        function(l) l$author), recursive = FALSE), works_year = unlist(lapply(scholars_sel$work, function(l) l$publication_year),
+        recursive = FALSE))
+
+    df_works <- df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == "first") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- df_works_w$works_author[i][[1]]$au_id[1]
+                alters <- df_works_w$works_author[i][[1]]$au_id[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "last") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- rev(df_works_w$works_author[i][[1]]$au_id)[1]
+                alters <- rev(df_works_w$works_author[i][[1]]$au_id)[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "all") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos <- df_works_w$works_author[i][[1]]$au_id
+                if (sum(ids %in% egos) > 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] <- 1
+                }
+            }
+        }
+    }
+    output <- list()
+    output$data <- scholars_sel
+    output$nets <- nets
+    return(output)
+}
+```
+
+
+
+
+## Test fcolnet function: Make adjacency matrix with first wave of data
+### First make large lists for different universities - this will be nice to compare results later, to make sure that there are differentces
+```{r}
+#save the output of your function
+test_ru <- fcolnet(data = scholars, 
+                university = "RU", 
+                discipline = "sociology", 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("first"))
+
+test_vu <- fcolnet(data = scholars, 
+                university = "VU", 
+                discipline = "sociology", 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("first"))
+
+test_uu <- fcolnet(data = scholars, 
+                university = "UU", 
+                discipline = "sociology", 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("first"))
+
+test <- fcolnet(data = scholars, 
+                university = c("RU", "UU", "UvA", "EUR", "Leiden", "VU", "UvT", "RUG"), 
+                discipline = c("sociology", "political science"), 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("first"))
+
+test2 <- fcolnet(data = scholars, 
+                university = c("RU", "UU", "UvA", "EUR", "Leiden", "VU", "UvT", "RUG"), 
+                discipline = c("sociology", "political science"), 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("all"))
+
+
+```
+
+
+### then make adjacency matrix for first waves of data: "test_wave1"
+Will compare different universities, and then try to include multiple universities and disciplines!
+
+**Just for radboud (RU) sociology:**
+```{r}
+# make adjacency matrix with first wave of data
+test_wave1ru <- igraph::graph_from_adjacency_matrix(
+  test_ru$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave1ru,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+dim(test_wave1ru) #check it works 
+sum(is.na(test_wave1ru)) #check it is complete -- if 0 missing values
+
+```
+
+
+**Just for vrij uni (VU) sociology:** 
+```{r}
+# make adjacency matrix with first wave of data
+test_wave1vu <- igraph::graph_from_adjacency_matrix(
+  test_vu$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave1vu,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+dim(test_wave1vu) #check it works 
+sum(is.na(test_wave1vu)) #check it is complete -- if 0 missing values
+
+```
+
+**Just for utrecht uni (UU) sociology:** 
+```{r}
+# make adjacency matrix with first wave of data
+test_wave1uu <- igraph::graph_from_adjacency_matrix(
+  test_uu$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave1uu,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+dim(test_wave1uu) #check it works 
+sum(is.na(test_wave1uu)) #check it is complete -- if 0 missing values
+
+```
+
+**for both departments at radboud**
+```{r}
+
+test_ru2 <- fcolnet(data = scholars, 
+                university = c("RU"), 
+                discipline = c("sociology", "political science"), 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("first"))
+
+
+# make adjacency matrix with first wave of data
+test_wave1ru2 <- igraph::graph_from_adjacency_matrix(
+  test_ru2$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave1ru2,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+```
+
+
+**for 3 universities, both departments)
+```{r}
+test_rvu_u <- fcolnet(data = scholars, 
+                university = c("RU", "VU", "UU"), 
+                discipline = c("sociology", "political science"), 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("all"))
+
+test_wave1rvu <- igraph::graph_from_adjacency_matrix(
+  test_rvu_u$nets[1,,], #look at first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave1rvu,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+```
+
+## Then look at wave 2
+```{r}
+test_wave2rvu <- igraph::graph_from_adjacency_matrix(
+  test_rvu_u$nets[2,,], #look at first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave2rvu,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+
+
+dim(test_wave2rvu) #check it works 
+sum(is.na(test_wave2rvu)) #check it is complete -- if 0 missing values
+```
+
+## then all departments, directed
+```{r}
+test_wave1 <- igraph::graph_from_adjacency_matrix(
+  test$nets[1,,], #look at first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave1,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+## and all departments, undirected
+```{r}
+test2_wave1 <- igraph::graph_from_adjacency_matrix(
+  test2$nets[1,,], #look at first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test2_wave1,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+
+# Step 3: Incorporate Ego level characteristics
+Let us find ego characteristics. 
+
+```{r}
+#first: fish out the data
+#only RU professors , only sociology department (test_wave1ru)
+  # ego_df1 <- test$data -- old code, 'test'refers to old df
+ego_df1 <- test_ru$data
+
+#same complicated structure as 'scholars' thus first make a dataframe from the list in which all info was saved. 
+ego_df1r <- do.call(rbind.data.frame, ego_df1$demographics)
+
+#DO NOT MESS UP THE ORDER! THUS IF YOU JOIN THIS DATA WITH YOUR OWN DATA CHECK THAT ORDER REMAINED THE SAME!! 
+plot(test_wave1ru,
+  vertex.color = ifelse(ego_df1r$discipline.24 == "sociology", "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+## both departments at radboud - struggling to configure 
+```{r}
+#alternatively, both ru departments 
+
+#only RU professors , only sociology department (test_wave1ru)
+  # ego_df1 <- test$data -- old code, 'test'refers to old df
+ego_df1_2 <- test_ru2 $data
+
+#same complicated structure as 'scholars' thus first make a dataframe from the list in which all info was saved. 
+ego_df1r <- do.call(rbind.data.frame, ego_df1$demographics)
+
+#DO NOT MESS UP THE ORDER! THUS IF YOU JOIN THIS DATA WITH YOUR OWN DATA CHECK THAT ORDER REMAINED THE SAME!! 
+plot(test_wave1ru,
+  vertex.color = ifelse(ego_df1r$discipline.24 == "sociology", "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+
+
+
+```
+
+
+
+
+
+
+
+```{r}
+ego_df1_rvu <- test_wave1rvu$data
+```
+
+
+
+```{r}
+ego_df2 <- test_u$data
+ego_df2r <- do.call(rbind.data.frame, ego_df2$demographics)
+plot(test_wave2,
+  vertex.color = ifelse(ego_df2r$discipline.24 == "sociology", "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+```{r}
+ego_df3 <- test_ru$data
+ego_df3r <- do.call(rbind.data.frame, ego_df3$demographics)
+plot(test_wave2,
+  vertex.color = ifelse(ego_df3r$discipline.24 == "sociology", "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+```{r}
+ego_df4 <- test_uu$data
+ego_df4r <- do.call(rbind.data.frame, ego_df4$demographics)
+plot(test_wave2,
+  vertex.color = ifelse(ego_df4r$discipline.24 == "sociology", "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+```{r}
+ego_df5 <- test_vu$data
+ego_df5r <- do.call(rbind.data.frame, ego_df5$demographics)
+plot(test_wave2,
+  vertex.color = ifelse(ego_df5r$discipline.24 == "sociology", "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+```{r}
+ego_df6 <- test_rvu_u$data
+ego_df6r <- do.call(rbind.data.frame, ego_df6$demographics)
+plot(test_wave2,
+  vertex.color = ifelse(ego_df6r$discipline.24 == "sociology", "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+```{r}
+ego_df7 <- test_ru$data
+ego_df7r <- do.call(rbind.data.frame, ego_df7$demographics)
+plot(test_wave2,
+  vertex.color = ifelse(ego_df7r$Universiteit.22 == "RU", "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+```{r}
+ego_df8 <- test$data
+ego_df8r <- do.call(rbind.data.frame, ego_df8$demographics)
+
+plot(test_wave1,
+     vertex.color = ifelse(ego_df8r$Universiteit.22 == "VU", "red", "blue"), 
+     vertex.label = NA,
+     edge.width = 0.2,
+     edge.arrow.size =0.2
+ )
+
+
+
+plot(test_wave1,
+     for(i in 1:nrow(ego_df8r)) {
+       if(i[2] == "VU") {
+         vertex.color = "orange"}
+       if(i[2] == "UU") {
+         vertex.shapes = "triangle"}
+       if(i[2] == "RU") {
+         vertex.color == "red"}
+       else "blue"
+  vertex.label = NA
+  edge.width = 0.2
+  edge.arrow.size =0.2
+ })
+
+
+
+
+  vertex.color = ifelse(ego_df8r$Universiteit.22 == "VU", "red", "blue"), 
+  vertex.color = if(ego_df8r$Universiteit.22 == "UU" "yellow"),  
+  vertex.color = if(ego_df8r$Universiteit.22 == "RU", "orange"), 
+```
+
+
+
+
+
+
+## Now try with ego characteristics
+Wave 1
+```{r}
+plot(test_wave1,
+  vertex.color = ifelse(radboud_profs$beyond_dutch_exp == 1, "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+Wave 2
+```{r}
+plot(test_wave2,
+  vertex.color = ifelse(radboud_profs$beyond_dutch_exp == 1, "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+```
+
+
+
+
+
+# Step 4: Apply igraph 
+
+## Recap: 
+-   data <- comes from 'scholars'; split into subsections/elements. inspecting 'demographic' element. 
+-   sample <- looking at change in demographics between time 1 and time 2 in 2 different universities. 
+
+## NOW - LOOK AT DESCRIPTIVE STATISTICS
+```{r}
+#SIZE
+# vcount = number of nodes
+# ecount = number of edges
+plot(test_wave1)
+vcount(test_wave1) # = 131 = number of nodes
+ecount(test_wave2) # = 302 = number of edges
+
+plot(test_wave2)
+vcount(test_wave2) # = 131
+ecount(test_wave2) # = 302
+
+
+#DEGREE
+# looking at clustering and spread
+igraph::degree(test_wave1)
+igraph::degree(test_wave2)
+
+hist(table(degree(test_wave1)), xlab='indegree', main= 'Histogram of indegree') 
+# every number is the degree level of each actor -- and see it is heavily skewed to the left
+
+hist(table(degree(test_wave2)), xlab='indegree', main= 'Histogram of indegree') # every number is the degree level of each actor -- and see it is heavily left skewed too  
+
+
+#TRANSITIVITY -- all of these return "NAN" -- check?
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+igraph::transitivity(test_wave1, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+igraph::transitivity(test_wave2, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+
+
+
+#BETWEENNESS
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+igraph::transitivity(test_wave1, type = c("localundirected"), isolates = c("NaN", "zero"))
+igraph::transitivity(test_wave2, type = c("localundirected"), isolates = c("NaN", "zero"))
+
+
+```
+
+
+
+## Next, moving from local to global transitivity 
+-   Look at triads for more global transitivity. Note: Global = number of observed over possible - can identify all transitive triads and all possible triads 
+-   Reviewing dyads - then triads. Since it is undirected, it is less difficult to calculate. 
+-   Now, looking at triad census vs triad allegation
+
+```{r}
+
+# plot: igraph - XX <- make_graph(y) <- test$nets[1,,] ??
+# adj mat: XX <- as_adj_matrix((plot), type = "both", sparse = FALSE) -- adj mat = test_w1 =  test$nets[1,,]
+
+
+igraph::dyad.census(test_wave1) #with plot -- works 
+igraph::dyad.census(test_wave2) #with plot -- works
+
+
+igraph::triad.census(test_wave1) #with plot -- works
+igraph::triad.census(test_wave2) #with plot -- works
+
+
+# I will use sna because it shows the names of the triads as well.
+install.packages("sna")
+library(sna)
+
+# Wave 1
+sna::triad.census(test$nets[1,,]) #with adj matrix of test_w1 -- triad.census of (test_w1) doesn't work. 
+unloadNamespace("sna")  #detach this package again to avoid interference with other igraph functions 
+
+igraph::transitivity(test_wave1, type = "global") #with plot
+# sna::gtrans(test_w1) #triad census a different way, but this is with plot - need with adj mat:
+sna::gtrans(test$nets[1,,]) #with adj matrix
+
+
+triad_wave1 <- data.frame(sna::triad.census(test$nets[1,,])) #save as df, #with adj matrix
+
+transitivity_wave1 <- (3 * triad_wave1$X300)/(triad_wave1$X201 + 3 * triad_wave1$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_wave1
+
+
+
+
+
+# Wave 2
+sna::triad.census(test$nets[2,,])
+unloadNamespace("sna")  #I will detach this package again, otherwise it will interfere with all kind of functions from igraph, and my students will hate me for that.
+
+
+igraph::transitivity(test_wave2, type = "global")
+sna::gtrans(test$nets[2,,]) #triad census a different way 
+
+triad_wave2 <- data.frame(sna::triad.census(test$nets[2,,])) #save as df
+
+transitivity_wave2 <- (3 * triad_wave2$X300)/(triad_wave2$X201 + 3 * triad_wave2$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_wave2
+
+```
+
+
+
+## pt 2
+Network visualisation: parctice making  size proportional to betweenness score
+``` {r}
+# changing V of Wave1
+V(test_wave1)$size = betweenness(test_wave1, normalized = T, directed = FALSE) * 60 + 10  #after some trial and error
+
+
+ ## multiplication - changing 60 changes the difference in size,, adding 10 makes the smallest visible
+plot(test_wave1, mode = "undirected")
+
+
+# igraph, want no overlap: igraph plotting no overlap -- a lot of layout functions -- want to hold printing device constant, and then reduce overlap...the idea is to push least central egos out 
+
+set.seed(2345)
+l <- layout_with_mds(test_wave1)  #https://igraph.org/r/doc/layout_with_mds.html
+plot(test_wave1, layout = l)
+# story in second plot: 3 clusters, around 1, around 34 - and in between (which wasn't as clear before)
+?
+
+```
+
+
+
+# Step 5: RSiena work - Now put in Array
+
+```{r}
+packages = c("RSiena", "devtools", "igraph")
+fpackage.check(packages)
+# devtools::install_github('JochemTolsma/RsienaTwoStep', build_vignettes=TRUE)
+packages = c("RsienaTwoStep")
+fpackage.check(packages)
+```
+
+
+```{r}
+nets <- array(data = c(test_wave1, test_wave2), dim = c(dim(test_wave1), 2))
+net <- sienaDependent(nets)
+
+
+ego_df1 # df <- test$data
+ego_df1r # df_ego <- do.call(rbind.data.frame, df$demographics) 
+
+
+# what kind 
+unique(c(ego_df1r$Functie.22, ego_df1r$Functie.24))
+
+
+#replace missing values with empty string
+ego_df1r$Functie.22[is.na(ego_df1r$Functie.22)] <- " "
+ego_df1r$Functie.24[is.na(ego_df1r$Functie.24)] <- " "
+
+# 
+ego_df1r$functie <- ifelse(ego_df1r$Functie.22=="Hoogleraar", 1, 0)
+ego_df1r$functie <- ifelse(ego_df1r$Functie.24=="Hoogleraar", 1, ego_df1r$functie)
+ego_df1r$functie <- ifelse(ego_df1r$Functie.22=="Bijzoner hoogleraar", 1, ego_df1r$functie)
+ego_df1r$functie <- ifelse(ego_df1r$Functie.24=="Bijzoner hoogleraar", 1, ego_df1r$functie)
+
+table(ego_df1r$functie, useNA="always") #use as constant - 
+
+# should see variable is correct
+packages <- c("tidyverse", "RSiena", "RsienaTwoStep")
+
+functie <- coCovar(ego_df1r$functie)
+functie
+
+```
+
+```{r}
+mydata <- sienaDataCreate(net, functie)
+
+```
+
+
+# STEP 2 EFFECTS 
+```{r}
+myeff <-getEffects(mydata)
+myeff
+
+myeff <- includeEffects(myeff, egoXaltX, interaction1 = "functie")
+
+
+#alternative: 
+myeff <- includeEffects(myeff, egoX, interaction1 = "functie")
+
+#mathematical of egoX = V(i), tie = X(i)(j), want the sum of the ties --> X(i)(+) 
+# independent variable=ego, dependent variable = tie, covariate = functie, 
+
+
+#another alternative: 
+myeff <- includeEffects(myeff, altX, interaction1 = "functie" )# altX effect --- hypothesis: more likely to receive? model from ego perspectives, and ego sends ties -- therefore, formulation of tie different: should be more likely to send ties to professors 
+# altX = V(j) * Sum of Xij
+# altX = Alter * Sum of ties
+# Expect positive effect (opposite of ego X)
+
+
+```
+
+
+
+
+
+
+
+
+```{r}
+myAlgorithm <- sienaAlgorithmCreate(projname = "soc_init")
+ansM1 <- siena07(myAlgorithm, data = mydata, effects = myeff, returnDeps = TRUE)
+# if necessary estimate again!  ansM1 <- siena07(myAlgorithm, data = mydata, effects = myeff,
+# prevAns = ansM1, returnDeps=TRUE)
+ansM1
+
+```
+
+
+```{r}
+
+```
+
+
+
+
+

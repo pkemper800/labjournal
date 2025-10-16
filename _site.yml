@@ -26,6 +26,12 @@ navbar:
       - text: "Page 4"
         href: lab4.html
         
+      - text: "Page 5"
+        href: lab5.html
+        
+      - text: "Page 6"
+        href: lab6.html
+        
         
     - text: "Assignments"
       menu:
@@ -39,6 +45,12 @@ navbar:
         
       - text: "Developing Database"
         href: databasedraft.html
+        
+      - text: "Second draft"
+        href: databasedraft2.html
+        
+      - text: "Working Draft"
+        href: workingdraft.html
         
     - text: "codereview"
       menu:

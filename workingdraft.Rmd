@@ -1,0 +1,381 @@
+---
+title: "Working Draft"
+author: "Paige Kemper"
+date: "2025-10-14"
+output: html_document
+---
+Working draft for social network analysis dataset
+
+# Clean workspace, loaded libraries and packages
+```{r}
+library(readxl)
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+packages <- c("devtools", "igraph")
+
+fpackage.check(packages)
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, file, "_", datename, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+
+
+
+```
+
+```{r}
+
+```
+
+
+
+# Getting the data 
+
+## Access large data file of professors, set of egos for research
+```{r}
+# big datafile with everything (*very important!*)
+scholars <- fload("C:/Github/labjournal/scholars_20240924.rda")
+
+
+install.packages("readxl")
+library(readxl)
+# from all professors from all dutch universities - for reference, for now
+socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
+socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
+
+# My manual data set, including manual review of professor experience abroad
+ru_soc_profs <- read_excel("C:/Github/labjournal/ru_soc_profs.xlsx")
+ru_soc_profs
+
+#now have list of scholars for all dutch universities 
+```
+
+
+
+## Pull just Radboud professors
+
+```{r}
+s = bind_rows(scholars$demographics) |>
+  filter(
+    Universiteit.22 == "RU",
+    Universiteit.24 == "RU"
+  )
+```
+
+## For each Radboud professor in 's', webscrape from openalex their works. Make extra large list of datafiles for each professor ('hold'), and then a dataframe of all of the works ('res') (collaboration ties) 
+
+```{r}
+hold = c()
+for (authorid in s$au_id[1:nrow(s)]){
+  print(authorid)
+  res = oa_fetch(
+    entity = "works", 
+    author.id=authorid
+  )
+  # # res = bind_rows(scholars$works) |> filter(id == authorid)
+  hold[[authorid]] = res
+}
+
+#s |> filter(Naam == "Katia Begall") |> pull(au_id) #practice then filtering for just one author
+```
+
+## Now make dataframe
+Ego: each professor, in the form of their openalex ID
+Alters: each collaborator, in the form of their openalex ID
+Tie: Collaborations
+Alters Descriptive Information: Their affiliate institution (will check this - if is same, in NL, or international)
+Ego Descriptive Information: If the ego has international academic experience? If from the Netherlands - or not?
+```{r}
+papers = hold
+
+co_authors = c()
+for (authorid in names(papers)){
+  print(authorid)
+  tab = papers[[authorid]]
+  co_authors[[authorid]] = bind_rows(tab$authorships) |> #Next: get the collaborations and the affiliate institutions
+    filter(id != authorid) |> #make sure that ego id isn't a collaborator - remove egoID from coauthor IDs
+    mutate(ego_id = authorid) |> #rename - ego ID = author ID
+    relocate(ego_id, .before = 1) # Put ego ID in the front 
+#  co_authors <- append(affil = papers[[author]] ## potentially add column with values for affiliations?
+
+#    mutate(affiliations = affiliations[[1, 4]]) - alternative 
+#  co_authors[[affiliations]] = bind_rows(tab$[[j,6]][[1]] - alternative 
+
+}
+
+
+co_authors[[authorid]]
+co_authors[[authorid[1]]]
+co_authors[[authorid[1]]][[1,7]]
+print(co_authors[[authorid[1]]][[1,7]])
+
+co_authors[[6]][[1]][[2]]
+co_authors[[1]][[1]][[7]][[1,2]]
+
+
+co_authors[[authorid]][["affiliations"]][[1]]
+```
+
+
+
+Make list of co-authors for 1 professor (eg.Jochem)
+```{r}
+#check packages are installed
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+
+
+# Next, test calling 1 professor
+options(openalexR.mailto = "paige.kemper@ru.nl") 
+
+```
+
+
+```{r}
+
+```
+
+
+Now: try to do this for list of authors
+```{r}
+
+```
+
+```{r}
+## make sure to reference correct university
+
+# search just one name from the list 
+
+```
+
+# Try playing with Rsiena 
+
+
+# Try playing with visualizations 
+
+## Use with fcolnet
+
+```{r}
+fcolnet <- function(data = scholars, university = "RU", discipline = "sociology", waves = list(c(2015,
+    2018), c(2019, 2023)), type = c("first")) {
+
+    # step 1
+    demographics <- do.call(rbind.data.frame, data$demographics)
+    demographics <- demographics %>%
+        mutate(Universiteit1.22 = replace(Universiteit1.22, is.na(Universiteit1.22), ""), Universiteit2.22 = replace(Universiteit2.22,
+            is.na(Universiteit2.22), ""), Universiteit1.24 = replace(Universiteit1.24, is.na(Universiteit1.24),
+            ""), Universiteit2.24 = replace(Universiteit2.24, is.na(Universiteit2.24), ""), discipline.22 = replace(discipline.22,
+            is.na(discipline.22), ""), discipline.24 = replace(discipline.24, is.na(discipline.24), ""))
+
+    sample <- which((demographics$Universiteit1.22 %in% university | demographics$Universiteit2.22 %in%
+        university | demographics$Universiteit1.24 %in% university | demographics$Universiteit2.24 %in%
+        university) & (demographics$discipline.22 %in% discipline | demographics$discipline.24 %in% discipline))
+
+    demographics_soc <- demographics[sample, ]
+    scholars_sel <- lapply(scholars, "[", sample)
+
+    # step 2
+    ids <- demographics_soc$au_id
+    nwaves <- length(waves)
+    nets <- array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works <- tibble(works_id = unlist(lapply(scholars_sel$work, function(l) l$id)), works_author = unlist(lapply(scholars_sel$work,
+        function(l) l$author), recursive = FALSE), works_year = unlist(lapply(scholars_sel$work, function(l) l$publication_year),
+        recursive = FALSE))
+
+    df_works <- df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == "first") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- df_works_w$works_author[i][[1]]$au_id[1]
+                alters <- df_works_w$works_author[i][[1]]$au_id[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "last") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- rev(df_works_w$works_author[i][[1]]$au_id)[1]
+                alters <- rev(df_works_w$works_author[i][[1]]$au_id)[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "all") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos <- df_works_w$works_author[i][[1]]$au_id
+                if (sum(ids %in% egos) > 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] <- 1
+                }
+            }
+        }
+    }
+    output <- list()
+    output$data <- scholars_sel
+    output$nets <- nets
+    return(output)
+}
+```
+
+
+## pull data using fcolnet
+```{r}
+test <- fcolnet(data = scholars, 
+                university = c("RU", "UU", "UvA", "EUR", "Leiden", "VU", "UvT", "RUG"), 
+                discipline = c("sociology", "political science"), 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("first"))
+
+test_ru <- fcolnet(data = scholars, 
+                university = c("RU"), 
+                discipline = c("sociology", "political science"), 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("first"))
+```
+
+
+## Just radboud (both depts) wave 1
+```{r}
+# make adjacency matrix with first wave of data
+test_wave1ru <- igraph::graph_from_adjacency_matrix(
+  test_ru$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave1ru,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+dim(test_wave1ru) #check it works 
+sum(is.na(test_wave1ru)) #check it is complete -- if 0 missing values
+
+```
+
+
+### colored version
+```{r}
+#first: fish out the data
+#only RU professors , only sociology department (test_wave1ru)
+  # ego_df1 <- test$data -- old code, 'test'refers to old df
+ego_df1 <- test_ru$data
+
+#same complicated structure as 'scholars' thus first make a dataframe from the list in which all info was saved. 
+ego_df1r <- do.call(rbind.data.frame, ego_df1$demographics)
+
+#DO NOT MESS UP THE ORDER! THUS IF YOU JOIN THIS DATA WITH YOUR OWN DATA CHECK THAT ORDER REMAINED THE SAME!! 
+plot(test_wave1ru,
+  vertex.color = ifelse(ego_df1r$discipline.24 == "sociology", "red", "blue"),  
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+
+## then all departments, directed
+```{r}
+test_wave1 <- igraph::graph_from_adjacency_matrix(
+  test$nets[1,,], #look at first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave1,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+## Now, testing with data developed from database developed
+  NEEDS WORK 
+```{r}
+test_coauthor <- fcolnet(data = co_authors, 
+                         university = c("Radboud University")
+                type = c("first"))
+
+test <- fcolnet(data = co_authors, 
+                university = c("RU", "UU", "UvA", "EUR", "Leiden", "VU", "UvT", "RUG"), 
+                discipline = c("sociology", "political science"), 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("first"))
+
+co_authors[[authorid]]
+
+
+```
+
+
+```{r}
+
+```

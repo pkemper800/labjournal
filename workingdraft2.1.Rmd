@@ -1,0 +1,523 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+17 October review 
+
+New Data review : "C:\Github\labjournal\20251016scholars.Rda"
+
+# Data Prep Work 
+
+## Clear data
+```{r}
+rm(list=ls()) #start clean
+```
+
+## Load Functions
+```{r}
+library(readxl)
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+library(readxl)
+
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+packages <- c("devtools", "igraph")
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, file, "_", datename, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+```
+
+
+## Access large data file of professors, set of egos for research
+
+### Load Dataset - new dataset from Jos
+
+```{r}
+scholars <- fload("C:/Github/labjournal/20251016scholars.Rda") 
+```
+
+
+## New fcolnet function
+
+### Define Network Data Helper Function
+```{r}
+fcolnet = function(data = scholars, university = c("RU", 'UU'), discipline = "Sociologie", waves = list(c(2015,
+    2018), c(2019, 2023), c(2024, 2025)), type = c("first")) {
+
+    university = paste0('(', paste0(university, collapse='|' ), ')')
+    discipline = paste0('(', paste0(discipline, collapse='|' ), ')')
+
+    # step 1
+    demographics = data$demographics
+    sample = which(
+        (str_detect(demographics$universiteit.22, university)
+            | str_detect(demographics$universiteit.24, university)
+            | str_detect(demographics$universiteit.25, university)
+        ) & (
+            str_detect(demographics$discipline.22, discipline)
+            | str_detect(demographics$discipline.24, discipline)
+            | str_detect(demographics$discipline.25, discipline)
+        ) |> replace_na(FALSE))
+
+    demographics_soc = demographics[sample, ] |> drop_na(id)
+
+    # step 2
+    ids = demographics_soc$id |> unique()
+
+
+    scholars_sel = list() 
+    for (id_ in ids){
+        scholars_sel[[id_]] = bind_rows(scholars$works) |>
+            filter(author_id == id_)
+    }
+    scholars_sel = bind_rows(scholars$works) 
+    
+
+    nwaves = length(waves)
+    nets = array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works = tibble(
+            works_id = scholars_sel$id, 
+            works_author = scholars_sel$authorships, 
+            works_year = scholars_sel$publication_year
+        )
+
+
+    df_works = df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == "first") {
+        for (j in 1:length(waves)) {
+            df_works_w = df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego = df_works_w$works_author[i][[1]]$id[1]
+                alters = df_works_w$works_author[i][[1]]$id[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] = 1
+                }
+            }
+        }
+    }
+
+    if (type == "last") {
+        for (j in 1:length(waves)) {
+            df_works_w = df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego = rev(df_works_w$works_author[i][[1]]$id[1])
+                alters = rev(df_works_w$works_author[i][[1]]$id[-1])
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] = 1
+                }
+            }
+        }
+    }
+    if (type == "all") {
+        for (j in 1:length(waves)) {
+            df_works_w = df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos = df_works_w$works_author[i][[1]]$id
+                if (sum(ids %in% egos) > 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] = 1
+                }
+            }
+            diag(nets[j,,]) = 0
+        }
+    }
+
+    output = list()
+    output$data = demographics_soc
+    output$nets = nets
+    return(output)
+}
+```
+
+### load Rsiena packages
+```{r}
+packages = c(
+    "RSiena", "tidyverse",
+    'dplyr', 'stringr' # these packages were added to make the code run
+)
+fpackage.check(packages)
+
+```
+
+
+# Getting Data
+
+## Application
+
+### Load Data
+```{r}
+# from Jos code - Radboud and Utrecht
+test1 = fcolnet(scholars, university = c('RU', 'UU')) 
+df_ego1 = bind_rows(test1$data)
+
+# Radboud only (where I want to start)
+test = fcolnet(scholars, university = c("RU")) #only Radboud 
+df_ego = bind_rows(test$data)
+```
+
+### Wrangle Data
+```{r}
+wave1 = test$nets[1,,]
+wave2 = test$nets[2,,]
+wave3 = test$nets[3,,]
+
+nets = array(
+    data = c(wave1, wave2, wave3),
+    dim = c(dim(wave2), 2)
+)
+
+net = sienaDependent(nets)
+```
+
+
+## Isolate Gender variable (binary)
+
+```{r}
+# Example from recoding function
+#df_ego = df_ego |>
+#    mutate(
+#        funcs = case_when(
+#            functie.22 == "Full Professor" ~ 1,
+#            functie.24 == "Full Professor" ~ 1,
+#            functie.25 == "Full Professor" ~ 1,
+#            .default = 0
+#        )
+#    )
+
+# Recoding for gender
+df_ego = df_ego |>
+    mutate(
+        female = case_when(
+            gender == "female" ~ 1,
+            .default = 0
+        )
+    )
+female = coCovar(df_ego$female)
+```
+
+
+
+## Visualizing RU Waves
+
+```{r}
+# make adjacency matrix with first wave of data
+test_wave1ru <- igraph::graph_from_adjacency_matrix(
+  test$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave1ru,
+  vertex.color = ifelse(df_ego$female == 1, "red", "blue"),
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+dim(test_wave1ru) #check it works 
+sum(is.na(test_wave1ru)) #check it is complete -- if 0 missing values
+
+```
+
+
+## Visualizing just radboud (both depts) wave 2
+```{r}
+test_wave2ru <- igraph::graph_from_adjacency_matrix(
+  test$nets[2,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave2ru,
+  vertex.color = ifelse(df_ego$female == 1, "red", "blue"),
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+```{r}
+test_wave3ru <- igraph::graph_from_adjacency_matrix(
+  test$nets[3,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave3ru,
+  vertex.color = ifelse(df_ego$female == 1, "red", "blue"),
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+# Add in collaborators + their gender?
+```{r}
+```
+
+
+
+```{r}
+```
+
+
+
+# Descriptive Statistics
+## NOW - LOOK AT DESCRIPTIVE STATISTICS FOR RU ONLY 
+
+```{r}
+
+#SIZE
+# number of nodes for RU professors
+vcount(test_wave1ru) #returns 160
+vcount(test_wave2ru) #returns 160
+vcount(test_wave3ru) #returns 160 
+
+#SIZE - for reference
+# number of nodes for all professors
+#vcount(test_w1) #returns 674
+#vcount(test_w2) #returns 674
+
+
+#EDGES
+# number of edges for RU professors
+ecount(test_wave1ru) #returns 49
+ecount(test_wave2ru) #returns 138
+ecount(test_wave3ru) #returns 75
+
+
+#DEGREE
+# looking at clustering and spread
+igraph::degree(test_wave1ru)
+igraph::degree(test_wave2ru)
+igraph::degree(test_wave3ru)
+
+
+hist(table(degree(test_wave1ru)), xlab='indegree', main= 'Histogram of indegree') 
+# every number is the degree level of each actor -- and see it is heavily skewed to the left
+# Wave 1: see frequency of 7 for indegree 0:50, frequency of 0 for indegree 50:100, frequency 1 for indegree 100:150
+
+hist(table(degree(test_wave2ru)), xlab='indegree', main= 'Histogram of indegree') # every number is the degree level of each actor -- and see it is heavily left skewed too  
+# Wave 2: see frequency of 10 for indegree 0:20, frequency of 2 for indegree 20:40, 0 for 40:60, 1 for 60:80
+
+hist(table(degree(test_wave3ru)), xlab='indegree', main= 'Histogram of indegree') # every number is the degree level of each actor -- and see it is heavily left skewed too  
+# Wave 3: see frequency of 4 for indegree 0:20, frequency of 2 for indegree 20:40, 0 for 40:80, 1 for 80:100
+
+
+#TRANSITIVITY -- all of these return "NAN" -- check?
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+## FLAG - ERROR WITH THIS - NOT ABLE TO REALLY USE/VIEW RESULTS
+igraph::transitivity(test_wave1ru, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+igraph::transitivity(test_wave2ru, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+igraph::transitivity(test_wave3ru, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+
+
+#BETWEENNESS
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+igraph::transitivity(test_wave1ru, type = c("localundirected"), isolates = c("NaN", "zero"))
+igraph::transitivity(test_wave2ru, type = c("localundirected"), isolates = c("NaN", "zero"))
+igraph::transitivity(test_wave3ru, type = c("localundirected"), isolates = c("NaN", "zero"))
+
+```
+
+
+
+## Next, moving from local to global transitivity 
+-   Look at triads for more global transitivity. 
+-   Note: Global = number of observed over possible - can identify all transitive triads and all possible triads 
+-   Reviewing dyads - then triads. Since it is undirected, it is less difficult to calculate. 
+-   Now, looking at triad census vs triad allegation
+
+```{r}
+# plot: igraph - XX <- make_graph(y) <- test$nets[1,,] ??
+# adj mat: XX <- as_adj_matrix((plot), type = "both", sparse = FALSE) -- adj mat = test_w1 =  test$nets[1,,]
+
+
+igraph::dyad.census(test_wave1ru) #with plot -- works 
+  # Returns: 7 mut, 35 asym, 12678 null 
+igraph::dyad.census(test_wave2ru) #with plot -- works
+  # Returns: 13 mut, 112 asym, 12575 null 
+igraph::dyad.census(test_wave3ru) #with plot -- works
+  # Returns: 3 mut, 69 asym, 12648 null 
+
+
+igraph::triad.census(test_wave1ru) #with plot -- works
+  # Returns:  [1] 663364   5405   1076     11     24     11     15      6      2      0      3      3      0      0      0      0
+
+igraph::triad.census(test_wave2ru) #with plot -- works
+  # Returns:   [1] 650587  16986   1963     37    189     58     56     10     14      0      1      8      4      4      2      1
+
+igraph::triad.census(test_wave3ru) #with plot -- works
+  # Returns:   [1] 658675  10658    462     28     68     13      8      2      5      0      0      0      0      0      1      0
+
+
+
+```
+
+
+
+```{r}
+library(sna)
+
+# Wave 1
+sna::triad.census(test$nets[1,,]) #with adj matrix of test_wave1ru -- triad.census of (test_w1) doesn't work. 
+unloadNamespace("sna")  #detach this package again to avoid interference with other igraph functions 
+  # Returns:         003  012  102   021D 021U 021C 111D 111U 030T 030C 201 120D 120U 120C 210 300
+           # [1,] 663364  5405 1076  11   24   11   15    6    2    0   3    3    0    0   0   0
+  # Same as igraph triad census! 
+
+
+igraph::transitivity(test_wave1ru, type = "global") #with plot
+  # Returns: [1] 0.1764706
+sna::gtrans(test$nets[1,,]) #triad census a different way, but this is with plot - need with adj mat:
+  # Returns: [1] 0.173913
+  ## Prev Code: sna::gtrans(test$nets[1,,]) #with adj matrix
+
+triad_w1ru <- data.frame(sna::triad.census(test$nets[1,,])) #save as df, #with adj matrix
+
+transitivity_w1 <- (3 * triad_w1ru$X300)/(triad_w1ru$X201 + 3 * triad_w1ru$X300) #X300 is variable for transitive triad (the fully closed triad) - we multiply by 3 because there are 3 possible transitive triads
+
+transitivity_w1
+  # Returns 0 (?)
+
+
+
+
+# Wave 2
+sna::triad.census(test$nets[2,,])
+unloadNamespace("sna")  #I will detach this package again
+
+triad_w2ru <- data.frame(sna::triad.census(test$nets[2,,])) #save as df
+
+
+igraph::transitivity(test_wave2ru, type = "global")
+  # Returns: [1] 0.22
+sna::gtrans(test$nets[2,,]) #triad census a different way 
+  # Returns: [1] 0.2842105
+
+transitivity_w2 <- (3 * triad_w2ru$X300)/(triad_w2ru$X201 + 3 * triad_w2ru$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_w2
+  # Returns: [1] 0.75
+
+
+
+# Wave 3
+sna::triad.census(test$nets[3,,])
+   # Returns: 003    012   102   021D  021U  021C  111D  111U  030T  030C 201  120D  120U 120C  210  300
+   #    [1,]  658675 10658 462   28    68    13     8     2     5    0    0    0     0     0     1   0
+
+unloadNamespace("sna")  #I will detach this package again
+
+triad_w3ru <- data.frame(sna::triad.census(test$nets[3,,])) #save as df
+
+
+igraph::transitivity(test_wave3ru, type = "global")
+  # Returns: [1] 0.1313869
+sna::gtrans(test$nets[3,,]) #triad census a different way 
+  # Returns: [1] 0.25
+
+transitivity_w3 <- (3 * triad_w3ru$X300)/(triad_w3ru$X201 + 3 * triad_w3ru$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_w3
+  # Returns: [1] NaN
+
+```
+
+NEED TO INCLUDE TRIADS - TRANSITIVITY 
+OUTDEGREE AND RECIPROCITY ARE ALWAYS IN THERE, ALSO NEED OUTDEGREE ACTIVITY OR IN DEGREE POPULARITY. ALSO NEED SOMETHING FOR TRANSITIVITY - GWESP VARIABLE AND EFFECTS TO INCLUDE - MAKE SURE TO INCLUDE ONE OF THESE TOO.
+
+
+
+## Network visualisation: Let’s make size proportional to betweenness score
+``` {r}
+# changing V of Wave1
+V(test_wave1ru)$size = betweenness(test_wave1ru, normalized = T, directed = FALSE) * 60 + 10  #after some trial and error
+
+
+ ## multiplication - changing 60 changes the difference in size,, adding 10 makes the smallest visible
+plot(test_wave1ru, mode = "undirected")
+ ## stuck: need to remove ids
+
+
+# igraph, want no overlap: igraph plotting no overlap -- a lot of layout functions -- want to hold printing device constant, and then reduce overlap...the idea is to push least central egos out 
+
+set.seed(2345)
+l <- layout_with_mds(test_wave1ru)  #https://igraph.org/r/doc/layout_with_mds.html
+plot(test_wave1ru, layout = l)
+# story in second plot: 5 clusters ? (around XX, XX, XX, XX, and XX) - and in-between (which wasn't as clear before)
+ ## stuck: need to remove ids
+
+
+#NOTE: REF LAB 4 TO MODIFY THE THE SIZING/APPEARANCE OF THE NETWORK VISUALS
+
+```
+
+
+
+
+
+IF NEEDED LATER:
+
+# Now, try to loop in gender 
+## Make simple adj matrix for gender 
+```{r}
+
+
+```
+
+
+

@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Paige Kemper" />
+
+<meta name="date" content="2025-10-17" />
+
+<title>gof</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+<link rel="stylesheet" href="tweaks.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    My journal
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="lab1.html">Page 1</a>
+    </li>
+    <li>
+      <a href="lab2.html">Page 2</a>
+    </li>
+    <li>
+      <a href="lab3.html">Page 3</a>
+    </li>
+    <li>
+      <a href="lab4.html">Page 4</a>
+    </li>
+    <li>
+      <a href="lab5.html">Page 5</a>
+    </li>
+    <li>
+      <a href="lab6.html">Page 6</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    codereview
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="codereview.html">codereview</a>
+    </li>
+    <li>
+      <a href="codereview2.html">codereview2</a>
+    </li>
+    <li>
+      <a href="codereview3.html">codereview3</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    rsiena
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="rsiena.html">rsiena</a>
+    </li>
+    <li>
+      <a href="rsiena2.html">rsiena2</a>
+    </li>
+    <li>
+      <a href="gof.html"></a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Research
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="researchquestions.html">Research Questions</a>
+    </li>
+    <li>
+      <a href="databasedraft.html">Developing Database</a>
+    </li>
+    <li>
+      <a href="databasedraft2.html">Second draft</a>
+    </li>
+    <li>
+      <a href="workingdraft.html">Working Draft</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/pkemper800/labjournal">
+    <span class="fab fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">gof</h1>
+<h4 class="author">Paige Kemper</h4>
+<h4 class="date">2025-10-17</h4>
+
+</div>
+
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<p>Last compiled on October, 2025</p>
+<p><br></p>
+<div id="goodness-of-fit" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Goodness of Fit</h1>
+<p>estimate Rsiena model, or estimate basic model from Rsiena package
+with something of 2<br />
+behavioral data - could use s501 and s502 return depths of 2 - in
+siena07</p>
+<div id="data---follow-rsiena-procedure" class="section level2"
+number="1.1">
+<h2><span class="header-section-number">1.1</span> Data - follow RSIENA
+procedure</h2>
+<pre class="r test"><code>rm(list=ls()) #start clean</code></pre>
+<hr />
+</div>
+<div id="using-r-sienna-example-load-packages" class="section level2"
+number="1.2">
+<h2><span class="header-section-number">1.2</span> Using R Sienna
+example: Load packages</h2>
+<pre class="r test"><code>fpackage.check &lt;- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave &lt;- function(x, file = NULL, location = &quot;./data/processed/&quot;) {
+    ifelse(!dir.exists(&quot;data&quot;), dir.create(&quot;data&quot;), FALSE)
+    ifelse(!dir.exists(&quot;data/processed&quot;), dir.create(&quot;data/processed&quot;), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename &lt;- substr(gsub(&quot;[:-]&quot;, &quot;&quot;, Sys.time()), 1, 8)
+    totalname &lt;- paste(location, datename, file, &quot;.rda&quot;, sep = &quot;&quot;)
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload &lt;- function(filename) {
+    load(filename)
+    get(ls()[ls() != &quot;filename&quot;])
+}
+
+fshowdf &lt;- function(x, ...) {
+    knitr::kable(x, digits = 2, &quot;html&quot;, ...) %&gt;%
+        kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)) %&gt;%
+        kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)
+}
+
+colorize &lt;- function(x, color) {
+    sprintf(&quot;&lt;span style=&#39;color: %s;&#39;&gt;%s&lt;/span&gt;&quot;, color, x)
+}</code></pre>
+<pre class="r test"><code>packages = c(&quot;RSiena&quot;, &quot;devtools&quot;, &quot;igraph&quot;)
+fpackage.check(packages)</code></pre>
+<pre class="test2"><code>#&gt; [[1]]
+#&gt; NULL
+#&gt; 
+#&gt; [[2]]
+#&gt; NULL
+#&gt; 
+#&gt; [[3]]
+#&gt; NULL</code></pre>
+<pre class="r test"><code># devtools::install_github(&#39;JochemTolsma/RsienaTwoStep&#39;, build_vignettes=TRUE)
+packages = c(&quot;RsienaTwoStep&quot;)
+fpackage.check(packages)</code></pre>
+<pre class="test2"><code>#&gt; [[1]]
+#&gt; NULL</code></pre>
+<p>NEED DATA - use build in datasets from RSIENNA ?s501 Is adjacency
+matrix for network type 1. Goal: Follow steps in 7.1 for different
+data:</p>
+</div>
+</div>
+<div id="step-1.-define-data" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Step 1. Define
+data</h1>
+<p>Dependent variable: ties</p>
+<pre class="r test"><code>s501 #network at timepoint 1</code></pre>
+<pre class="test2"><code>#&gt;    V1 V2 V3 V4 V5 V6 V7 V8 V9 V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V20 V21 V22 V23 V24 V25 V26
+#&gt; 1   0  0  0  0  0  0  0  0  0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2   0  0  0  0  0  0  1  0  0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 3   0  0  0  1  0  0  0  0  1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4   0  0  1  0  0  0  0  0  1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 6   0  0  0  0  0  0  0  1  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 7   0  1  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 8   0  0  0  0  0  1  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 9   0  0  1  1  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10  0  0  0  0  0  0  0  0  0   0   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11  0  1  0  0  0  0  0  0  0   0   0   0   0   0   1   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 12  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 13  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14  1  0  0  0  0  0  0  0  0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15  0  0  0  0  0  0  0  0  0   1   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 16  0  0  0  0  0  0  0  0  0   0   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 17  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   1   1   0   1   1   0   1   0   0
+#&gt; 18  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 19  0  0  0  0  0  0  0  0  0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1
+#&gt; 20  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0
+#&gt; 22  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   1   0   0   0   0   0
+#&gt; 23  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+#&gt; 24  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   1   0   1   1   1   0   0   0
+#&gt; 25  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0
+#&gt; 26  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 27  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 28  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 29  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 30  0  0  0  0  0  0  0  0  0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 31  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   0
+#&gt; 32  0  0  0  0  1  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0
+#&gt; 33  0  0  0  0  0  0  0  0  0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 35  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 36  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 37  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 38  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 39  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 40  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 41  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 42  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 43  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0
+#&gt; 44  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 45  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 46  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 47  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 48  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 49  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 50  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt;    V27 V28 V29 V30 V31 V32 V33 V34 V35 V36 V37 V38 V39 V40 V41 V42 V43 V44 V45 V46 V47 V48 V49 V50
+#&gt; 1    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 3    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5    0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 6    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 7    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0
+#&gt; 8    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 9    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 12   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0
+#&gt; 13   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 16   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 17   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 18   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 19   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 20   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 22   0   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 23   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 24   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 25   0   0   0   0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 26   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0
+#&gt; 27   0   1   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 28   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 29   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 30   0   0   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 31   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 32   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 33   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 35   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 36   0   0   0   0   0   0   0   0   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 37   0   0   0   0   1   1   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 38   0   0   0   0   0   0   0   0   0   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 39   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 40   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   1   1   0   0   0
+#&gt; 41   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 42   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0
+#&gt; 43   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 44   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 45   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   1   1   0   0   0
+#&gt; 46   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   1   0   0   0   1   0
+#&gt; 47   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 48   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   1   0
+#&gt; 49   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0
+#&gt; 50   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0</code></pre>
+<pre class="r test"><code>s502 #network at timepoint 2</code></pre>
+<pre class="test2"><code>#&gt;    V1 V2 V3 V4 V5 V6 V7 V8 V9 V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V20 V21 V22 V23 V24 V25 V26
+#&gt; 1   0  0  0  0  0  0  0  0  0   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 3   0  0  0  1  0  0  0  0  1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4   0  0  1  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5   0  0  0  1  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 6   0  0  0  0  0  0  0  1  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 7   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 8   0  0  0  0  0  1  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 9   0  0  1  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10  1  0  0  0  0  0  0  0  0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11  1  0  0  0  0  0  0  0  0   1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   1
+#&gt; 12  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 13  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14  1  0  0  0  0  0  0  0  0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 16  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 17  0  0  0  1  1  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0
+#&gt; 18  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 19  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 20  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 22  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 23  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 24  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   0   1   0   0   0   0
+#&gt; 25  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+#&gt; 26  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 27  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 28  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+#&gt; 29  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 30  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 31  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 32  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 33  0  0  0  0  0  0  0  0  0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34  0  0  0  1  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 35  0  0  0  0  0  1  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 36  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 37  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0
+#&gt; 38  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 39  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 40  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 41  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 42  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 43  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 44  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 45  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 46  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 47  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 48  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 49  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 50  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0
+#&gt;    V27 V28 V29 V30 V31 V32 V33 V34 V35 V36 V37 V38 V39 V40 V41 V42 V43 V44 V45 V46 V47 V48 V49 V50
+#&gt; 1    0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 3    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 6    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 7    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 8    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 9    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 12   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0
+#&gt; 13   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 16   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 17   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 18   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 19   0   0   0   1   0   0   0   0   0   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 20   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21   0   0   0   0   1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 22   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 23   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 24   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 25   1   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 26   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 27   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 28   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 29   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 30   0   0   1   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 31   0   0   0   0   0   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 32   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 33   0   0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 35   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 36   0   0   0   1   0   0   0   0   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 37   0   0   0   0   1   1   0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 38   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 39   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 40   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   1   1   0   0   0
+#&gt; 41   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 42   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 43   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 44   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 45   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   1   1   0   0   0
+#&gt; 46   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   1   0   1   0   1   0
+#&gt; 47   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   1   1   0   0   0   0
+#&gt; 48   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   1   0
+#&gt; 49   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0
+#&gt; 50   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0</code></pre>
+<p>Inspect networks. Remove NAs, make sure diagonal. Need to see binary
+(not weighted)</p>
+<pre class="r test"><code># come back to this </code></pre>
+<p>Put networks in an array</p>
+<pre class="r test"><code># mynet
+
+dim(s501) #says 50x50: 50 rows, 50 columns in data. </code></pre>
+<pre class="test2"><code>#&gt; [1] 50 50</code></pre>
+<pre class="r test"><code>nets &lt;- array (data = c(s501, s502), dim = c(dim(s501), 2)) #
+c(dim(s501),2)</code></pre>
+<pre class="test2"><code>#&gt; [1] 50 50  2</code></pre>
+<pre class="r test"><code># dimentions of array are number of columns and number of rows </code></pre>
+<p>could replace this with data set from last week</p>
+<p>Define dependent - and independent - variable</p>
+<pre class="r test"><code>net &lt;- sienaDependent(nets) #dependent variable 
+
+  # independent variable - s50a - we will take first way 
+
+#net$alcohol
+
+#s50a[,1]alcohol
+
+
+alcohol &lt;- s50a[,1]#alcohol
+ # don&#39;t need wave 2 - just modeling at independent variable, influencing all ministeps between time 1 and time 2 
+alcohol </code></pre>
+<pre class="test2"><code>#&gt;  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 
+#&gt;  3  2  2  2  3  4  4  4  2  4  5  5  3  3  4  4  2  4  3  2  1  3  4  3  3  4  2  2  3  1  4  4  3 
+#&gt; 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 
+#&gt;  2  3  4  2  3  2  1  4  4  2  5  2  2  2  2  1  1</code></pre>
+<pre class="r test"><code>alcohol &lt;- coCovar(alcohol)# at actor level - mean centered - is a time constant coVariate </code></pre>
+<p>Now combine into dataset - if use Rsiena, need this.</p>
+<pre class="r test"><code>mydata &lt;- sienaDataCreate(net, alcohol)
+
+myeff &lt;- getEffects(mydata) #have a look 
+myeff</code></pre>
+<pre class="test2"><code>#&gt;   effectName               include fix   test  initialValue parm
+#&gt; 1 basic rate parameter net TRUE    FALSE FALSE    4.69604   0   
+#&gt; 2 outdegree (density)      TRUE    FALSE FALSE   -1.48852   0   
+#&gt; 3 reciprocity              TRUE    FALSE FALSE    0.00000   0</code></pre>
+<p>Now can look at myeff - look at starting values - has density of two
+networks, reciprocity</p>
+<p>Want much more statistics for model, though!!</p>
+</div>
+<div id="step-2" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Step 2:</h1>
+<p>Can see all effects that could include in the dataset. Which is a
+lot. And this is a simple dataset. and yeah, its huge. Also can see that
+the type depends on weight function (evaluation (), endowment (), and
+creation ())</p>
+<p>Example. Jochem wants to make tie with Jos. Jochem’s consideration to
+make a tie with Jos could be different than consideration to maintain a
+tie, could be different that decistions to break a tie. Can’t estimate
+all three. Evalution: mechanisms the same for making as breaking,
+endowment = maintaining, creation = if there are none then what is the
+cost.</p>
+<p>In this course: just use evaluation function. Assume mechanisms and
+functions to make/break ties are similar. include degree for evaluation.
+But what are all these effects? - should be able to calculate statistic
+for each effect for an ego in a network… Mathematical formula in chapter
+12.</p>
+<pre class="r test"><code>effectsDocumentation(myeff)</code></pre>
+<pre class="test2"><code>#&gt; Effects documentation written to file myeff.html .</code></pre>
+<p>Make sure to understand out degree and reciprocity effects -
+statistics - will play around with this next week. Need to think of
+theory for which statistics are relevant. - Look at literature for
+statistics, think about it, play and see if effects exists - how work in
+reality? propose idea, write notation, see if effect exists in manual,
+etc. Lots of notation because everyone is looking for their own effects.
+- need to include more effects if what to.</p>
+</div>
+<div id="step-3-look-at-intial-data" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Step 3: Look at intial
+data</h1>
+<ul>
+<li>good for deciding statistics to use.</li>
+</ul>
+<pre class="r test"><code>print01Report(mydata)
+
+# gives initial description of data 
+# reading network variables , covariates, density measures/changes in networks, tie changes between subsequent observations... calculate how much networks changed over time. 
+# dont use balance calculation </code></pre>
+</div>
+<div id="step-4-add-effects" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Step 4: Add
+effects</h1>
+<pre class="r test"><code>myeff &lt;- includeEffects(myeff, isolateNet, inPop, outAct)</code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName            shortName  include fix   test  initialValue parm
+#&gt; 1  78          indegree - popularity inPop      TRUE    FALSE FALSE          0   0   
+#&gt; 2 106          outdegree - activity  outAct     TRUE    FALSE FALSE          0   0   
+#&gt; 3 149          network-isolate       isolateNet TRUE    FALSE FALSE          0   0</code></pre>
+<pre class="r test"><code>#outAct - outdegree related activity </code></pre>
+<p>outAct - look at the number of times I have and square that:
+especially the people that have a lot of ties will send a lot of ties. -
+evaluation function of tie1 0 ties, and tie1 4 ties - then at t2 people
+who have ties are more likely to send more ties</p>
+<p>We know tie distributions are skewed, some people send a lot of ties
+and others dont.</p>
+<p>inPop: in degree activity: people who reseive a lot of in-degrees
+send a lot of out-degrees</p>
+<p>isolateNet: people without a lot of indegree nets.</p>
+<p>Can see that starting values are 0 – hypothesis testing</p>
+</div>
+<div id="step-5-estimation" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Step 5: Estimation</h1>
+<pre class="r test"><code>myAlgorithm &lt;- sienaAlgorithmCreate(projname = &quot;test&quot;)</code></pre>
+<pre class="test2"><code>#&gt; If you use this algorithm object, siena07 will create/use an output file test.txt .</code></pre>
+<pre class="r test"><code># define algorithm that says how I want to estimate my model. will use defaults. 
+
+ansM1 &lt;- siena07(myAlgorithm, data = mydata, effects = myeff, returnDeps = TRUE)
+# then run it to see 
+
+ansM1</code></pre>
+<pre class="test2"><code>#&gt; Estimates, standard errors and convergence t-ratios
+#&gt; 
+#&gt;                                 Estimate   Standard   Convergence 
+#&gt;                                              Error      t-ratio   
+#&gt; 
+#&gt; Rate parameters: 
+#&gt;   0       Rate parameter         5.6156  ( 0.8831   )             
+#&gt; 
+#&gt; Other parameters: 
+#&gt;   1. eval outdegree (density)   -2.0893  ( 0.4455   )   -0.0269   
+#&gt;   2. eval reciprocity            2.4306  ( 0.2431   )   -0.0712   
+#&gt;   3. eval indegree - popularity  0.0718  ( 0.0632   )   -0.0254   
+#&gt;   4. eval outdegree - activity  -0.0673  ( 0.0744   )   -0.0410   
+#&gt;   5. eval network-isolate        1.8826  ( 2.2509   )   -0.0286   
+#&gt; 
+#&gt; Overall maximum convergence ratio:    0.0975 
+#&gt; 
+#&gt; 
+#&gt; Total of 2552 iteration steps.</code></pre>
+<p>Now have first estimated Rsiena model!</p>
+<ul>
+<li>see:negative out degree</li>
+<li>2.4 reciprocity: is important then in this model</li>
+<li>indegree populaty is popular but not significant…</li>
+</ul>
+<p>if significant: more indegrees- more likely to send later. people
+with more out-degrees - more likely to send less (negative). isolate
+more likely to be alone.</p>
+<p>Need to think of model that makes sense in this</p>
+</div>
+<div id="ignore-above" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> IGNORE ABOVE</h1>
+<p>REVIEWING RSIENA NOW - negative degree - density is less than .5 -
+interpretations - Mailing list for TOM</p>
+<ul>
+<li>Now: re-read chapter 2 and chapter 5</li>
+</ul>
+<p>Afternoon: play with estimating our own models Nice to do with our
+own data - collaboration networks. Logic of RSIENA: took actor oriented
+approach - works if ties are directed. if undirected network, logic is
+different: the actor deciding on undirected tie is difficult. Advise:
+for now treat as undirected - and then evaluate tie. undirected tie by
+reach consensus, forced into concensus, etc - reciprocity matters less
+now.</p>
+</div>
+<div id="now-play-with-it" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Now play with it</h1>
+<p>Now - referencing web scraping site</p>
+<pre class="r test"><code>fcolnet &lt;- function(data = scholars, university = &quot;RU&quot;, discipline = &quot;sociology&quot;, waves = list(c(2015,
+    2018), c(2019, 2023)), type = c(&quot;first&quot;)) {
+
+    # step 1
+    demographics &lt;- do.call(rbind.data.frame, data$demographics)
+    demographics &lt;- demographics %&gt;%
+        mutate(Universiteit1.22 = replace(Universiteit1.22, is.na(Universiteit1.22), &quot;&quot;), Universiteit2.22 = replace(Universiteit2.22,
+            is.na(Universiteit2.22), &quot;&quot;), Universiteit1.24 = replace(Universiteit1.24, is.na(Universiteit1.24),
+            &quot;&quot;), Universiteit2.24 = replace(Universiteit2.24, is.na(Universiteit2.24), &quot;&quot;), discipline.22 = replace(discipline.22,
+            is.na(discipline.22), &quot;&quot;), discipline.24 = replace(discipline.24, is.na(discipline.24), &quot;&quot;))
+
+    sample &lt;- which((demographics$Universiteit1.22 %in% university | demographics$Universiteit2.22 %in%
+        university | demographics$Universiteit1.24 %in% university | demographics$Universiteit2.24 %in%
+        university) &amp; (demographics$discipline.22 %in% discipline | demographics$discipline.24 %in% discipline))
+
+    demographics_soc &lt;- demographics[sample, ]
+    scholars_sel &lt;- lapply(scholars, &quot;[&quot;, sample)
+
+    # step 2
+    ids &lt;- demographics_soc$au_id
+    nwaves &lt;- length(waves)
+    nets &lt;- array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works &lt;- tibble(works_id = unlist(lapply(scholars_sel$work, function(l) l$id)), works_author = unlist(lapply(scholars_sel$work,
+        function(l) l$author), recursive = FALSE), works_year = unlist(lapply(scholars_sel$work, function(l) l$publication_year),
+        recursive = FALSE))
+
+    df_works &lt;- df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == &quot;first&quot;) {
+        for (j in 1:nwaves) {
+            df_works_w &lt;- df_works[df_works$works_year &gt;= waves[[j]][1] &amp; df_works$works_year &lt;= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego &lt;- df_works_w$works_author[i][[1]]$au_id[1]
+                alters &lt;- df_works_w$works_author[i][[1]]$au_id[-1]
+                if (sum(ids %in% ego) &gt; 0 &amp; sum(ids %in% alters) &gt; 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] &lt;- 1
+                }
+            }
+        }
+    }
+
+    if (type == &quot;last&quot;) {
+        for (j in 1:nwaves) {
+            df_works_w &lt;- df_works[df_works$works_year &gt;= waves[[j]][1] &amp; df_works$works_year &lt;= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego &lt;- rev(df_works_w$works_author[i][[1]]$au_id)[1]
+                alters &lt;- rev(df_works_w$works_author[i][[1]]$au_id)[-1]
+                if (sum(ids %in% ego) &gt; 0 &amp; sum(ids %in% alters) &gt; 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] &lt;- 1
+                }
+            }
+        }
+    }
+
+    if (type == &quot;all&quot;) {
+        for (j in 1:nwaves) {
+            df_works_w &lt;- df_works[df_works$works_year &gt;= waves[[j]][1] &amp; df_works$works_year &lt;= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos &lt;- df_works_w$works_author[i][[1]]$au_id
+                if (sum(ids %in% egos) &gt; 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] &lt;- 1
+                }
+            }
+        }
+    }
+    output &lt;- list()
+    output$data &lt;- scholars_sel
+    output$nets &lt;- nets
+    return(output)
+}</code></pre>
+<p>Example in class from 10 October Siena dependent variable</p>
+<pre class="r test"><code># Step 1: load data
+library(RSiena)
+?sienaDependent #look for examples - script for how to run stuff 
+
+
+# then check waves available
+s501 #network at timepoint 1</code></pre>
+<pre class="test2"><code>#&gt;    V1 V2 V3 V4 V5 V6 V7 V8 V9 V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V20 V21 V22 V23 V24 V25 V26
+#&gt; 1   0  0  0  0  0  0  0  0  0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2   0  0  0  0  0  0  1  0  0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 3   0  0  0  1  0  0  0  0  1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4   0  0  1  0  0  0  0  0  1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 6   0  0  0  0  0  0  0  1  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 7   0  1  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 8   0  0  0  0  0  1  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 9   0  0  1  1  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10  0  0  0  0  0  0  0  0  0   0   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11  0  1  0  0  0  0  0  0  0   0   0   0   0   0   1   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 12  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 13  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14  1  0  0  0  0  0  0  0  0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15  0  0  0  0  0  0  0  0  0   1   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 16  0  0  0  0  0  0  0  0  0   0   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 17  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   1   1   0   1   1   0   1   0   0
+#&gt; 18  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 19  0  0  0  0  0  0  0  0  0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1
+#&gt; 20  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0
+#&gt; 22  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   1   0   0   0   0   0
+#&gt; 23  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+#&gt; 24  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   1   0   1   1   1   0   0   0
+#&gt; 25  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0
+#&gt; 26  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 27  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 28  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 29  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 30  0  0  0  0  0  0  0  0  0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 31  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   0
+#&gt; 32  0  0  0  0  1  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0
+#&gt; 33  0  0  0  0  0  0  0  0  0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 35  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 36  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 37  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 38  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 39  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 40  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 41  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 42  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 43  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0
+#&gt; 44  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 45  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 46  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 47  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 48  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 49  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 50  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt;    V27 V28 V29 V30 V31 V32 V33 V34 V35 V36 V37 V38 V39 V40 V41 V42 V43 V44 V45 V46 V47 V48 V49 V50
+#&gt; 1    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 3    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5    0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 6    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 7    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0
+#&gt; 8    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 9    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 12   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0
+#&gt; 13   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 16   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 17   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 18   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 19   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 20   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 22   0   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 23   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 24   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 25   0   0   0   0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 26   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0
+#&gt; 27   0   1   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 28   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 29   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 30   0   0   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 31   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 32   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 33   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 35   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 36   0   0   0   0   0   0   0   0   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 37   0   0   0   0   1   1   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 38   0   0   0   0   0   0   0   0   0   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 39   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 40   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   1   1   0   0   0
+#&gt; 41   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 42   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0
+#&gt; 43   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 44   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 45   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   1   1   0   0   0
+#&gt; 46   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   1   0   0   0   1   0
+#&gt; 47   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 48   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   1   0
+#&gt; 49   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0
+#&gt; 50   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0</code></pre>
+<pre class="r test"><code>s502 #network at timepoint 2</code></pre>
+<pre class="test2"><code>#&gt;    V1 V2 V3 V4 V5 V6 V7 V8 V9 V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V20 V21 V22 V23 V24 V25 V26
+#&gt; 1   0  0  0  0  0  0  0  0  0   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 3   0  0  0  1  0  0  0  0  1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4   0  0  1  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5   0  0  0  1  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 6   0  0  0  0  0  0  0  1  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 7   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 8   0  0  0  0  0  1  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 9   0  0  1  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10  1  0  0  0  0  0  0  0  0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11  1  0  0  0  0  0  0  0  0   1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   1
+#&gt; 12  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 13  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14  1  0  0  0  0  0  0  0  0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 16  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 17  0  0  0  1  1  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0
+#&gt; 18  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 19  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 20  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 22  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 23  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 24  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   0   1   0   0   0   0
+#&gt; 25  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+#&gt; 26  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 27  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 28  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+#&gt; 29  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 30  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 31  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 32  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 33  0  0  0  0  0  0  0  0  0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34  0  0  0  1  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 35  0  0  0  0  0  1  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 36  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 37  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0
+#&gt; 38  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 39  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 40  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 41  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 42  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 43  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 44  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 45  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 46  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 47  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 48  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 49  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 50  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0
+#&gt;    V27 V28 V29 V30 V31 V32 V33 V34 V35 V36 V37 V38 V39 V40 V41 V42 V43 V44 V45 V46 V47 V48 V49 V50
+#&gt; 1    0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 3    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 6    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 7    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 8    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 9    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 12   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0
+#&gt; 13   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 16   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 17   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 18   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 19   0   0   0   1   0   0   0   0   0   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 20   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21   0   0   0   0   1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 22   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 23   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 24   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 25   1   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 26   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 27   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 28   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 29   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 30   0   0   1   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 31   0   0   0   0   0   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 32   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 33   0   0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 35   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 36   0   0   0   1   0   0   0   0   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 37   0   0   0   0   1   1   0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 38   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 39   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 40   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   1   1   0   0   0
+#&gt; 41   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 42   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 43   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 44   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 45   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   1   1   0   0   0
+#&gt; 46   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   1   0   1   0   1   0
+#&gt; 47   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   1   1   0   0   0   0
+#&gt; 48   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   1   0
+#&gt; 49   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0
+#&gt; 50   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0</code></pre>
+<pre class="r test"><code>s503 #network at timepoint </code></pre>
+<pre class="test2"><code>#&gt;    V1 V2 V3 V4 V5 V6 V7 V8 V9 V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V20 V21 V22 V23 V24 V25 V26
+#&gt; 1   0  0  0  0  0  0  0  0  0   1   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 2   0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   1
+#&gt; 3   0  0  0  1  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 6   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+#&gt; 7   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   1
+#&gt; 8   0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
+#&gt; 9   0  0  1  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10  1  0  0  0  0  0  0  0  0   0   1   1   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11  1  0  0  0  0  0  0  0  0   1   0   0   0   1   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 12  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 13  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14  1  0  0  0  0  0  0  0  0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15  0  0  0  0  0  0  0  0  0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 16  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 17  0  0  0  0  1  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0
+#&gt; 18  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 19  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 20  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 22  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 23  0  1  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 24  0  0  0  0  0  1  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 25  0  0  0  0  0  0  0  1  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 26  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0
+#&gt; 27  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0
+#&gt; 28  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 29  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 30  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 31  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0
+#&gt; 32  0  0  0  1  1  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 33  0  0  0  0  0  0  0  0  0   1   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34  0  0  1  1  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 35  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 36  0  0  0  0  0  0  0  0  0   0   0   0   0   0   1   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 37  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0
+#&gt; 38  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 39  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 40  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 41  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 42  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 43  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 44  0  0  0  0  0  0  1  0  0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   1
+#&gt; 45  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 46  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 47  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 48  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 49  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 50  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt;    V27 V28 V29 V30 V31 V32 V33 V34 V35 V36 V37 V38 V39 V40 V41 V42 V43 V44 V45 V46 V47 V48 V49 V50
+#&gt; 1    0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 2    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 3    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 4    0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 5    0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 6    1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 7    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0
+#&gt; 8    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 9    0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 10   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 11   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 12   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 13   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 14   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 15   0   0   1   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 16   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0
+#&gt; 17   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 18   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 19   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 20   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 21   0   0   0   0   1   0   0   0   0   0   1   0   0   1   0   0   0   0   1   0   0   0   0   0
+#&gt; 22   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 23   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 24   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 25   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 26   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 27   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 28   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 29   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 30   0   0   1   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 31   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 32   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 33   0   0   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 34   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 35   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1
+#&gt; 36   0   0   0   1   0   0   0   0   0   0   0   1   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 37   0   0   0   0   1   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0
+#&gt; 38   0   0   0   0   0   0   0   0   0   1   0   0   0   0   1   0   0   0   0   0   0   0   0   0
+#&gt; 39   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0
+#&gt; 40   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   1   1   1   0   0
+#&gt; 41   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 42   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0
+#&gt; 43   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   0   0   0
+#&gt; 44   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0
+#&gt; 45   0   0   0   0   0   0   0   0   0   0   0   0   1   1   0   0   0   0   0   1   1   0   0   0
+#&gt; 46   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   1   1   1   0
+#&gt; 47   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0
+#&gt; 48   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   1   0
+#&gt; 49   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0   0   0   0   0   1   0   1   0   0
+#&gt; 50   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0</code></pre>
+<pre class="r test"><code>mynet1 &lt;- sienaDependent(array(c(s501, s502, s503), dim=c(50, 50, 3)))
+mybeh &lt;- sienaDependent(s50a, type=&quot;behavior&quot;)
+
+ # look for smoking and drinking behaviors
+
+smoke &lt;- s50s #time varying covariate. Time constant covar - varCovar
+smoke &lt;- varCovar(s50s)
+
+mydata_example &lt;- sienaDataCreate(mynet1, mybeh, smoke)
+
+
+
+# Step 2: look at data
+#print report on data reports
+
+print01Report(mydata_example)
+
+
+# Step 3: add effects 
+myeff_example &lt;- getEffects(mydata_example)
+myeff_example</code></pre>
+<pre class="test2"><code>#&gt;   name   effectName                      include fix   test  initialValue parm
+#&gt; 1 mynet1 constant mynet1 rate (period 1) TRUE    FALSE FALSE    4.69604   0   
+#&gt; 2 mynet1 constant mynet1 rate (period 2) TRUE    FALSE FALSE    4.32885   0   
+#&gt; 3 mynet1 outdegree (density)             TRUE    FALSE FALSE   -1.46770   0   
+#&gt; 4 mynet1 reciprocity                     TRUE    FALSE FALSE    0.00000   0   
+#&gt; 5 mybeh  rate mybeh (period 1)           TRUE    FALSE FALSE    0.70571   0   
+#&gt; 6 mybeh  rate mybeh (period 2)           TRUE    FALSE FALSE    0.84939   0   
+#&gt; 7 mybeh  mybeh linear shape              TRUE    FALSE FALSE    0.32237   0   
+#&gt; 8 mybeh  mybeh quadratic shape           TRUE    FALSE FALSE    0.00000   0</code></pre>
+<pre class="r test"><code>myeff_example &lt;- includeEffects(myeff_example, unequalX, name=&quot;mynet1&quot;, interaction1 = &quot;smoke&quot;)</code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName    shortName include fix   test  initialValue parm
+#&gt; 1 501          unequal smoke unequalX  TRUE    FALSE FALSE          0   0</code></pre>
+<pre class="r test"><code>myeff_example</code></pre>
+<pre class="test2"><code>#&gt;   name   effectName                      include fix   test  initialValue parm
+#&gt; 1 mynet1 constant mynet1 rate (period 1) TRUE    FALSE FALSE    4.69604   0   
+#&gt; 2 mynet1 constant mynet1 rate (period 2) TRUE    FALSE FALSE    4.32885   0   
+#&gt; 3 mynet1 outdegree (density)             TRUE    FALSE FALSE   -1.46770   0   
+#&gt; 4 mynet1 reciprocity                     TRUE    FALSE FALSE    0.00000   0   
+#&gt; 5 mynet1 unequal smoke                   TRUE    FALSE FALSE    0.00000   0   
+#&gt; 6 mybeh  rate mybeh (period 1)           TRUE    FALSE FALSE    0.70571   0   
+#&gt; 7 mybeh  rate mybeh (period 2)           TRUE    FALSE FALSE    0.84939   0   
+#&gt; 8 mybeh  mybeh linear shape              TRUE    FALSE FALSE    0.32237   0   
+#&gt; 9 mybeh  mybeh quadratic shape           TRUE    FALSE FALSE    0.00000   0</code></pre>
+<pre class="r test"><code>#make algorithm to then estimate it
+algo_ex &lt;- sienaAlgorithmCreate(projname = &quot;test_ex&quot;)</code></pre>
+<pre class="test2"><code>#&gt; If you use this algorithm object, siena07 will create/use an output file test_ex.txt .</code></pre>
+<pre class="r test"><code>answer_ex &lt;- siena07(algo_ex, data=mydata_example, effects=myeff_example, returnDeps = TRUE)
+
+answer_ex</code></pre>
+<pre class="test2"><code>#&gt; Estimates, standard errors and convergence t-ratios
+#&gt; 
+#&gt;                                           Estimate   Standard   Convergence 
+#&gt;                                                        Error      t-ratio   
+#&gt; Network Dynamics 
+#&gt;   1. rate constant mynet1 rate (period 1)  5.8187  ( 0.8090   )    0.0319   
+#&gt;   2. rate constant mynet1 rate (period 2)  4.5845  ( 0.6860   )   -0.0170   
+#&gt;   3. eval outdegree (density)             -2.2673  ( 0.1139   )    0.0424   
+#&gt;   4. eval reciprocity                      2.8067  ( 0.1847   )    0.0446   
+#&gt;   5. eval unequal smoke                   -0.2195  ( 0.1375   )    0.0049   
+#&gt; 
+#&gt; Behavior Dynamics
+#&gt;   6. rate rate mybeh (period 1)            1.1864  ( 0.2796   )    0.0157   
+#&gt;   7. rate rate mybeh (period 2)            1.6454  ( 0.4957   )   -0.0085   
+#&gt;   8. eval mybeh linear shape               0.3619  ( 0.1471   )   -0.0078   
+#&gt;   9. eval mybeh quadratic shape           -0.1991  ( 0.0926   )    0.0220   
+#&gt; 
+#&gt; Overall maximum convergence ratio:    0.0661 
+#&gt; 
+#&gt; 
+#&gt; Total of 2877 iteration steps.</code></pre>
+<pre class="r test"><code>#does it change if dependent X 
+myeff_example &lt;- includeEffects(myeff_example, unequalX, name=&quot;mynet1&quot;, interaction1 = &quot;mybeh&quot;) #name = network dependent variable, interaction 1 is covariate (smoking) - if have multiple netowrks, then could have unequalX with respect to X. We replaced smoke with my behavior, and rerun the siena model. This is an algorithm, can ask RSiena to reference previous result with &#39;prevans=ANS&#39; after returnDepts = TRUE</code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName    shortName include fix   test  initialValue parm
+#&gt; 1 314          unequal mybeh unequalX  TRUE    FALSE FALSE          0   0</code></pre>
+<pre class="r test"><code>answer_ex &lt;- siena07(algo_ex, data=mydata_example, effects=myeff_example, returnDeps = TRUE)
+
+answer_ex</code></pre>
+<pre class="test2"><code>#&gt; Estimates, standard errors and convergence t-ratios
+#&gt; 
+#&gt;                                            Estimate   Standard   Convergence 
+#&gt;                                                         Error      t-ratio   
+#&gt; Network Dynamics 
+#&gt;    1. rate constant mynet1 rate (period 1)  5.7866  ( 0.8818   )    0.0431   
+#&gt;    2. rate constant mynet1 rate (period 2)  4.5375  ( 0.7258   )   -0.0559   
+#&gt;    3. eval outdegree (density)             -1.9275  ( 0.2457   )   -0.0262   
+#&gt;    4. eval reciprocity                      2.8053  ( 0.1899   )    0.0006   
+#&gt;    5. eval unequal mybeh                   -0.4961  ( 0.3500   )   -0.0549   
+#&gt;    6. eval unequal smoke                   -0.1958  ( 0.1317   )   -0.0403   
+#&gt; 
+#&gt; Behavior Dynamics
+#&gt;    7. rate rate mybeh (period 1)            1.1835  ( 0.3326   )   -0.0818   
+#&gt;    8. rate rate mybeh (period 2)            1.6595  ( 0.4306   )    0.0338   
+#&gt;    9. eval mybeh linear shape               0.3665  ( 0.1546   )   -0.0135   
+#&gt;   10. eval mybeh quadratic shape           -0.1988  ( 0.1038   )    0.0116   
+#&gt; 
+#&gt; Overall maximum convergence ratio:    0.1343 
+#&gt; 
+#&gt; 
+#&gt; Total of 2926 iteration steps.</code></pre>
+<pre class="r test"><code># looking at results, mybeh = drinking -- ego less likely to spend time with people who drink more or less than them. ego also less likely to spend time with people who smoke more or less, to a lesser extent. Can use unequalX for dependent variables and covariates. key difference in estimation procedure: 
+# we are also modeling behavioral results - behavior changing over time, simulated via ministep logic (one step up or down). The crucial difference: during the algorithm 
+#If count statistic for smoke, then between time point 1 and 2 we use value from timepoint 1. between 2-3, use time point 2. But within the variable, the ego level behavior is changing. is not using the value as observed at t1 - it is using the value as is currently simulated. 
+
+
+
+
+
+#could exclude variable to then include as covariate effect. 
+
+mybeh &lt;- sienaDependent(s50a, type=&quot;behavior&quot;) #defined as dependent variable 
+drinking &lt;- varCovar(s50a) #defined as covariate variable 
+
+#update data object: 
+mydata_example &lt;- sienaDataCreate(mynet1, mybeh, drinking, smoke)
+
+
+#and effects object: 
+myeff_example &lt;- includeEffects(myeff_example, unequalX, name=&quot;mynet1&quot;, interaction1 = &quot;smoke&quot;)</code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName    shortName include fix   test  initialValue parm
+#&gt; 1 501          unequal smoke unequalX  TRUE    FALSE FALSE          0   0</code></pre>
+<pre class="r test"><code>myeff_example &lt;- includeEffects(myeff_example, unequalX, name=&quot;mynet1&quot;, interaction1 = &quot;drinking&quot;)</code></pre>
+<pre class="test2"><code>#&gt; There is no effect with short name unequalX, 
+#&gt; and with interaction1 = &lt;drinking&gt;, interaction2 = &lt;&gt;, and type = &lt;eval&gt;, 
+#&gt; for dependent variable mynet1 .
+#&gt; See effectsDocumentation() for this effects object.</code></pre>
+<pre class="r test"><code>algo_ex2 &lt;- sienaAlgorithmCreate(projname = &quot;test_ex&quot;)</code></pre>
+<pre class="test2"><code>#&gt; If you use this algorithm object, siena07 will create/use an output file test_ex.txt .</code></pre>
+<pre class="r test"><code>answer_ex &lt;- siena07(algo_ex2, data=mydata_example, effects=myeff_example, returnDeps = TRUE)
+answer_ex</code></pre>
+<pre class="test2"><code>#&gt; Estimates, standard errors and convergence t-ratios
+#&gt; 
+#&gt;                                            Estimate   Standard   Convergence 
+#&gt;                                                         Error      t-ratio   
+#&gt; Network Dynamics 
+#&gt;    1. rate constant mynet1 rate (period 1)  5.7317  ( 0.8295   )   -0.0134   
+#&gt;    2. rate constant mynet1 rate (period 2)  4.5060  ( 0.6450   )   -0.0438   
+#&gt;    3. eval outdegree (density)             -1.9243  ( 0.2346   )    0.0023   
+#&gt;    4. eval reciprocity                      2.7991  ( 0.1847   )   -0.0083   
+#&gt;    5. eval unequal mybeh                   -0.4941  ( 0.3278   )   -0.0020   
+#&gt;    6. eval unequal smoke                   -0.1995  ( 0.1350   )   -0.0233   
+#&gt; 
+#&gt; Behavior Dynamics
+#&gt;    7. rate rate mybeh (period 1)            1.1872  ( 0.2981   )   -0.0539   
+#&gt;    8. rate rate mybeh (period 2)            1.6710  ( 0.4008   )    0.0652   
+#&gt;    9. eval mybeh linear shape               0.3635  ( 0.1489   )   -0.0164   
+#&gt;   10. eval mybeh quadratic shape           -0.1994  ( 0.0970   )    0.0248   
+#&gt; 
+#&gt; Overall maximum convergence ratio:    0.1139 
+#&gt; 
+#&gt; 
+#&gt; Total of 2926 iteration steps.</code></pre>
+<pre class="r test"><code>#then the network dynamics change 
+# interpretation of the rate constant - the average amount of ministeps each ego is making between the two observations
+
+#behavioral dynamics: 
+# the rate constant: the number of steps in the behavioral aspect 
+
+#statistic for linear shape - linear shape effect - the value of the *centered* behavioral variable (average in the total sample). 
+# if positive, try to increase behavior. effect is z1 (zed score), with the options of 1, 0, or -1. behavior increases because positively evaluates 1 more than 0, more than -1. At some point, though, behavior will stop increasing - that is z2 (squared!). so, parameter moderates itself with time?? 
+
+# these are the minimum effects to include, because it predicts mean value observe in dataset. 2 parameters - estimate mean behavior. based on model results, what is the mean value. 
+
+# behavioral variables in dataset - everything observed that changes. ex., position (functie), citations, interdisciplinarity score. Problem: is time window large enought to see change? and over time, behavioral variable is only changing - which then must be calculated as continuous depended variable. </code></pre>
+<p>START OF GOODNESS OF FIT</p>
+<pre class="r test"><code># see here: ?&#39;sienaGOF-auxiliary&#39;
+
+# The geodesic distribution is not available from within RSiena, and therefore is copied from the
+# help page of sienaGOF-auxiliary:
+
+# GeodesicDistribution calculates the distribution of non-directed geodesic distances; see
+# ?sna::geodist The default for \code{levls} reflects the usual phenomenon that geodesic distances
+# larger than 5 do not differ appreciably with respect to interpretation.  Note that the levels of
+# the result are named; these names are used in the \code{plot} method.
+GeodesicDistribution &lt;- function(i, data, sims, period, groupName, varName, levls = c(1:5, Inf), cumulative = TRUE,
+    ...) {
+    x &lt;- networkExtraction(i, data, sims, period, groupName, varName)
+    require(sna)
+    a &lt;- sna::geodist(symmetrize(x))$gdist
+    if (cumulative) {
+        gdi &lt;- sapply(levls, function(i) {
+            sum(a &lt;= i)
+        })
+    } else {
+        gdi &lt;- sapply(levls, function(i) {
+            sum(a == i)
+        })
+    }
+    names(gdi) &lt;- as.character(levls)
+    gdi
+}
+
+# The following function is taken from the help page for sienaTest
+
+testall &lt;- function(ans) {
+    for (i in which(ans$test)) {
+        sct &lt;- score.Test(ans, i)
+        cat(ans$requestedEffects$effectName[i], &quot;\n&quot;)
+        print(sct)
+    }
+    invisible(score.Test(ans))
+}</code></pre>
+</div>
+<div id="where-class-starts" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> where class starts</h1>
+<pre class="r test"><code>gofi0 &lt;- sienaGOF(answer_ex, IndegreeDistribution, verbose = FALSE, join = TRUE, varName = &quot;mynet1&quot;)
+gofi0</code></pre>
+<pre class="test2"><code>#&gt; Siena Goodness of Fit ( IndegreeDistribution ), all periods
+#&gt; =====
+#&gt; Monte Carlo Mahalanobis distance test p-value:  0.563 
+#&gt; -----
+#&gt; One tailed test used  (i.e. estimated probability of greater distance than observation).
+#&gt; -----
+#&gt; Calculated joint MHD = ( 12.13 ) for current model.</code></pre>
+<pre class="r test"><code>plot(gofi0)</code></pre>
+<p><img src="gof_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<pre class="r test"><code># variable name from example = mynet
+# x-axis = indegree 
+# y-axis = frequency (ploting the people with 0 in-degrees)</code></pre>
+<p>##Box Plot v Violin plot</p>
+<p>box plot: looking at degree of spread - for many simulations - based
+on parameters / estimation, we have simulated networks. for each
+simulated network, we do an in-degree count. for the median value of the
+simulated networks, is about 20 in this?? Violin plot - represents where
+the majority of the data is..</p>
+<p>red line - red is the observed network. Simulated SHOULD match the
+observed networks - and matches, if the red points are within the plots,
+and ideally close to the median of each.</p>
+<div id="why-do-the-numbers-increase" class="section level2"
+number="9.1">
+<h2><span class="header-section-number">9.1</span> Why do the numbers
+increase?</h2>
+<p>Cumulative in-degree? No. We have 12 nodes in observed network with 0
+degrees. 17 more with one. Is counter intuitive?</p>
+<p>we underestimate number of isolates, and overestimate the number of
+actors with 3-4-5 ties, and over estimate people with FEW degrees…</p>
+<p>Is cumulative because it is stacked throughout one plot.</p>
+</div>
+<div id="testing-with-p-value" class="section level2" number="9.2">
+<h2><span class="header-section-number">9.2</span> Testing with
+p-value:</h2>
+<p>Values are fixed - there are not randomness in targets. we have a
+random variable, so we test a set of randome variables against a set of
+fixed values, and combine it in one test (where we take into account if
+there is a covariance in all of this. if covariance in random
+variables).</p>
+<p>If have 1 random variable and 1 fixed variable: T-test (one-sample
+t-test) This test is more complicated: Monte Carlo Mahalanobis distance
+test p-value (in this example, is: 0.542)</p>
+</div>
+<div id="can-also-do-this-for-out-degree-distribution"
+class="section level2" number="9.3">
+<h2><span class="header-section-number">9.3</span> can also do this for
+OUT DEGREE DISTRIBUTION</h2>
+<div
+id="important-to-do-tests-on-dyad-census-and-triad-census---dont-get-farther-than-dyadic-effect-or-triad-effect-so-want-to-make-sure-that-model-at-least-can-explain-dyad-and-triad-configurations"
+class="section level3" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> IMPORTANT TO DO
+TESTS ON DYAD CENSUS AND TRIAD CENSUS - DON’T GET FARTHER THAN DYADIC
+EFFECT OR TRIAD EFFECT, SO WANT TO MAKE SURE THAT MODEL AT LEAST CAN
+EXPLAIN DYAD AND TRIAD CONFIGURATIONS</h3>
+<p>Triad configuration of</p>
+<p>This is MACRO LEVEL INVESTIGATION</p>
+<pre class="r test"><code># TBD: outdegree distribution
+
+# gofi1 &lt;- sienaGOF(answer_ex, OutdegreeDistribution, verbose = FALSE, join = TRUE, levls = c(0:10, 15, 20), varName = &quot;nynet1&quot;)</code></pre>
+</div>
+</div>
+</div>
+<div id="relative-influence" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> RELATIVE
+INFLUENCE</h1>
+<pre class="r test"><code>library(RSiena)
+library(RsienaTwoStep)
+library(tidyr)
+library(tidyverse)
+# RI &lt;- sienaRI(data = mydata, ans = ansM1)
+
+# RI &lt;- sienaRI(data = mydata_example, ans = answer_ex)
+
+# RSiena:::sienaRI(data = mydata_example, ans = answer_ex)
+
+# RI &lt;- RSiena:::sienaRI(data = mydata_example, ans = answer_ex)
+
+RI &lt;- RSiena:::sienaRI(data = mydata_example, ans = answer_ex)
+
+class(RI)</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;list&quot;</code></pre>
+<pre class="r test"><code># siena RI
+
+#plot(RI, addPieChart = TRUE)
+#plot.sienaRI(RI, addPieChart = TRUE)
+
+# HAD TO COMMENT THIS OUT TO KNIT, EVEN THOUGH CODE WORKS
+# RSiena:::plot.sienaRI(RI, addPieChart = TRUE)</code></pre>
+<p>With this plot, can look at the proportion of each effect on
+predicting - the more effects included, the longer the list.</p>
+<p>Why does relative importance vary per actors? - could be varying node
+characterstics (though for this we only have one node characteristic) -
+<strong>TIME CHARACTERISTICS</strong> - as an isolate, then node
+characteristic is not a parameter? -<br />
+This is a micro-level - this does not reflect parameter estimates,
+reciprocity could have large effect - and yet in each tiny-step, it
+could have a smaller effect on the decisions. * when it is relevant, it
+might have a large effect, but it might not always be relevant to each
+individual. This is looking at whether it is actually relevant for many
+people*</p>
+<ul>
+<li>the other is macro level -</li>
+</ul>
+</div>
+<div id="one-final-goodness-of-fit" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> One Final Goodness of
+Fit</h1>
+<p>What we can also do: tweak estimates, and simulate based on tweaked
+estimates.</p>
+<p>Just the logic for now.</p>
+<p>If we plug in our own values, would it meet different macro level
+dynamics?? how to set effect to 0. would it be to different macro level
+structures? See how model behaves differently??</p>
+<p>Run statistics on simulated models. simulations based on estimated
+models. statistic based on in-degree distribution. If in model there was
+an in-degree popularity effect. what if we excluded the in-degree
+popularity effect? How would it effect the rest? If we remove it, we can
+see how much change happens.</p>
+<p>Then, if effect excluded, but same model simulated, then would find
+that it actually is not so important??</p>
+<p>Change the micro-level mechanisms, look at importance of
+micro-level.</p>
+</div>
+<div id="step-1-load-data" class="section level1" number="12">
+<h1><span class="header-section-number">12</span> STEP 1: load data</h1>
+<pre class="r test"><code>scholars &lt;- fload(&quot;C:/Github/labjournal/scholars_20240924.rda&quot;)</code></pre>
+</div>
+<div id="webscraping-script---fcolnet-function" class="section level1"
+number="13">
+<h1><span class="header-section-number">13</span> Webscraping script -
+fcolnet function</h1>
+</div>
+<div
+id="publications-ii-nomination-networks-2.3.1-construct-adjacency-network-of-scholars-and-publications-of-ru-soc"
+class="section level1" number="14">
+<h1><span class="header-section-number">14</span> Publications II:
+nomination networks (2.3.1) construct adjacency network of scholars and
+publications of RU SOC</h1>
+<pre class="r test"><code>library(dplyr)
+fcolnet &lt;- function(data = scholars, university = &quot;RU&quot;, discipline = &quot;sociology&quot;, waves = list(c(2015,
+    2018), c(2019, 2023)), type = c(&quot;first&quot;)) {
+
+    # step 1
+    demographics &lt;- do.call(rbind.data.frame, data$demographics)
+    demographics &lt;- demographics %&gt;%
+        mutate(Universiteit1.22 = replace(Universiteit1.22, is.na(Universiteit1.22), &quot;&quot;), Universiteit2.22 = replace(Universiteit2.22,
+            is.na(Universiteit2.22), &quot;&quot;), Universiteit1.24 = replace(Universiteit1.24, is.na(Universiteit1.24),
+            &quot;&quot;), Universiteit2.24 = replace(Universiteit2.24, is.na(Universiteit2.24), &quot;&quot;), discipline.22 = replace(discipline.22,
+            is.na(discipline.22), &quot;&quot;), discipline.24 = replace(discipline.24, is.na(discipline.24), &quot;&quot;))
+
+    sample &lt;- which((demographics$Universiteit1.22 %in% university | demographics$Universiteit2.22 %in%
+        university | demographics$Universiteit1.24 %in% university | demographics$Universiteit2.24 %in%
+        university) &amp; (demographics$discipline.22 %in% discipline | demographics$discipline.24 %in% discipline))
+
+    demographics_soc &lt;- demographics[sample, ]
+    scholars_sel &lt;- lapply(scholars, &quot;[&quot;, sample)
+
+    # step 2
+    ids &lt;- demographics_soc$au_id
+    nwaves &lt;- length(waves)
+    nets &lt;- array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works &lt;- tibble(works_id = unlist(lapply(scholars_sel$work, function(l) l$id)), works_author = unlist(lapply(scholars_sel$work,
+        function(l) l$author), recursive = FALSE), works_year = unlist(lapply(scholars_sel$work, function(l) l$publication_year),
+        recursive = FALSE))
+
+    df_works &lt;- df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == &quot;first&quot;) {
+        for (j in 1:nwaves) {
+            df_works_w &lt;- df_works[df_works$works_year &gt;= waves[[j]][1] &amp; df_works$works_year &lt;= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego &lt;- df_works_w$works_author[i][[1]]$au_id[1]
+                alters &lt;- df_works_w$works_author[i][[1]]$au_id[-1]
+                if (sum(ids %in% ego) &gt; 0 &amp; sum(ids %in% alters) &gt; 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] &lt;- 1
+                }
+            }
+        }
+    }
+
+    if (type == &quot;last&quot;) {
+        for (j in 1:nwaves) {
+            df_works_w &lt;- df_works[df_works$works_year &gt;= waves[[j]][1] &amp; df_works$works_year &lt;= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego &lt;- rev(df_works_w$works_author[i][[1]]$au_id)[1]
+                alters &lt;- rev(df_works_w$works_author[i][[1]]$au_id)[-1]
+                if (sum(ids %in% ego) &gt; 0 &amp; sum(ids %in% alters) &gt; 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] &lt;- 1
+                }
+            }
+        }
+    }
+
+    if (type == &quot;all&quot;) {
+        for (j in 1:nwaves) {
+            df_works_w &lt;- df_works[df_works$works_year &gt;= waves[[j]][1] &amp; df_works$works_year &lt;= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos &lt;- df_works_w$works_author[i][[1]]$au_id
+                if (sum(ids %in% egos) &gt; 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] &lt;- 1
+                }
+            }
+        }
+    }
+    output &lt;- list()
+    output$data &lt;- scholars_sel
+    output$nets &lt;- nets
+    return(output)
+}</code></pre>
+<div
+id="use-function-for-test-object---custom-function-from-above-fcolnet"
+class="section level2" number="14.1">
+<h2><span class="header-section-number">14.1</span> use function for
+test object - custom function from above (fcolnet)</h2>
+<pre class="r test"><code>test &lt;- fcolnet(data = scholars, #use function on our data object, use default objects now (but customize later)
+                university = &quot;RU&quot;,
+                discipline = &quot;sociology&quot;,
+                waves = list(c(2015, 2018), c(2019, 2023)),
+                type = c(&quot;first&quot;)) #directed network - type first
+
+wave1 &lt;- test$nets[1,,] #first wave stored here
+wave2 &lt;- test$nets[2,,] #second wave stored here
+
+dim(wave2) #check it works </code></pre>
+<pre class="test2"><code>#&gt; [1] 50 50</code></pre>
+<pre class="r test"><code>sum(is.na(wave2)) #check it is complete -- if 0 missing values</code></pre>
+<pre class="test2"><code>#&gt; [1] 0</code></pre>
+<pre class="r test"><code>sum(wave2&gt;0) #input for rsiena = the array / adjacency matrix. need to check the diagonal: should all be 0 - check if larger than 1, should be 0/1/2</code></pre>
+<pre class="test2"><code>#&gt; [1] 76</code></pre>
+<p>Now put in Array</p>
+<pre class="r test"><code>nets &lt;- array(data = c(wave1, wave2), dim = c(dim(wave1), 2))
+net &lt;- sienaDependent(nets)
+
+
+df &lt;- test$data
+df_ego &lt;- do.call(rbind.data.frame, df$demographics) 
+
+
+# what kind 
+unique(c(df_ego$Functie.22, df_ego$Functie.24))</code></pre>
+<pre class="test2"><code>#&gt;  [1] &quot;PhD Student&quot;              &quot;Hoogleraar&quot;               &quot;Universitair docent&quot;     
+#&gt;  [4] &quot;Associate researcher&quot;     &quot;Postdoc&quot;                  &quot;Senior Researcher&quot;       
+#&gt;  [7] &quot;Universitair hoofddocent&quot; &quot;External Phd&quot;             &quot;Guest Researcher&quot;        
+#&gt; [10] &quot;Other researcher&quot;         NA                         &quot;Onderzoeker&quot;             
+#&gt; [13] &quot;Bijzonder hoogleraar&quot;</code></pre>
+<pre class="r test"><code>#replace missing values with empty string
+df_ego$Functie.22[is.na(df_ego$Functie.22)] &lt;- &quot; &quot;
+df_ego$Functie.24[is.na(df_ego$Functie.24)] &lt;- &quot; &quot;
+
+# 
+df_ego$functie &lt;- ifelse(df_ego$Functie.22==&quot;Hoogleraar&quot;, 1, 0)
+df_ego$functie &lt;- ifelse(df_ego$Functie.24==&quot;Hoogleraar&quot;, 1, df_ego$functie)
+df_ego$functie &lt;- ifelse(df_ego$Functie.22==&quot;Bijzoner hoogleraar&quot;, 1, df_ego$functie)
+df_ego$functie &lt;- ifelse(df_ego$Functie.24==&quot;Bijzoner hoogleraar&quot;, 1, df_ego$functie)
+
+table(df_ego$functie, useNA=&quot;always&quot;) #use as constant - </code></pre>
+<pre class="test2"><code>#&gt; 
+#&gt;    0    1 &lt;NA&gt; 
+#&gt;   42    8    0</code></pre>
+<pre class="r test"><code># should see variable is correct
+
+functie &lt;- coCovar(df_ego$functie)
+functie</code></pre>
+<pre class="test2"><code>#&gt;  [1] 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 1 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0
+#&gt; [49] 0 0
+#&gt; attr(,&quot;class&quot;)
+#&gt; [1] &quot;coCovar&quot;
+#&gt; attr(,&quot;version&quot;)
+#&gt; [1] &quot;1.5.0&quot;
+#&gt; attr(,&quot;centered&quot;)
+#&gt; [1] TRUE
+#&gt; attr(,&quot;nodeSet&quot;)
+#&gt; [1] &quot;Actors&quot;</code></pre>
+<p>next gender</p>
+<pre class="r test"><code>mydata &lt;- sienaDataCreate(net, functie)</code></pre>
+</div>
+</div>
+<div id="step-2-effects" class="section level1" number="15">
+<h1><span class="header-section-number">15</span> STEP 2 EFFECTS</h1>
+<pre class="r test"><code>myeff &lt;-getEffects(mydata)
+myeff</code></pre>
+<pre class="test2"><code>#&gt;   effectName               include fix   test  initialValue parm
+#&gt; 1 basic rate parameter net TRUE    FALSE FALSE    3.14565   0   
+#&gt; 2 outdegree (density)      TRUE    FALSE FALSE   -1.53846   0   
+#&gt; 3 reciprocity              TRUE    FALSE FALSE    0.00000   0</code></pre>
+<pre class="r test"><code>myeff &lt;- includeEffects(myeff, egoXaltX, interaction1 = &quot;functie&quot;)</code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName                  shortName include fix   test  initialValue parm
+#&gt; 1 388          functie ego x functie alter egoXaltX  TRUE    FALSE FALSE          0   0</code></pre>
+<pre class="r test"><code>#new statistic
+myeff &lt;- includeEffects(myeff, diffXOutAct, interaction1 = &quot;functie&quot;)</code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName                       shortName   include fix   test  initialValue parm
+#&gt; 1 339          outd. act.^(1/#) to dif. functie diffXOutAct TRUE    FALSE FALSE          0   1</code></pre>
+<pre class="r test"><code>#other new statistic
+myeff &lt;- includeEffects(myeff, unequalX, interaction1 = &quot;functie&quot;)</code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName      shortName include fix   test  initialValue parm
+#&gt; 1 312          unequal functie unequalX  TRUE    FALSE FALSE          0   0</code></pre>
+<pre class="r test"><code>myeff</code></pre>
+<pre class="test2"><code>#&gt;   effectName                       include fix   test  initialValue parm
+#&gt; 1 basic rate parameter net         TRUE    FALSE FALSE    3.14565   0   
+#&gt; 2 outdegree (density)              TRUE    FALSE FALSE   -1.53846   0   
+#&gt; 3 reciprocity                      TRUE    FALSE FALSE    0.00000   0   
+#&gt; 4 unequal functie                  TRUE    FALSE FALSE    0.00000   0   
+#&gt; 5 outd. act.^(1/#) to dif. functie TRUE    FALSE FALSE    0.00000   1   
+#&gt; 6 functie ego x functie alter      TRUE    FALSE FALSE    0.00000   0</code></pre>
+<pre class="r test"><code>#alternative: 
+myeff &lt;- includeEffects(myeff, egoX, interaction1 = &quot;functie&quot;)</code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName  shortName include fix   test  initialValue parm
+#&gt; 1 253          functie ego egoX      TRUE    FALSE FALSE          0   0</code></pre>
+<pre class="r test"><code>#mathematical of egoX = V(i), tie = X(i)(j), want the sum of the ties --&gt; X(i)(+) 
+# independent variable=ego, dependent variable = tie, covariate = functie, 
+
+
+
+#another alternative: 
+myeff &lt;- includeEffects(myeff, altX, interaction1 = &quot;functie&quot; )# altX effect --- hypothesis: more likely to receive? model from ego perspectives, and ego sends ties -- therefore, formulation of tie different: should be more likely to send ties to professors </code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName    shortName include fix   test  initialValue parm
+#&gt; 1 238          functie alter altX      TRUE    FALSE FALSE          0   0</code></pre>
+<pre class="r test"><code># altX = V(j) * Sum of Xij
+# altX = Alter * Sum of ties
+# Expect positive effect (opposite of ego X)</code></pre>
+</div>
+<div id="step-3-look-at-initial-data-and-get-description"
+class="section level1" number="16">
+<h1><span class="header-section-number">16</span> STEP 3 LOOK AT INITIAL
+DATA AND GET DESCRIPTION</h1>
+<pre class="r test"><code>ifelse(!dir.exists(&quot;results&quot;), dir.create(&quot;results&quot;), FALSE) #make directory to store results separately - less crowding for lab journal</code></pre>
+<pre class="test2"><code>#&gt; [1] FALSE</code></pre>
+<pre class="r test"><code>print01Report(mydata, modelname= &quot;./results/soc_init&quot;)
+print01Report(mydata)
+
+# TO VIEW THIS - LOOK WITHIN FILE DIRECTORY - GITHUB - LAB JOURNAL - RESULTS :)</code></pre>
+<p>@ Data input. 2 observations, 50 actors, 1 dependent network
+variables, 0 dependent bipartite variables, 0 dependent discrete
+behavior variables, 0 dependent continuous behavior variables, 1
+constant actor covariates, 0 exogenous changing actor covariates, 0
+constant dyadic covariates, 0 exogenous changing dyadic covariates, 0 no
+files with times of composition change.</p>
+<ul>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+<p>@ Change in networks Network density indicators: observation time 1 2
+density 0.016 0.031 average degree 0.780 1.520 number of ties 39 76
+missing fraction 0.000 0.000</p>
+<p>What does the initial data mean? number of ties increasing rapidly
+–&gt; 39 is high</p>
+<p>Tie changes between subsequent observations: periods 0 =&gt; 0 0
+=&gt; 1 1 =&gt; 0 1 =&gt; 1 Distance Jaccard Missing 1 ==&gt; 2 2354 57
+20 19 77 0.198 0 (0%)</p>
+<p>Jaccard index low ** Jaccard Index: counting all changes (1-&gt;1 /
+0-&gt;1, 1-&gt;0, and 1-&gt;1 (not 0-&gt;0, because that is a very large
+number) : important measure of stability – looking at difference between
+T1 and T2 – want it somewhere between 0 and 1).</p>
+</div>
+<div id="step-4-effects" class="section level1" number="17">
+<h1><span class="header-section-number">17</span> Step 4 Effects</h1>
+<pre class="r test"><code>myeff &lt;- includeEffects(myeff, isolateNet, inPop, outAct)</code></pre>
+<pre class="test2"><code>#&gt;   effectNumber effectName            shortName  include fix   test  initialValue parm
+#&gt; 1  78          indegree - popularity inPop      TRUE    FALSE FALSE          0   0   
+#&gt; 2 106          outdegree - activity  outAct     TRUE    FALSE FALSE          0   0   
+#&gt; 3 149          network-isolate       isolateNet TRUE    FALSE FALSE          0   0</code></pre>
+<pre class="r test"><code>myeff &lt;- includeEffects(myeff, unequalX, egoX, alterX)</code></pre>
+<pre class="test2"><code>#&gt; There is no effect with short name unequalX, 
+#&gt;  egoX, 
+#&gt;  alterX, 
+#&gt; and with interaction1 = &lt;&gt;, interaction2 = &lt;&gt;, and type = &lt;eval&gt;, 
+#&gt; for dependent variable net .
+#&gt; See effectsDocumentation() for this effects object.</code></pre>
+</div>
+<div id="step-5-assume-happy-with-effects---estimation"
+class="section level1" number="18">
+<h1><span class="header-section-number">18</span> Step 5 (assume happy
+with effects) - Estimation</h1>
+<pre class="r test"><code>myAlgorithm &lt;- sienaAlgorithmCreate(projname = &quot;soc_init&quot;)</code></pre>
+<pre class="test2"><code>#&gt; If you use this algorithm object, siena07 will create/use an output file soc_init.txt .</code></pre>
+<pre class="r test"><code>ansM1 &lt;- siena07(myAlgorithm, data = mydata, effects = myeff, returnDeps = TRUE)
+# if necessary estimate again!  ansM1 &lt;- siena07(myAlgorithm, data = mydata, effects = myeff,
+# prevAns = ansM1, returnDeps=TRUE)
+ansM1</code></pre>
+<pre class="test2"><code>#&gt; Estimates, standard errors and convergence t-ratios
+#&gt; 
+#&gt;                                             Estimate   Standard   Convergence 
+#&gt;                                                          Error      t-ratio   
+#&gt; 
+#&gt; Rate parameters: 
+#&gt;   0        Rate parameter                    3.4705  ( 0.6022   )             
+#&gt; 
+#&gt; Other parameters: 
+#&gt;    1. eval outdegree (density)              -1.3952  (     NA   )    0.0364   
+#&gt;    2. eval reciprocity                       2.1677  (     NA   )    0.0306   
+#&gt;    3. eval indegree - popularity             0.1093  (     NA   )    0.0120   
+#&gt;    4. eval outdegree - activity             -0.0825  (     NA   )    0.0519   
+#&gt;    5. eval network-isolate                   3.5371  (     NA   )    0.0125   
+#&gt;    6. eval functie alter                     1.6371  (     NA   )    0.0193   
+#&gt;    7. eval functie ego                      -2.2837  (     NA   )   -0.0759   
+#&gt;    8. eval unequal functie                   0.3627  (     NA   )    0.0190   
+#&gt;    9. eval outd. act.^(1/1) to dif. functie -0.4577  (     NA   )    0.0068   
+#&gt;   10. eval functie ego x functie alter      -0.4214  (     NA   )   -0.0299   
+#&gt; 
+#&gt; Overall maximum convergence ratio:        NA</code></pre>
+<pre class="test2"><code>#&gt; 
+#&gt; Total of 2926 iteration steps.</code></pre>
+<p>First author papers This makes sense - about 3 papers per year per
+author, that makes sense</p>
+<p>Density is negative: makes sense, sparse network Reciprocity: have
+that, which makes sense (help eachother with papers)</p>
+<p>Given these statistics included in this model, this is able to
+replicate these statistics in T2</p>
+<p>If we look at degree distribution or sensitivity, could be completely
+different.</p>
+<p>NOW : EGOX Tweak model, try to interpret effects, include covariate
+effect</p>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogImdvZiINCmF1dGhvcjogIlBhaWdlIEtlbXBlciINCmRhdGU6ICIyMDI1LTEwLTE3Ig0Kb3V0cHV0OiBodG1sX2RvY3VtZW50DQotLS0NCg0KDQpgYGB7ciwgZ2xvYmFsc2V0dGluZ3MsIGVjaG89RkFMU0UsIHdhcm5pbmc9RkFMU0UsIHJlc3VsdHM9J2hpZGUnfQ0KbGlicmFyeShrbml0cikNCg0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0Kb3B0c19jaHVuayRzZXQodGlkeS5vcHRzPWxpc3Qod2lkdGguY3V0b2ZmPTEwMCksdGlkeT1UUlVFLCB3YXJuaW5nID0gRkFMU0UsIG1lc3NhZ2UgPSBGQUxTRSxjb21tZW50ID0gIiM+IiwgY2FjaGU9VFJVRSwgY2xhc3Muc291cmNlPWMoInRlc3QiKSwgY2xhc3Mub3V0cHV0PWMoInRlc3QyIikpDQpvcHRpb25zKHdpZHRoID0gMTAwKQ0KcmdsOjpzZXR1cEtuaXRyKCkNCg0KDQpjb2xvcml6ZSA8LSBmdW5jdGlvbih4LCBjb2xvcikge3NwcmludGYoIjxzcGFuIHN0eWxlPSdjb2xvcjogJXM7Jz4lczwvc3Bhbj4iLCBjb2xvciwgeCkgfQ0KDQoNCmBgYA0KDQpgYGB7ciBrbGlwcHksIGVjaG89RkFMU0UsIGluY2x1ZGU9VFJVRX0NCmtsaXBweTo6a2xpcHB5KHBvc2l0aW9uID0gYygndG9wJywgJ3JpZ2h0JykpDQoja2xpcHB5OjprbGlwcHkoY29sb3IgPSAnZGFya3JlZCcpDQoja2xpcHB5OjprbGlwcHkodG9vbHRpcF9tZXNzYWdlID0gJ0NsaWNrIHRvIGNvcHknLCB0b29sdGlwX3N1Y2Nlc3MgPSAnRG9uZScpDQpgYGANCg0KTGFzdCBjb21waWxlZCBvbiBgciBmb3JtYXQoU3lzLnRpbWUoKSwgJyVCLCAlWScpYA0KDQo8YnI+DQoNCg0KDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSkNCmBgYA0KDQojIEdvb2RuZXNzIG9mIEZpdCANCg0KIGVzdGltYXRlIFJzaWVuYSBtb2RlbCwgb3IgZXN0aW1hdGUgYmFzaWMgbW9kZWwgZnJvbSBSc2llbmEgcGFja2FnZSB3aXRoIHNvbWV0aGluZyBvZiAyICANCiBiZWhhdmlvcmFsIGRhdGEgLSBjb3VsZCB1c2UgczUwMSBhbmQgczUwMg0KIHJldHVybiBkZXB0aHMgb2YgMiAtIGluIHNpZW5hMDcNCg0KDQoNCiMjIERhdGEgLSBmb2xsb3cgUlNJRU5BIHByb2NlZHVyZQ0KYGBge3J9DQpybShsaXN0PWxzKCkpICNzdGFydCBjbGVhbg0KYGBgDQotLS0NCg0KIyMgVXNpbmcgUiBTaWVubmEgZXhhbXBsZTogTG9hZCBwYWNrYWdlcw0KDQpgYGB7cn0NCmZwYWNrYWdlLmNoZWNrIDwtIGZ1bmN0aW9uKHBhY2thZ2VzKSB7DQogICAgbGFwcGx5KHBhY2thZ2VzLCBGVU4gPSBmdW5jdGlvbih4KSB7DQogICAgICAgIGlmICghcmVxdWlyZSh4LCBjaGFyYWN0ZXIub25seSA9IFRSVUUpKSB7DQogICAgICAgICAgICBpbnN0YWxsLnBhY2thZ2VzKHgsIGRlcGVuZGVuY2llcyA9IFRSVUUpDQogICAgICAgICAgICBsaWJyYXJ5KHgsIGNoYXJhY3Rlci5vbmx5ID0gVFJVRSkNCiAgICAgICAgfQ0KICAgIH0pDQp9DQoNCmZzYXZlIDwtIGZ1bmN0aW9uKHgsIGZpbGUgPSBOVUxMLCBsb2NhdGlvbiA9ICIuL2RhdGEvcHJvY2Vzc2VkLyIpIHsNCiAgICBpZmVsc2UoIWRpci5leGlzdHMoImRhdGEiKSwgZGlyLmNyZWF0ZSgiZGF0YSIpLCBGQUxTRSkNCiAgICBpZmVsc2UoIWRpci5leGlzdHMoImRhdGEvcHJvY2Vzc2VkIiksIGRpci5jcmVhdGUoImRhdGEvcHJvY2Vzc2VkIiksIEZBTFNFKQ0KICAgIGlmIChpcy5udWxsKGZpbGUpKQ0KICAgICAgICBmaWxlID0gZGVwYXJzZShzdWJzdGl0dXRlKHgpKQ0KICAgIGRhdGVuYW1lIDwtIHN1YnN0cihnc3ViKCJbOi1dIiwgIiIsIFN5cy50aW1lKCkpLCAxLCA4KQ0KICAgIHRvdGFsbmFtZSA8LSBwYXN0ZShsb2NhdGlvbiwgZGF0ZW5hbWUsIGZpbGUsICIucmRhIiwgc2VwID0gIiIpDQogICAgc2F2ZSh4LCBmaWxlID0gdG90YWxuYW1lKSAgI25lZWQgdG8gZml4IGlmIGZpbGUgaXMgcmVsb2FkZWQgYXMgaW5wdXQgbmFtZSwgbm90IGFzIHguIA0KfQ0KDQpmbG9hZCA8LSBmdW5jdGlvbihmaWxlbmFtZSkgew0KICAgIGxvYWQoZmlsZW5hbWUpDQogICAgZ2V0KGxzKClbbHMoKSAhPSAiZmlsZW5hbWUiXSkNCn0NCg0KZnNob3dkZiA8LSBmdW5jdGlvbih4LCAuLi4pIHsNCiAgICBrbml0cjo6a2FibGUoeCwgZGlnaXRzID0gMiwgImh0bWwiLCAuLi4pICU+JQ0KICAgICAgICBrYWJsZUV4dHJhOjprYWJsZV9zdHlsaW5nKGJvb3RzdHJhcF9vcHRpb25zID0gYygic3RyaXBlZCIsICJob3ZlciIpKSAlPiUNCiAgICAgICAga2FibGVFeHRyYTo6c2Nyb2xsX2JveCh3aWR0aCA9ICIxMDAlIiwgaGVpZ2h0ID0gIjMwMHB4IikNCn0NCg0KY29sb3JpemUgPC0gZnVuY3Rpb24oeCwgY29sb3IpIHsNCiAgICBzcHJpbnRmKCI8c3BhbiBzdHlsZT0nY29sb3I6ICVzOyc+JXM8L3NwYW4+IiwgY29sb3IsIHgpDQp9DQpgYGANCg0KDQoNCmBgYHtyfQ0KcGFja2FnZXMgPSBjKCJSU2llbmEiLCAiZGV2dG9vbHMiLCAiaWdyYXBoIikNCmZwYWNrYWdlLmNoZWNrKHBhY2thZ2VzKQ0KIyBkZXZ0b29sczo6aW5zdGFsbF9naXRodWIoJ0pvY2hlbVRvbHNtYS9Sc2llbmFUd29TdGVwJywgYnVpbGRfdmlnbmV0dGVzPVRSVUUpDQpwYWNrYWdlcyA9IGMoIlJzaWVuYVR3b1N0ZXAiKQ0KZnBhY2thZ2UuY2hlY2socGFja2FnZXMpDQpgYGANCg0KTkVFRCBEQVRBIC0gdXNlIGJ1aWxkIGluIGRhdGFzZXRzIGZyb20gUlNJRU5OQSANCj9zNTAxDQpJcyBhZGphY2VuY3kgbWF0cml4IGZvciBuZXR3b3JrIHR5cGUgMS4gR29hbDogRm9sbG93IHN0ZXBzIGluIDcuMSBmb3IgZGlmZmVyZW50IGRhdGE6DQoNCiMgU3RlcCAxLiBEZWZpbmUgZGF0YQ0KRGVwZW5kZW50IHZhcmlhYmxlOiB0aWVzIA0KDQoNCmBgYHtyfQ0KczUwMSAjbmV0d29yayBhdCB0aW1lcG9pbnQgMQ0KczUwMiAjbmV0d29yayBhdCB0aW1lcG9pbnQgMg0KYGBgDQoNCg0KSW5zcGVjdCBuZXR3b3Jrcy4gUmVtb3ZlIE5BcywgbWFrZSBzdXJlIGRpYWdvbmFsLiBOZWVkIHRvIHNlZSBiaW5hcnkgKG5vdCB3ZWlnaHRlZCkNCmBgYHtyfQ0KIyBjb21lIGJhY2sgdG8gdGhpcyANCmBgYA0KDQoNClB1dCBuZXR3b3JrcyBpbiBhbiBhcnJheQ0KYGBge3J9DQojIG15bmV0DQoNCmRpbShzNTAxKSAjc2F5cyA1MHg1MDogNTAgcm93cywgNTAgY29sdW1ucyBpbiBkYXRhLiANCg0KbmV0cyA8LSBhcnJheSAoZGF0YSA9IGMoczUwMSwgczUwMiksIGRpbSA9IGMoZGltKHM1MDEpLCAyKSkgIw0KYyhkaW0oczUwMSksMikNCg0KIyBkaW1lbnRpb25zIG9mIGFycmF5IGFyZSBudW1iZXIgb2YgY29sdW1ucyBhbmQgbnVtYmVyIG9mIHJvd3MgDQpgYGANCmNvdWxkIHJlcGxhY2UgdGhpcyB3aXRoIGRhdGEgc2V0IGZyb20gbGFzdCB3ZWVrIA0KIA0KIA0KRGVmaW5lIGRlcGVuZGVudCAtIGFuZCBpbmRlcGVuZGVudCAtIHZhcmlhYmxlDQpgYGB7cn0NCg0KbmV0IDwtIHNpZW5hRGVwZW5kZW50KG5ldHMpICNkZXBlbmRlbnQgdmFyaWFibGUgDQoNCiAgIyBpbmRlcGVuZGVudCB2YXJpYWJsZSAtIHM1MGEgLSB3ZSB3aWxsIHRha2UgZmlyc3Qgd2F5IA0KDQojbmV0JGFsY29ob2wNCg0KI3M1MGFbLDFdYWxjb2hvbA0KDQoNCmFsY29ob2wgPC0gczUwYVssMV0jYWxjb2hvbA0KICMgZG9uJ3QgbmVlZCB3YXZlIDIgLSBqdXN0IG1vZGVsaW5nIGF0IGluZGVwZW5kZW50IHZhcmlhYmxlLCBpbmZsdWVuY2luZyBhbGwgbWluaXN0ZXBzIGJldHdlZW4gdGltZSAxIGFuZCB0aW1lIDIgDQphbGNvaG9sIA0KIA0KYWxjb2hvbCA8LSBjb0NvdmFyKGFsY29ob2wpIyBhdCBhY3RvciBsZXZlbCAtIG1lYW4gY2VudGVyZWQgLSBpcyBhIHRpbWUgY29uc3RhbnQgY29WYXJpYXRlIA0KYGBgDQoNCk5vdyBjb21iaW5lIGludG8gZGF0YXNldCAtIGlmIHVzZSBSc2llbmEsIG5lZWQgdGhpcy4gDQpgYGB7cn0NCm15ZGF0YSA8LSBzaWVuYURhdGFDcmVhdGUobmV0LCBhbGNvaG9sKQ0KDQpteWVmZiA8LSBnZXRFZmZlY3RzKG15ZGF0YSkgI2hhdmUgYSBsb29rIA0KbXllZmYNCmBgYA0KTm93IGNhbiBsb29rIGF0IG15ZWZmIC0gbG9vayBhdCBzdGFydGluZyB2YWx1ZXMgLSBoYXMgZGVuc2l0eSBvZiB0d28gbmV0d29ya3MsIHJlY2lwcm9jaXR5IA0KDQoNCldhbnQgbXVjaCBtb3JlIHN0YXRpc3RpY3MgZm9yIG1vZGVsLCB0aG91Z2ghISANCg0KIyBTdGVwIDI6IA0KQ2FuIHNlZSBhbGwgZWZmZWN0cyB0aGF0IGNvdWxkIGluY2x1ZGUgaW4gdGhlIGRhdGFzZXQuIFdoaWNoIGlzIGEgbG90LiBBbmQgdGhpcyBpcyBhIHNpbXBsZSBkYXRhc2V0LiBhbmQgeWVhaCwgaXRzIGh1Z2UuIEFsc28gY2FuIHNlZSB0aGF0IHRoZSB0eXBlIGRlcGVuZHMgb24gd2VpZ2h0IGZ1bmN0aW9uIChldmFsdWF0aW9uICgpLCBlbmRvd21lbnQgKCksIGFuZCBjcmVhdGlvbiAoKSkNCg0KRXhhbXBsZS4gSm9jaGVtIHdhbnRzIHRvIG1ha2UgdGllIHdpdGggSm9zLiBKb2NoZW0ncyBjb25zaWRlcmF0aW9uIHRvIG1ha2UgYSB0aWUgd2l0aCBKb3MgY291bGQgYmUgZGlmZmVyZW50IHRoYW4gY29uc2lkZXJhdGlvbiB0byBtYWludGFpbiBhIHRpZSwgY291bGQgYmUgZGlmZmVyZW50IHRoYXQgZGVjaXN0aW9ucyB0byBicmVhayBhIHRpZS4gQ2FuJ3QgZXN0aW1hdGUgYWxsIHRocmVlLiBFdmFsdXRpb246IG1lY2hhbmlzbXMgdGhlIHNhbWUgZm9yIG1ha2luZyBhcyBicmVha2luZywgZW5kb3dtZW50ID0gbWFpbnRhaW5pbmcsIGNyZWF0aW9uID0gaWYgdGhlcmUgYXJlIG5vbmUgdGhlbiB3aGF0IGlzIHRoZSBjb3N0LiANCg0KSW4gdGhpcyBjb3Vyc2U6IGp1c3QgdXNlIGV2YWx1YXRpb24gZnVuY3Rpb24uIEFzc3VtZSBtZWNoYW5pc21zIGFuZCBmdW5jdGlvbnMgdG8gbWFrZS9icmVhayB0aWVzIGFyZSBzaW1pbGFyLiBpbmNsdWRlIGRlZ3JlZSBmb3IgZXZhbHVhdGlvbi4gQnV0IHdoYXQgYXJlIGFsbCB0aGVzZSBlZmZlY3RzPyANCi0gICAgc2hvdWxkIGJlIGFibGUgdG8gY2FsY3VsYXRlIHN0YXRpc3RpYyBmb3IgZWFjaCBlZmZlY3QgZm9yIGFuIGVnbyBpbiBhIG5ldHdvcmsuLi4gTWF0aGVtYXRpY2FsIGZvcm11bGEgaW4gY2hhcHRlciAxMi4gDQoNCg0KYGBge3J9DQplZmZlY3RzRG9jdW1lbnRhdGlvbihteWVmZikNCmBgYA0KDQoNCk1ha2Ugc3VyZSB0byB1bmRlcnN0YW5kIG91dCBkZWdyZWUgYW5kIHJlY2lwcm9jaXR5IGVmZmVjdHMgLSBzdGF0aXN0aWNzIC0gd2lsbCBwbGF5IGFyb3VuZCB3aXRoIHRoaXMgbmV4dCB3ZWVrLiBOZWVkIHRvIHRoaW5rIG9mIHRoZW9yeSBmb3Igd2hpY2ggc3RhdGlzdGljcyBhcmUgcmVsZXZhbnQuIA0KLSAgICBMb29rIGF0IGxpdGVyYXR1cmUgZm9yIHN0YXRpc3RpY3MsIHRoaW5rIGFib3V0IGl0LCBwbGF5IGFuZCBzZWUgaWYgZWZmZWN0cyBleGlzdHMgDQotICAgIGhvdyB3b3JrIGluIHJlYWxpdHk/IHByb3Bvc2UgaWRlYSwgd3JpdGUgbm90YXRpb24sIHNlZSBpZiBlZmZlY3QgZXhpc3RzIGluIG1hbnVhbCwgZXRjLiBMb3RzIG9mIG5vdGF0aW9uIGJlY2F1c2UgZXZlcnlvbmUgaXMgbG9va2luZyBmb3IgdGhlaXIgb3duIGVmZmVjdHMuIA0KLSAgICBuZWVkIHRvIGluY2x1ZGUgbW9yZSBlZmZlY3RzIGlmIHdoYXQgdG8uIA0KDQpgYGB7cn0NCg0KYGBgDQoNCg0KDQojIFN0ZXAgMzogTG9vayBhdCBpbnRpYWwgZGF0YQ0KLSAgICBnb29kIGZvciBkZWNpZGluZyBzdGF0aXN0aWNzIHRvIHVzZS4gDQpgYGB7cn0NCnByaW50MDFSZXBvcnQobXlkYXRhKQ0KDQojIGdpdmVzIGluaXRpYWwgZGVzY3JpcHRpb24gb2YgZGF0YSANCiMgcmVhZGluZyBuZXR3b3JrIHZhcmlhYmxlcyAsIGNvdmFyaWF0ZXMsIGRlbnNpdHkgbWVhc3VyZXMvY2hhbmdlcyBpbiBuZXR3b3JrcywgdGllIGNoYW5nZXMgYmV0d2VlbiBzdWJzZXF1ZW50IG9ic2VydmF0aW9ucy4uLiBjYWxjdWxhdGUgaG93IG11Y2ggbmV0d29ya3MgY2hhbmdlZCBvdmVyIHRpbWUuIA0KIyBkb250IHVzZSBiYWxhbmNlIGNhbGN1bGF0aW9uIA0KYGBgDQoNCiMgU3RlcCA0OiBBZGQgZWZmZWN0cw0KDQpgYGB7cn0NCm15ZWZmIDwtIGluY2x1ZGVFZmZlY3RzKG15ZWZmLCBpc29sYXRlTmV0LCBpblBvcCwgb3V0QWN0KQ0KDQojb3V0QWN0IC0gb3V0ZGVncmVlIHJlbGF0ZWQgYWN0aXZpdHkgDQpgYGANCg0Kb3V0QWN0DQotIGxvb2sgYXQgdGhlIG51bWJlciBvZiB0aW1lcyBJIGhhdmUgYW5kIHNxdWFyZSB0aGF0OiBlc3BlY2lhbGx5IHRoZSBwZW9wbGUgdGhhdCBoYXZlIGEgbG90IG9mIHRpZXMgd2lsbCBzZW5kIGEgbG90IG9mIHRpZXMuIA0KLSBldmFsdWF0aW9uIGZ1bmN0aW9uIG9mIHRpZTEgMCB0aWVzLCBhbmQgdGllMSA0IHRpZXMgLSB0aGVuIGF0IHQyIHBlb3BsZSB3aG8gaGF2ZSB0aWVzIGFyZSBtb3JlIGxpa2VseSB0byBzZW5kIG1vcmUgdGllcyANCg0KV2Uga25vdyB0aWUgZGlzdHJpYnV0aW9ucyBhcmUgc2tld2VkLCBzb21lIHBlb3BsZSBzZW5kIGEgbG90IG9mIHRpZXMgYW5kIG90aGVycyBkb250LiANCg0KaW5Qb3A6IGluIGRlZ3JlZSBhY3Rpdml0eTogcGVvcGxlIHdobyByZXNlaXZlIGEgbG90IG9mIGluLWRlZ3JlZXMgc2VuZCBhIGxvdCBvZiBvdXQtZGVncmVlcyANCg0KaXNvbGF0ZU5ldDogcGVvcGxlIHdpdGhvdXQgYSBsb3Qgb2YgaW5kZWdyZWUgbmV0cy4gDQoNCg0KDQpDYW4gc2VlIHRoYXQgc3RhcnRpbmcgdmFsdWVzIGFyZSAwIC0tIGh5cG90aGVzaXMgdGVzdGluZyANCg0KIyBTdGVwIDU6IEVzdGltYXRpb24NCg0KYGBge3J9DQpteUFsZ29yaXRobSA8LSBzaWVuYUFsZ29yaXRobUNyZWF0ZShwcm9qbmFtZSA9ICJ0ZXN0IikNCg0KIyBkZWZpbmUgYWxnb3JpdGhtIHRoYXQgc2F5cyBob3cgSSB3YW50IHRvIGVzdGltYXRlIG15IG1vZGVsLiB3aWxsIHVzZSBkZWZhdWx0cy4gDQoNCmFuc00xIDwtIHNpZW5hMDcobXlBbGdvcml0aG0sIGRhdGEgPSBteWRhdGEsIGVmZmVjdHMgPSBteWVmZiwgcmV0dXJuRGVwcyA9IFRSVUUpDQojIHRoZW4gcnVuIGl0IHRvIHNlZSANCg0KYW5zTTENCg0KYGBgDQpOb3cgaGF2ZSBmaXJzdCBlc3RpbWF0ZWQgUnNpZW5hIG1vZGVsISANCg0KDQotIHNlZTpuZWdhdGl2ZSBvdXQgZGVncmVlIA0KLSAyLjQgcmVjaXByb2NpdHk6IGlzIGltcG9ydGFudCB0aGVuIGluIHRoaXMgbW9kZWwgDQotIGluZGVncmVlIHBvcHVsYXR5IGlzIHBvcHVsYXIgYnV0IG5vdCBzaWduaWZpY2FudC4uLiANCg0KaWYgc2lnbmlmaWNhbnQ6IG1vcmUgaW5kZWdyZWVzLSBtb3JlIGxpa2VseSB0byBzZW5kIGxhdGVyLiBwZW9wbGUgd2l0aCBtb3JlIG91dC1kZWdyZWVzIC0gbW9yZSBsaWtlbHkgdG8gc2VuZCBsZXNzIChuZWdhdGl2ZSkuIGlzb2xhdGUgbW9yZSBsaWtlbHkgdG8gYmUgYWxvbmUuIA0KDQoNCk5lZWQgdG8gdGhpbmsgb2YgbW9kZWwgdGhhdCBtYWtlcyBzZW5zZSBpbiB0aGlzDQoNCg0KYGBge3J9DQoNCmBgYA0KDQojIElHTk9SRSBBQk9WRSANCg0KDQoNClJFVklFV0lORyBSU0lFTkEgTk9XDQotICAgbmVnYXRpdmUgZGVncmVlIC0gZGVuc2l0eSBpcyBsZXNzIHRoYW4gLjUgDQotICAgaW50ZXJwcmV0YXRpb25zIA0KLSAgIE1haWxpbmcgbGlzdCBmb3IgVE9NDQoNCi0gICBOb3c6IHJlLXJlYWQgY2hhcHRlciAyIGFuZCBjaGFwdGVyIDUgDQoNCkFmdGVybm9vbjogcGxheSB3aXRoIGVzdGltYXRpbmcgb3VyIG93biBtb2RlbHMgDQpOaWNlIHRvIGRvIHdpdGggb3VyIG93biBkYXRhIC0gY29sbGFib3JhdGlvbiBuZXR3b3Jrcy4gDQpMb2dpYyBvZiBSU0lFTkE6IHRvb2sgYWN0b3Igb3JpZW50ZWQgYXBwcm9hY2ggLSB3b3JrcyBpZiB0aWVzIGFyZSBkaXJlY3RlZC4gaWYgdW5kaXJlY3RlZCBuZXR3b3JrLCBsb2dpYyBpcyBkaWZmZXJlbnQ6IHRoZSBhY3RvciBkZWNpZGluZyBvbiB1bmRpcmVjdGVkIHRpZSBpcyBkaWZmaWN1bHQuIEFkdmlzZTogZm9yIG5vdyB0cmVhdCBhcyB1bmRpcmVjdGVkIC0gYW5kIHRoZW4gZXZhbHVhdGUgdGllLiANCnVuZGlyZWN0ZWQgdGllIGJ5IHJlYWNoIGNvbnNlbnN1cywgZm9yY2VkIGludG8gY29uY2Vuc3VzLCBldGMgLSByZWNpcHJvY2l0eSBtYXR0ZXJzIGxlc3Mgbm93LiANCg0KYGBge3J9DQoNCmBgYA0KDQojIE5vdyBwbGF5IHdpdGggaXQgDQoNCmBgYHtyfQ0KDQoNCmBgYA0KDQoNCmBgYHtyfQ0KYGBgDQoNCg0KTm93IC0gcmVmZXJlbmNpbmcgd2ViIHNjcmFwaW5nIHNpdGUgDQoNCmBgYHtyfQ0KZmNvbG5ldCA8LSBmdW5jdGlvbihkYXRhID0gc2Nob2xhcnMsIHVuaXZlcnNpdHkgPSAiUlUiLCBkaXNjaXBsaW5lID0gInNvY2lvbG9neSIsIHdhdmVzID0gbGlzdChjKDIwMTUsDQogICAgMjAxOCksIGMoMjAxOSwgMjAyMykpLCB0eXBlID0gYygiZmlyc3QiKSkgew0KDQogICAgIyBzdGVwIDENCiAgICBkZW1vZ3JhcGhpY3MgPC0gZG8uY2FsbChyYmluZC5kYXRhLmZyYW1lLCBkYXRhJGRlbW9ncmFwaGljcykNCiAgICBkZW1vZ3JhcGhpY3MgPC0gZGVtb2dyYXBoaWNzICU+JQ0KICAgICAgICBtdXRhdGUoVW5pdmVyc2l0ZWl0MS4yMiA9IHJlcGxhY2UoVW5pdmVyc2l0ZWl0MS4yMiwgaXMubmEoVW5pdmVyc2l0ZWl0MS4yMiksICIiKSwgVW5pdmVyc2l0ZWl0Mi4yMiA9IHJlcGxhY2UoVW5pdmVyc2l0ZWl0Mi4yMiwNCiAgICAgICAgICAgIGlzLm5hKFVuaXZlcnNpdGVpdDIuMjIpLCAiIiksIFVuaXZlcnNpdGVpdDEuMjQgPSByZXBsYWNlKFVuaXZlcnNpdGVpdDEuMjQsIGlzLm5hKFVuaXZlcnNpdGVpdDEuMjQpLA0KICAgICAgICAgICAgIiIpLCBVbml2ZXJzaXRlaXQyLjI0ID0gcmVwbGFjZShVbml2ZXJzaXRlaXQyLjI0LCBpcy5uYShVbml2ZXJzaXRlaXQyLjI0KSwgIiIpLCBkaXNjaXBsaW5lLjIyID0gcmVwbGFjZShkaXNjaXBsaW5lLjIyLA0KICAgICAgICAgICAgaXMubmEoZGlzY2lwbGluZS4yMiksICIiKSwgZGlzY2lwbGluZS4yNCA9IHJlcGxhY2UoZGlzY2lwbGluZS4yNCwgaXMubmEoZGlzY2lwbGluZS4yNCksICIiKSkNCg0KICAgIHNhbXBsZSA8LSB3aGljaCgoZGVtb2dyYXBoaWNzJFVuaXZlcnNpdGVpdDEuMjIgJWluJSB1bml2ZXJzaXR5IHwgZGVtb2dyYXBoaWNzJFVuaXZlcnNpdGVpdDIuMjIgJWluJQ0KICAgICAgICB1bml2ZXJzaXR5IHwgZGVtb2dyYXBoaWNzJFVuaXZlcnNpdGVpdDEuMjQgJWluJSB1bml2ZXJzaXR5IHwgZGVtb2dyYXBoaWNzJFVuaXZlcnNpdGVpdDIuMjQgJWluJQ0KICAgICAgICB1bml2ZXJzaXR5KSAmIChkZW1vZ3JhcGhpY3MkZGlzY2lwbGluZS4yMiAlaW4lIGRpc2NpcGxpbmUgfCBkZW1vZ3JhcGhpY3MkZGlzY2lwbGluZS4yNCAlaW4lIGRpc2NpcGxpbmUpKQ0KDQogICAgZGVtb2dyYXBoaWNzX3NvYyA8LSBkZW1vZ3JhcGhpY3Nbc2FtcGxlLCBdDQogICAgc2Nob2xhcnNfc2VsIDwtIGxhcHBseShzY2hvbGFycywgIlsiLCBzYW1wbGUpDQoNCiAgICAjIHN0ZXAgMg0KICAgIGlkcyA8LSBkZW1vZ3JhcGhpY3Nfc29jJGF1X2lkDQogICAgbndhdmVzIDwtIGxlbmd0aCh3YXZlcykNCiAgICBuZXRzIDwtIGFycmF5KDAsIGRpbSA9IGMobndhdmVzLCBsZW5ndGgoaWRzKSwgbGVuZ3RoKGlkcykpLCBkaW1uYW1lcyA9IGxpc3Qod2F2ZSA9IDE6bndhdmVzLCBpZHMsDQogICAgICAgIGlkcykpDQogICAgZGltbmFtZXMobmV0cykNCg0KICAgICMgc3RlcCAzDQogICAgZGZfd29ya3MgPC0gdGliYmxlKHdvcmtzX2lkID0gdW5saXN0KGxhcHBseShzY2hvbGFyc19zZWwkd29yaywgZnVuY3Rpb24obCkgbCRpZCkpLCB3b3Jrc19hdXRob3IgPSB1bmxpc3QobGFwcGx5KHNjaG9sYXJzX3NlbCR3b3JrLA0KICAgICAgICBmdW5jdGlvbihsKSBsJGF1dGhvciksIHJlY3Vyc2l2ZSA9IEZBTFNFKSwgd29ya3NfeWVhciA9IHVubGlzdChsYXBwbHkoc2Nob2xhcnNfc2VsJHdvcmssIGZ1bmN0aW9uKGwpIGwkcHVibGljYXRpb25feWVhciksDQogICAgICAgIHJlY3Vyc2l2ZSA9IEZBTFNFKSkNCg0KICAgIGRmX3dvcmtzIDwtIGRmX3dvcmtzWyFkdXBsaWNhdGVkKGRmX3dvcmtzKSwgXQ0KDQogICAgIyBzdGVwIDQNCiAgICBpZiAodHlwZSA9PSAiZmlyc3QiKSB7DQogICAgICAgIGZvciAoaiBpbiAxOm53YXZlcykgew0KICAgICAgICAgICAgZGZfd29ya3NfdyA8LSBkZl93b3Jrc1tkZl93b3JrcyR3b3Jrc195ZWFyID49IHdhdmVzW1tqXV1bMV0gJiBkZl93b3JrcyR3b3Jrc195ZWFyIDw9IHdhdmVzW1tqXV1bMl0sDQogICAgICAgICAgICAgICAgXQ0KICAgICAgICAgICAgZm9yIChpIGluIDE6bnJvdyhkZl93b3Jrc193KSkgew0KICAgICAgICAgICAgICAgIGVnbyA8LSBkZl93b3Jrc193JHdvcmtzX2F1dGhvcltpXVtbMV1dJGF1X2lkWzFdDQogICAgICAgICAgICAgICAgYWx0ZXJzIDwtIGRmX3dvcmtzX3ckd29ya3NfYXV0aG9yW2ldW1sxXV0kYXVfaWRbLTFdDQogICAgICAgICAgICAgICAgaWYgKHN1bShpZHMgJWluJSBlZ28pID4gMCAmIHN1bShpZHMgJWluJSBhbHRlcnMpID4gMCkgew0KICAgICAgICAgICAgICAgICAgbmV0c1tqLCB3aGljaChpZHMgJWluJSBlZ28pLCB3aGljaChpZHMgJWluJSBhbHRlcnMpXSA8LSAxDQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgfQ0KDQogICAgaWYgKHR5cGUgPT0gImxhc3QiKSB7DQogICAgICAgIGZvciAoaiBpbiAxOm53YXZlcykgew0KICAgICAgICAgICAgZGZfd29ya3NfdyA8LSBkZl93b3Jrc1tkZl93b3JrcyR3b3Jrc195ZWFyID49IHdhdmVzW1tqXV1bMV0gJiBkZl93b3JrcyR3b3Jrc195ZWFyIDw9IHdhdmVzW1tqXV1bMl0sDQogICAgICAgICAgICAgICAgXQ0KICAgICAgICAgICAgZm9yIChpIGluIDE6bnJvdyhkZl93b3Jrc193KSkgew0KICAgICAgICAgICAgICAgIGVnbyA8LSByZXYoZGZfd29ya3NfdyR3b3Jrc19hdXRob3JbaV1bWzFdXSRhdV9pZClbMV0NCiAgICAgICAgICAgICAgICBhbHRlcnMgPC0gcmV2KGRmX3dvcmtzX3ckd29ya3NfYXV0aG9yW2ldW1sxXV0kYXVfaWQpWy0xXQ0KICAgICAgICAgICAgICAgIGlmIChzdW0oaWRzICVpbiUgZWdvKSA+IDAgJiBzdW0oaWRzICVpbiUgYWx0ZXJzKSA+IDApIHsNCiAgICAgICAgICAgICAgICAgIG5ldHNbaiwgd2hpY2goaWRzICVpbiUgZWdvKSwgd2hpY2goaWRzICVpbiUgYWx0ZXJzKV0gPC0gMQ0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KICAgIH0NCg0KICAgIGlmICh0eXBlID09ICJhbGwiKSB7DQogICAgICAgIGZvciAoaiBpbiAxOm53YXZlcykgew0KICAgICAgICAgICAgZGZfd29ya3NfdyA8LSBkZl93b3Jrc1tkZl93b3JrcyR3b3Jrc195ZWFyID49IHdhdmVzW1tqXV1bMV0gJiBkZl93b3JrcyR3b3Jrc195ZWFyIDw9IHdhdmVzW1tqXV1bMl0sDQogICAgICAgICAgICAgICAgXQ0KICAgICAgICAgICAgZm9yIChpIGluIDE6bnJvdyhkZl93b3Jrc193KSkgew0KICAgICAgICAgICAgICAgIGVnb3MgPC0gZGZfd29ya3NfdyR3b3Jrc19hdXRob3JbaV1bWzFdXSRhdV9pZA0KICAgICAgICAgICAgICAgIGlmIChzdW0oaWRzICVpbiUgZWdvcykgPiAwKSB7DQogICAgICAgICAgICAgICAgICBuZXRzW2osIHdoaWNoKGlkcyAlaW4lIGVnb3MpLCB3aGljaChpZHMgJWluJSBlZ29zKV0gPC0gMQ0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KICAgIH0NCiAgICBvdXRwdXQgPC0gbGlzdCgpDQogICAgb3V0cHV0JGRhdGEgPC0gc2Nob2xhcnNfc2VsDQogICAgb3V0cHV0JG5ldHMgPC0gbmV0cw0KICAgIHJldHVybihvdXRwdXQpDQp9DQpgYGANCg0KDQpFeGFtcGxlIGluIGNsYXNzIGZyb20gMTAgT2N0b2Jlcg0KU2llbmEgZGVwZW5kZW50IHZhcmlhYmxlIA0KDQpgYGB7cn0NCiMgU3RlcCAxOiBsb2FkIGRhdGENCmxpYnJhcnkoUlNpZW5hKQ0KP3NpZW5hRGVwZW5kZW50ICNsb29rIGZvciBleGFtcGxlcyAtIHNjcmlwdCBmb3IgaG93IHRvIHJ1biBzdHVmZiANCg0KDQojIHRoZW4gY2hlY2sgd2F2ZXMgYXZhaWxhYmxlDQpzNTAxICNuZXR3b3JrIGF0IHRpbWVwb2ludCAxDQpzNTAyICNuZXR3b3JrIGF0IHRpbWVwb2ludCAyDQpzNTAzICNuZXR3b3JrIGF0IHRpbWVwb2ludCANCg0KDQpteW5ldDEgPC0gc2llbmFEZXBlbmRlbnQoYXJyYXkoYyhzNTAxLCBzNTAyLCBzNTAzKSwgZGltPWMoNTAsIDUwLCAzKSkpDQpteWJlaCA8LSBzaWVuYURlcGVuZGVudChzNTBhLCB0eXBlPSJiZWhhdmlvciIpDQoNCiAjIGxvb2sgZm9yIHNtb2tpbmcgYW5kIGRyaW5raW5nIGJlaGF2aW9ycw0KDQpzbW9rZSA8LSBzNTBzICN0aW1lIHZhcnlpbmcgY292YXJpYXRlLiBUaW1lIGNvbnN0YW50IGNvdmFyIC0gdmFyQ292YXINCnNtb2tlIDwtIHZhckNvdmFyKHM1MHMpDQoNCm15ZGF0YV9leGFtcGxlIDwtIHNpZW5hRGF0YUNyZWF0ZShteW5ldDEsIG15YmVoLCBzbW9rZSkNCg0KDQoNCiMgU3RlcCAyOiBsb29rIGF0IGRhdGENCiNwcmludCByZXBvcnQgb24gZGF0YSByZXBvcnRzDQoNCnByaW50MDFSZXBvcnQobXlkYXRhX2V4YW1wbGUpDQoNCg0KIyBTdGVwIDM6IGFkZCBlZmZlY3RzIA0KbXllZmZfZXhhbXBsZSA8LSBnZXRFZmZlY3RzKG15ZGF0YV9leGFtcGxlKQ0KbXllZmZfZXhhbXBsZQ0KDQoNCg0KbXllZmZfZXhhbXBsZSA8LSBpbmNsdWRlRWZmZWN0cyhteWVmZl9leGFtcGxlLCB1bmVxdWFsWCwgbmFtZT0ibXluZXQxIiwgaW50ZXJhY3Rpb24xID0gInNtb2tlIikNCm15ZWZmX2V4YW1wbGUNCg0KDQojbWFrZSBhbGdvcml0aG0gdG8gdGhlbiBlc3RpbWF0ZSBpdA0KYWxnb19leCA8LSBzaWVuYUFsZ29yaXRobUNyZWF0ZShwcm9qbmFtZSA9ICJ0ZXN0X2V4IikNCmFuc3dlcl9leCA8LSBzaWVuYTA3KGFsZ29fZXgsIGRhdGE9bXlkYXRhX2V4YW1wbGUsIGVmZmVjdHM9bXllZmZfZXhhbXBsZSwgcmV0dXJuRGVwcyA9IFRSVUUpDQoNCmFuc3dlcl9leA0KDQoNCiNkb2VzIGl0IGNoYW5nZSBpZiBkZXBlbmRlbnQgWCANCm15ZWZmX2V4YW1wbGUgPC0gaW5jbHVkZUVmZmVjdHMobXllZmZfZXhhbXBsZSwgdW5lcXVhbFgsIG5hbWU9Im15bmV0MSIsIGludGVyYWN0aW9uMSA9ICJteWJlaCIpICNuYW1lID0gbmV0d29yayBkZXBlbmRlbnQgdmFyaWFibGUsIGludGVyYWN0aW9uIDEgaXMgY292YXJpYXRlIChzbW9raW5nKSAtIGlmIGhhdmUgbXVsdGlwbGUgbmV0b3dya3MsIHRoZW4gY291bGQgaGF2ZSB1bmVxdWFsWCB3aXRoIHJlc3BlY3QgdG8gWC4gV2UgcmVwbGFjZWQgc21va2Ugd2l0aCBteSBiZWhhdmlvciwgYW5kIHJlcnVuIHRoZSBzaWVuYSBtb2RlbC4gVGhpcyBpcyBhbiBhbGdvcml0aG0sIGNhbiBhc2sgUlNpZW5hIHRvIHJlZmVyZW5jZSBwcmV2aW91cyByZXN1bHQgd2l0aCAncHJldmFucz1BTlMnIGFmdGVyIHJldHVybkRlcHRzID0gVFJVRQ0KYW5zd2VyX2V4IDwtIHNpZW5hMDcoYWxnb19leCwgZGF0YT1teWRhdGFfZXhhbXBsZSwgZWZmZWN0cz1teWVmZl9leGFtcGxlLCByZXR1cm5EZXBzID0gVFJVRSkNCg0KYW5zd2VyX2V4DQojIGxvb2tpbmcgYXQgcmVzdWx0cywgbXliZWggPSBkcmlua2luZyAtLSBlZ28gbGVzcyBsaWtlbHkgdG8gc3BlbmQgdGltZSB3aXRoIHBlb3BsZSB3aG8gZHJpbmsgbW9yZSBvciBsZXNzIHRoYW4gdGhlbS4gZWdvIGFsc28gbGVzcyBsaWtlbHkgdG8gc3BlbmQgdGltZSB3aXRoIHBlb3BsZSB3aG8gc21va2UgbW9yZSBvciBsZXNzLCB0byBhIGxlc3NlciBleHRlbnQuIENhbiB1c2UgdW5lcXVhbFggZm9yIGRlcGVuZGVudCB2YXJpYWJsZXMgYW5kIGNvdmFyaWF0ZXMuIGtleSBkaWZmZXJlbmNlIGluIGVzdGltYXRpb24gcHJvY2VkdXJlOiANCiMgd2UgYXJlIGFsc28gbW9kZWxpbmcgYmVoYXZpb3JhbCByZXN1bHRzIC0gYmVoYXZpb3IgY2hhbmdpbmcgb3ZlciB0aW1lLCBzaW11bGF0ZWQgdmlhIG1pbmlzdGVwIGxvZ2ljIChvbmUgc3RlcCB1cCBvciBkb3duKS4gVGhlIGNydWNpYWwgZGlmZmVyZW5jZTogZHVyaW5nIHRoZSBhbGdvcml0aG0gDQojSWYgY291bnQgc3RhdGlzdGljIGZvciBzbW9rZSwgdGhlbiBiZXR3ZWVuIHRpbWUgcG9pbnQgMSBhbmQgMiB3ZSB1c2UgdmFsdWUgZnJvbSB0aW1lcG9pbnQgMS4gYmV0d2VlbiAyLTMsIHVzZSB0aW1lIHBvaW50IDIuIEJ1dCB3aXRoaW4gdGhlIHZhcmlhYmxlLCB0aGUgZWdvIGxldmVsIGJlaGF2aW9yIGlzIGNoYW5naW5nLiBpcyBub3QgdXNpbmcgdGhlIHZhbHVlIGFzIG9ic2VydmVkIGF0IHQxIC0gaXQgaXMgdXNpbmcgdGhlIHZhbHVlIGFzIGlzIGN1cnJlbnRseSBzaW11bGF0ZWQuIA0KDQoNCg0KDQoNCiNjb3VsZCBleGNsdWRlIHZhcmlhYmxlIHRvIHRoZW4gaW5jbHVkZSBhcyBjb3ZhcmlhdGUgZWZmZWN0LiANCg0KbXliZWggPC0gc2llbmFEZXBlbmRlbnQoczUwYSwgdHlwZT0iYmVoYXZpb3IiKSAjZGVmaW5lZCBhcyBkZXBlbmRlbnQgdmFyaWFibGUgDQpkcmlua2luZyA8LSB2YXJDb3ZhcihzNTBhKSAjZGVmaW5lZCBhcyBjb3ZhcmlhdGUgdmFyaWFibGUgDQoNCiN1cGRhdGUgZGF0YSBvYmplY3Q6IA0KbXlkYXRhX2V4YW1wbGUgPC0gc2llbmFEYXRhQ3JlYXRlKG15bmV0MSwgbXliZWgsIGRyaW5raW5nLCBzbW9rZSkNCg0KDQojYW5kIGVmZmVjdHMgb2JqZWN0OiANCm15ZWZmX2V4YW1wbGUgPC0gaW5jbHVkZUVmZmVjdHMobXllZmZfZXhhbXBsZSwgdW5lcXVhbFgsIG5hbWU9Im15bmV0MSIsIGludGVyYWN0aW9uMSA9ICJzbW9rZSIpDQoNCm15ZWZmX2V4YW1wbGUgPC0gaW5jbHVkZUVmZmVjdHMobXllZmZfZXhhbXBsZSwgdW5lcXVhbFgsIG5hbWU9Im15bmV0MSIsIGludGVyYWN0aW9uMSA9ICJkcmlua2luZyIpDQoNCmFsZ29fZXgyIDwtIHNpZW5hQWxnb3JpdGhtQ3JlYXRlKHByb2puYW1lID0gInRlc3RfZXgiKQ0KDQphbnN3ZXJfZXggPC0gc2llbmEwNyhhbGdvX2V4MiwgZGF0YT1teWRhdGFfZXhhbXBsZSwgZWZmZWN0cz1teWVmZl9leGFtcGxlLCByZXR1cm5EZXBzID0gVFJVRSkNCmFuc3dlcl9leA0KDQojdGhlbiB0aGUgbmV0d29yayBkeW5hbWljcyBjaGFuZ2UgDQojIGludGVycHJldGF0aW9uIG9mIHRoZSByYXRlIGNvbnN0YW50IC0gdGhlIGF2ZXJhZ2UgYW1vdW50IG9mIG1pbmlzdGVwcyBlYWNoIGVnbyBpcyBtYWtpbmcgYmV0d2VlbiB0aGUgdHdvIG9ic2VydmF0aW9ucw0KDQojYmVoYXZpb3JhbCBkeW5hbWljczogDQojIHRoZSByYXRlIGNvbnN0YW50OiB0aGUgbnVtYmVyIG9mIHN0ZXBzIGluIHRoZSBiZWhhdmlvcmFsIGFzcGVjdCANCg0KI3N0YXRpc3RpYyBmb3IgbGluZWFyIHNoYXBlIC0gbGluZWFyIHNoYXBlIGVmZmVjdCAtIHRoZSB2YWx1ZSBvZiB0aGUgKmNlbnRlcmVkKiBiZWhhdmlvcmFsIHZhcmlhYmxlIChhdmVyYWdlIGluIHRoZSB0b3RhbCBzYW1wbGUpLiANCiMgaWYgcG9zaXRpdmUsIHRyeSB0byBpbmNyZWFzZSBiZWhhdmlvci4gZWZmZWN0IGlzIHoxICh6ZWQgc2NvcmUpLCB3aXRoIHRoZSBvcHRpb25zIG9mIDEsIDAsIG9yIC0xLiBiZWhhdmlvciBpbmNyZWFzZXMgYmVjYXVzZSBwb3NpdGl2ZWx5IGV2YWx1YXRlcyAxIG1vcmUgdGhhbiAwLCBtb3JlIHRoYW4gLTEuIEF0IHNvbWUgcG9pbnQsIHRob3VnaCwgYmVoYXZpb3Igd2lsbCBzdG9wIGluY3JlYXNpbmcgLSB0aGF0IGlzIHoyIChzcXVhcmVkISkuIHNvLCBwYXJhbWV0ZXIgbW9kZXJhdGVzIGl0c2VsZiB3aXRoIHRpbWU/PyANCg0KIyB0aGVzZSBhcmUgdGhlIG1pbmltdW0gZWZmZWN0cyB0byBpbmNsdWRlLCBiZWNhdXNlIGl0IHByZWRpY3RzIG1lYW4gdmFsdWUgb2JzZXJ2ZSBpbiBkYXRhc2V0LiAyIHBhcmFtZXRlcnMgLSBlc3RpbWF0ZSBtZWFuIGJlaGF2aW9yLiBiYXNlZCBvbiBtb2RlbCByZXN1bHRzLCB3aGF0IGlzIHRoZSBtZWFuIHZhbHVlLiANCg0KIyBiZWhhdmlvcmFsIHZhcmlhYmxlcyBpbiBkYXRhc2V0IC0gZXZlcnl0aGluZyBvYnNlcnZlZCB0aGF0IGNoYW5nZXMuIGV4LiwgcG9zaXRpb24gKGZ1bmN0aWUpLCBjaXRhdGlvbnMsIGludGVyZGlzY2lwbGluYXJpdHkgc2NvcmUuIFByb2JsZW06IGlzIHRpbWUgd2luZG93IGxhcmdlIGVub3VnaHQgdG8gc2VlIGNoYW5nZT8gYW5kIG92ZXIgdGltZSwgYmVoYXZpb3JhbCB2YXJpYWJsZSBpcyBvbmx5IGNoYW5naW5nIC0gd2hpY2ggdGhlbiBtdXN0IGJlIGNhbGN1bGF0ZWQgYXMgY29udGludW91cyBkZXBlbmRlZCB2YXJpYWJsZS4gDQoNCg0KYGBgDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNClNUQVJUIE9GIEdPT0RORVNTIE9GIEZJVCANCg0KDQpgYGB7cn0NCiMgc2VlIGhlcmU6ID8nc2llbmFHT0YtYXV4aWxpYXJ5Jw0KDQojIFRoZSBnZW9kZXNpYyBkaXN0cmlidXRpb24gaXMgbm90IGF2YWlsYWJsZSBmcm9tIHdpdGhpbiBSU2llbmEsIGFuZCB0aGVyZWZvcmUgaXMgY29waWVkIGZyb20gdGhlDQojIGhlbHAgcGFnZSBvZiBzaWVuYUdPRi1hdXhpbGlhcnk6DQoNCiMgR2VvZGVzaWNEaXN0cmlidXRpb24gY2FsY3VsYXRlcyB0aGUgZGlzdHJpYnV0aW9uIG9mIG5vbi1kaXJlY3RlZCBnZW9kZXNpYyBkaXN0YW5jZXM7IHNlZQ0KIyA/c25hOjpnZW9kaXN0IFRoZSBkZWZhdWx0IGZvciBcY29kZXtsZXZsc30gcmVmbGVjdHMgdGhlIHVzdWFsIHBoZW5vbWVub24gdGhhdCBnZW9kZXNpYyBkaXN0YW5jZXMNCiMgbGFyZ2VyIHRoYW4gNSBkbyBub3QgZGlmZmVyIGFwcHJlY2lhYmx5IHdpdGggcmVzcGVjdCB0byBpbnRlcnByZXRhdGlvbi4gIE5vdGUgdGhhdCB0aGUgbGV2ZWxzIG9mDQojIHRoZSByZXN1bHQgYXJlIG5hbWVkOyB0aGVzZSBuYW1lcyBhcmUgdXNlZCBpbiB0aGUgXGNvZGV7cGxvdH0gbWV0aG9kLg0KR2VvZGVzaWNEaXN0cmlidXRpb24gPC0gZnVuY3Rpb24oaSwgZGF0YSwgc2ltcywgcGVyaW9kLCBncm91cE5hbWUsIHZhck5hbWUsIGxldmxzID0gYygxOjUsIEluZiksIGN1bXVsYXRpdmUgPSBUUlVFLA0KICAgIC4uLikgew0KICAgIHggPC0gbmV0d29ya0V4dHJhY3Rpb24oaSwgZGF0YSwgc2ltcywgcGVyaW9kLCBncm91cE5hbWUsIHZhck5hbWUpDQogICAgcmVxdWlyZShzbmEpDQogICAgYSA8LSBzbmE6Omdlb2Rpc3Qoc3ltbWV0cml6ZSh4KSkkZ2Rpc3QNCiAgICBpZiAoY3VtdWxhdGl2ZSkgew0KICAgICAgICBnZGkgPC0gc2FwcGx5KGxldmxzLCBmdW5jdGlvbihpKSB7DQogICAgICAgICAgICBzdW0oYSA8PSBpKQ0KICAgICAgICB9KQ0KICAgIH0gZWxzZSB7DQogICAgICAgIGdkaSA8LSBzYXBwbHkobGV2bHMsIGZ1bmN0aW9uKGkpIHsNCiAgICAgICAgICAgIHN1bShhID09IGkpDQogICAgICAgIH0pDQogICAgfQ0KICAgIG5hbWVzKGdkaSkgPC0gYXMuY2hhcmFjdGVyKGxldmxzKQ0KICAgIGdkaQ0KfQ0KDQojIFRoZSBmb2xsb3dpbmcgZnVuY3Rpb24gaXMgdGFrZW4gZnJvbSB0aGUgaGVscCBwYWdlIGZvciBzaWVuYVRlc3QNCg0KdGVzdGFsbCA8LSBmdW5jdGlvbihhbnMpIHsNCiAgICBmb3IgKGkgaW4gd2hpY2goYW5zJHRlc3QpKSB7DQogICAgICAgIHNjdCA8LSBzY29yZS5UZXN0KGFucywgaSkNCiAgICAgICAgY2F0KGFucyRyZXF1ZXN0ZWRFZmZlY3RzJGVmZmVjdE5hbWVbaV0sICJcbiIpDQogICAgICAgIHByaW50KHNjdCkNCiAgICB9DQogICAgaW52aXNpYmxlKHNjb3JlLlRlc3QoYW5zKSkNCn0NCmBgYA0KDQoNCiMgd2hlcmUgY2xhc3Mgc3RhcnRzIA0KDQpgYGB7cn0NCmdvZmkwIDwtIHNpZW5hR09GKGFuc3dlcl9leCwgSW5kZWdyZWVEaXN0cmlidXRpb24sIHZlcmJvc2UgPSBGQUxTRSwgam9pbiA9IFRSVUUsIHZhck5hbWUgPSAibXluZXQxIikNCmdvZmkwDQpwbG90KGdvZmkwKQ0KDQojIHZhcmlhYmxlIG5hbWUgZnJvbSBleGFtcGxlID0gbXluZXQNCiMgeC1heGlzID0gaW5kZWdyZWUgDQojIHktYXhpcyA9IGZyZXF1ZW5jeSAocGxvdGluZyB0aGUgcGVvcGxlIHdpdGggMCBpbi1kZWdyZWVzKQ0KDQoNCmBgYA0KDQojI0JveCBQbG90IHYgVmlvbGluIHBsb3QNCg0KYm94IHBsb3Q6IGxvb2tpbmcgYXQgZGVncmVlIG9mIHNwcmVhZCAtIGZvciBtYW55IHNpbXVsYXRpb25zIC0gYmFzZWQgb24gcGFyYW1ldGVycyAvIGVzdGltYXRpb24sIHdlIGhhdmUgc2ltdWxhdGVkIG5ldHdvcmtzLiBmb3IgZWFjaCBzaW11bGF0ZWQgbmV0d29yaywgd2UgZG8gYW4gaW4tZGVncmVlIGNvdW50LiBmb3IgdGhlIG1lZGlhbiB2YWx1ZSBvZiB0aGUgc2ltdWxhdGVkIG5ldHdvcmtzLCBpcyBhYm91dCAyMCBpbiB0aGlzPz8gDQpWaW9saW4gcGxvdCAtIHJlcHJlc2VudHMgd2hlcmUgdGhlIG1ham9yaXR5IG9mIHRoZSBkYXRhIGlzLi4gDQoNCnJlZCBsaW5lIC0gcmVkIGlzIHRoZSBvYnNlcnZlZCBuZXR3b3JrLiBTaW11bGF0ZWQgU0hPVUxEIG1hdGNoIHRoZSBvYnNlcnZlZCBuZXR3b3JrcyAtIGFuZCBtYXRjaGVzLCBpZiB0aGUgcmVkIHBvaW50cyBhcmUgd2l0aGluIHRoZSBwbG90cywgYW5kIGlkZWFsbHkgY2xvc2UgdG8gdGhlIG1lZGlhbiBvZiBlYWNoLiANCg0KIyMgV2h5IGRvIHRoZSBudW1iZXJzIGluY3JlYXNlPyANCkN1bXVsYXRpdmUgaW4tZGVncmVlPyBOby4gV2UgaGF2ZSAxMiBub2RlcyBpbiBvYnNlcnZlZCBuZXR3b3JrIHdpdGggMCBkZWdyZWVzLiAxNyBtb3JlIHdpdGggb25lLiBJcyBjb3VudGVyIGludHVpdGl2ZT8NCg0Kd2UgdW5kZXJlc3RpbWF0ZSBudW1iZXIgb2YgaXNvbGF0ZXMsIGFuZCBvdmVyZXN0aW1hdGUgdGhlIG51bWJlciBvZiBhY3RvcnMgd2l0aCAzLTQtNSB0aWVzLCBhbmQgb3ZlciBlc3RpbWF0ZSBwZW9wbGUgd2l0aCBGRVcgZGVncmVlcy4uLiANCg0KSXMgY3VtdWxhdGl2ZSBiZWNhdXNlIGl0IGlzIHN0YWNrZWQgdGhyb3VnaG91dCBvbmUgcGxvdC4gDQoNCg0KDQoNCiMjIFRlc3Rpbmcgd2l0aCBwLXZhbHVlOiANClZhbHVlcyBhcmUgZml4ZWQgLSB0aGVyZSBhcmUgbm90IHJhbmRvbW5lc3MgaW4gdGFyZ2V0cy4gd2UgaGF2ZSBhIHJhbmRvbSB2YXJpYWJsZSwgc28gd2UgdGVzdCBhIHNldCBvZiByYW5kb21lIHZhcmlhYmxlcyBhZ2FpbnN0IGEgc2V0IG9mIGZpeGVkIHZhbHVlcywgYW5kIGNvbWJpbmUgaXQgaW4gb25lIHRlc3QgKHdoZXJlIHdlIHRha2UgaW50byBhY2NvdW50IGlmIHRoZXJlIGlzIGEgY292YXJpYW5jZSBpbiBhbGwgb2YgdGhpcy4gaWYgY292YXJpYW5jZSBpbiByYW5kb20gdmFyaWFibGVzKS4gDQoNCklmIGhhdmUgMSByYW5kb20gdmFyaWFibGUgYW5kIDEgZml4ZWQgdmFyaWFibGU6IFQtdGVzdCAob25lLXNhbXBsZSB0LXRlc3QpDQpUaGlzIHRlc3QgaXMgbW9yZSBjb21wbGljYXRlZDogTW9udGUgQ2FybG8gTWFoYWxhbm9iaXMgZGlzdGFuY2UgdGVzdCBwLXZhbHVlIChpbiB0aGlzIGV4YW1wbGUsIGlzOiAgMC41NDIpIA0KDQoNCiMjIGNhbiBhbHNvIGRvIHRoaXMgZm9yIE9VVCBERUdSRUUgRElTVFJJQlVUSU9ODQojIyMgSU1QT1JUQU5UIFRPIERPIFRFU1RTIE9OIERZQUQgQ0VOU1VTIEFORCBUUklBRCBDRU5TVVMgLSBET04nVCBHRVQgRkFSVEhFUiBUSEFOIERZQURJQyBFRkZFQ1QgT1IgVFJJQUQgRUZGRUNULCBTTyBXQU5UIFRPIE1BS0UgU1VSRSBUSEFUIE1PREVMIEFUIExFQVNUIENBTiBFWFBMQUlOIERZQUQgQU5EIFRSSUFEIENPTkZJR1VSQVRJT05TDQpUcmlhZCBjb25maWd1cmF0aW9uIG9mDQoNClRoaXMgaXMgTUFDUk8gTEVWRUwgSU5WRVNUSUdBVElPTg0KDQpgYGB7cn0NCiMgVEJEOiBvdXRkZWdyZWUgZGlzdHJpYnV0aW9uDQoNCiMgZ29maTEgPC0gc2llbmFHT0YoYW5zd2VyX2V4LCBPdXRkZWdyZWVEaXN0cmlidXRpb24sIHZlcmJvc2UgPSBGQUxTRSwgam9pbiA9IFRSVUUsIGxldmxzID0gYygwOjEwLCAxNSwgMjApLCB2YXJOYW1lID0gIm55bmV0MSIpDQoNCg0KYGBgDQoNCg0KIyBSRUxBVElWRSBJTkZMVUVOQ0UgDQoNCg0KYGBge3J9DQpsaWJyYXJ5KFJTaWVuYSkNCmxpYnJhcnkoUnNpZW5hVHdvU3RlcCkNCmxpYnJhcnkodGlkeXIpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCiMgUkkgPC0gc2llbmFSSShkYXRhID0gbXlkYXRhLCBhbnMgPSBhbnNNMSkNCg0KIyBSSSA8LSBzaWVuYVJJKGRhdGEgPSBteWRhdGFfZXhhbXBsZSwgYW5zID0gYW5zd2VyX2V4KQ0KDQojIFJTaWVuYTo6OnNpZW5hUkkoZGF0YSA9IG15ZGF0YV9leGFtcGxlLCBhbnMgPSBhbnN3ZXJfZXgpDQoNCiMgUkkgPC0gUlNpZW5hOjo6c2llbmFSSShkYXRhID0gbXlkYXRhX2V4YW1wbGUsIGFucyA9IGFuc3dlcl9leCkNCg0KUkkgPC0gUlNpZW5hOjo6c2llbmFSSShkYXRhID0gbXlkYXRhX2V4YW1wbGUsIGFucyA9IGFuc3dlcl9leCkNCg0KY2xhc3MoUkkpDQojIHNpZW5hIFJJDQoNCiNwbG90KFJJLCBhZGRQaWVDaGFydCA9IFRSVUUpDQojcGxvdC5zaWVuYVJJKFJJLCBhZGRQaWVDaGFydCA9IFRSVUUpDQoNCiMgSEFEIFRPIENPTU1FTlQgVEhJUyBPVVQgVE8gS05JVCwgRVZFTiBUSE9VR0ggQ09ERSBXT1JLUw0KIyBSU2llbmE6OjpwbG90LnNpZW5hUkkoUkksIGFkZFBpZUNoYXJ0ID0gVFJVRSkNCmBgYA0KDQoNCg0KDQoNCg0KDQpXaXRoIHRoaXMgcGxvdCwgY2FuIGxvb2sgYXQgdGhlIHByb3BvcnRpb24gb2YgZWFjaCBlZmZlY3Qgb24gcHJlZGljdGluZyAtIHRoZSBtb3JlIGVmZmVjdHMgaW5jbHVkZWQsIHRoZSBsb25nZXIgdGhlIGxpc3QuIA0KDQpXaHkgZG9lcyByZWxhdGl2ZSBpbXBvcnRhbmNlIHZhcnkgcGVyIGFjdG9ycz8gDQotICAgY291bGQgYmUgdmFyeWluZyBub2RlIGNoYXJhY3RlcnN0aWNzICh0aG91Z2ggZm9yIHRoaXMgd2Ugb25seSBoYXZlIG9uZSBub2RlIGNoYXJhY3RlcmlzdGljKQ0KLSAgICoqVElNRSBDSEFSQUNURVJJU1RJQ1MqKiAtIGFzIGFuIGlzb2xhdGUsIHRoZW4gbm9kZSBjaGFyYWN0ZXJpc3RpYyBpcyBub3QgYSBwYXJhbWV0ZXI/DQotICAgDQpUaGlzIGlzIGEgbWljcm8tbGV2ZWwgLSB0aGlzIGRvZXMgbm90IHJlZmxlY3QgcGFyYW1ldGVyIGVzdGltYXRlcywgcmVjaXByb2NpdHkgY291bGQgaGF2ZSBsYXJnZSBlZmZlY3QgLSBhbmQgeWV0IGluIGVhY2ggdGlueS1zdGVwLCBpdCBjb3VsZCBoYXZlIGEgc21hbGxlciBlZmZlY3Qgb24gdGhlIGRlY2lzaW9ucy4gDQoqIHdoZW4gaXQgaXMgcmVsZXZhbnQsIGl0IG1pZ2h0IGhhdmUgYSBsYXJnZSBlZmZlY3QsIGJ1dCBpdCBtaWdodCBub3QgYWx3YXlzIGJlIHJlbGV2YW50IHRvIGVhY2ggaW5kaXZpZHVhbC4gVGhpcyBpcyBsb29raW5nIGF0IHdoZXRoZXIgaXQgaXMgYWN0dWFsbHkgcmVsZXZhbnQgZm9yIG1hbnkgcGVvcGxlKiANCg0KKiB0aGUgb3RoZXIgaXMgbWFjcm8gbGV2ZWwgLSANCg0KDQoNCg0KIyBPbmUgRmluYWwgR29vZG5lc3Mgb2YgRml0IA0KV2hhdCB3ZSBjYW4gYWxzbyBkbzogdHdlYWsgZXN0aW1hdGVzLCBhbmQgc2ltdWxhdGUgYmFzZWQgb24gdHdlYWtlZCBlc3RpbWF0ZXMuIA0KDQpKdXN0IHRoZSBsb2dpYyBmb3Igbm93LiANCg0KSWYgd2UgcGx1ZyBpbiBvdXIgb3duIHZhbHVlcywgd291bGQgaXQgbWVldCBkaWZmZXJlbnQgbWFjcm8gbGV2ZWwgZHluYW1pY3M/PyANCmhvdyB0byBzZXQgZWZmZWN0IHRvIDAuIHdvdWxkIGl0IGJlIHRvIGRpZmZlcmVudCBtYWNybyBsZXZlbCBzdHJ1Y3R1cmVzPyBTZWUgaG93IG1vZGVsIGJlaGF2ZXMgZGlmZmVyZW50bHk/PyANCg0KDQpSdW4gc3RhdGlzdGljcyBvbiBzaW11bGF0ZWQgbW9kZWxzLiBzaW11bGF0aW9ucyBiYXNlZCBvbiBlc3RpbWF0ZWQgbW9kZWxzLiBzdGF0aXN0aWMgYmFzZWQgb24gaW4tZGVncmVlIGRpc3RyaWJ1dGlvbi4gDQpJZiBpbiBtb2RlbCB0aGVyZSB3YXMgYW4gaW4tZGVncmVlIHBvcHVsYXJpdHkgZWZmZWN0LiB3aGF0IGlmIHdlIGV4Y2x1ZGVkIHRoZSBpbi1kZWdyZWUgcG9wdWxhcml0eSBlZmZlY3Q/IEhvdyB3b3VsZCBpdCBlZmZlY3QgdGhlIHJlc3Q/IElmIHdlIHJlbW92ZSBpdCwgd2UgY2FuIHNlZSBob3cgbXVjaCBjaGFuZ2UgaGFwcGVucy4gDQoNClRoZW4sIGlmIGVmZmVjdCBleGNsdWRlZCwgYnV0IHNhbWUgbW9kZWwgc2ltdWxhdGVkLCB0aGVuIHdvdWxkIGZpbmQgdGhhdCBpdCBhY3R1YWxseSBpcyBub3Qgc28gaW1wb3J0YW50Pz8gDQoNCg0KQ2hhbmdlIHRoZSBtaWNyby1sZXZlbCBtZWNoYW5pc21zLCBsb29rIGF0IGltcG9ydGFuY2Ugb2YgbWljcm8tbGV2ZWwuIA0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCg0KDQoNCiMgU1RFUCAxOiBsb2FkIGRhdGENCmBgYHtyfQ0Kc2Nob2xhcnMgPC0gZmxvYWQoIkM6L0dpdGh1Yi9sYWJqb3VybmFsL3NjaG9sYXJzXzIwMjQwOTI0LnJkYSIpDQpgYGANCg0KIyBXZWJzY3JhcGluZyBzY3JpcHQgLSBmY29sbmV0IGZ1bmN0aW9uDQojIFB1YmxpY2F0aW9ucyBJSTogbm9taW5hdGlvbiBuZXR3b3JrcyAoMi4zLjEpIGNvbnN0cnVjdCBhZGphY2VuY3kgbmV0d29yayBvZiBzY2hvbGFycyBhbmQgcHVibGljYXRpb25zIG9mIFJVIFNPQw0KDQpgYGB7cn0NCmxpYnJhcnkoZHBseXIpDQpmY29sbmV0IDwtIGZ1bmN0aW9uKGRhdGEgPSBzY2hvbGFycywgdW5pdmVyc2l0eSA9ICJSVSIsIGRpc2NpcGxpbmUgPSAic29jaW9sb2d5Iiwgd2F2ZXMgPSBsaXN0KGMoMjAxNSwNCiAgICAyMDE4KSwgYygyMDE5LCAyMDIzKSksIHR5cGUgPSBjKCJmaXJzdCIpKSB7DQoNCiAgICAjIHN0ZXAgMQ0KICAgIGRlbW9ncmFwaGljcyA8LSBkby5jYWxsKHJiaW5kLmRhdGEuZnJhbWUsIGRhdGEkZGVtb2dyYXBoaWNzKQ0KICAgIGRlbW9ncmFwaGljcyA8LSBkZW1vZ3JhcGhpY3MgJT4lDQogICAgICAgIG11dGF0ZShVbml2ZXJzaXRlaXQxLjIyID0gcmVwbGFjZShVbml2ZXJzaXRlaXQxLjIyLCBpcy5uYShVbml2ZXJzaXRlaXQxLjIyKSwgIiIpLCBVbml2ZXJzaXRlaXQyLjIyID0gcmVwbGFjZShVbml2ZXJzaXRlaXQyLjIyLA0KICAgICAgICAgICAgaXMubmEoVW5pdmVyc2l0ZWl0Mi4yMiksICIiKSwgVW5pdmVyc2l0ZWl0MS4yNCA9IHJlcGxhY2UoVW5pdmVyc2l0ZWl0MS4yNCwgaXMubmEoVW5pdmVyc2l0ZWl0MS4yNCksDQogICAgICAgICAgICAiIiksIFVuaXZlcnNpdGVpdDIuMjQgPSByZXBsYWNlKFVuaXZlcnNpdGVpdDIuMjQsIGlzLm5hKFVuaXZlcnNpdGVpdDIuMjQpLCAiIiksIGRpc2NpcGxpbmUuMjIgPSByZXBsYWNlKGRpc2NpcGxpbmUuMjIsDQogICAgICAgICAgICBpcy5uYShkaXNjaXBsaW5lLjIyKSwgIiIpLCBkaXNjaXBsaW5lLjI0ID0gcmVwbGFjZShkaXNjaXBsaW5lLjI0LCBpcy5uYShkaXNjaXBsaW5lLjI0KSwgIiIpKQ0KDQogICAgc2FtcGxlIDwtIHdoaWNoKChkZW1vZ3JhcGhpY3MkVW5pdmVyc2l0ZWl0MS4yMiAlaW4lIHVuaXZlcnNpdHkgfCBkZW1vZ3JhcGhpY3MkVW5pdmVyc2l0ZWl0Mi4yMiAlaW4lDQogICAgICAgIHVuaXZlcnNpdHkgfCBkZW1vZ3JhcGhpY3MkVW5pdmVyc2l0ZWl0MS4yNCAlaW4lIHVuaXZlcnNpdHkgfCBkZW1vZ3JhcGhpY3MkVW5pdmVyc2l0ZWl0Mi4yNCAlaW4lDQogICAgICAgIHVuaXZlcnNpdHkpICYgKGRlbW9ncmFwaGljcyRkaXNjaXBsaW5lLjIyICVpbiUgZGlzY2lwbGluZSB8IGRlbW9ncmFwaGljcyRkaXNjaXBsaW5lLjI0ICVpbiUgZGlzY2lwbGluZSkpDQoNCiAgICBkZW1vZ3JhcGhpY3Nfc29jIDwtIGRlbW9ncmFwaGljc1tzYW1wbGUsIF0NCiAgICBzY2hvbGFyc19zZWwgPC0gbGFwcGx5KHNjaG9sYXJzLCAiWyIsIHNhbXBsZSkNCg0KICAgICMgc3RlcCAyDQogICAgaWRzIDwtIGRlbW9ncmFwaGljc19zb2MkYXVfaWQNCiAgICBud2F2ZXMgPC0gbGVuZ3RoKHdhdmVzKQ0KICAgIG5ldHMgPC0gYXJyYXkoMCwgZGltID0gYyhud2F2ZXMsIGxlbmd0aChpZHMpLCBsZW5ndGgoaWRzKSksIGRpbW5hbWVzID0gbGlzdCh3YXZlID0gMTpud2F2ZXMsIGlkcywNCiAgICAgICAgaWRzKSkNCiAgICBkaW1uYW1lcyhuZXRzKQ0KDQogICAgIyBzdGVwIDMNCiAgICBkZl93b3JrcyA8LSB0aWJibGUod29ya3NfaWQgPSB1bmxpc3QobGFwcGx5KHNjaG9sYXJzX3NlbCR3b3JrLCBmdW5jdGlvbihsKSBsJGlkKSksIHdvcmtzX2F1dGhvciA9IHVubGlzdChsYXBwbHkoc2Nob2xhcnNfc2VsJHdvcmssDQogICAgICAgIGZ1bmN0aW9uKGwpIGwkYXV0aG9yKSwgcmVjdXJzaXZlID0gRkFMU0UpLCB3b3Jrc195ZWFyID0gdW5saXN0KGxhcHBseShzY2hvbGFyc19zZWwkd29yaywgZnVuY3Rpb24obCkgbCRwdWJsaWNhdGlvbl95ZWFyKSwNCiAgICAgICAgcmVjdXJzaXZlID0gRkFMU0UpKQ0KDQogICAgZGZfd29ya3MgPC0gZGZfd29ya3NbIWR1cGxpY2F0ZWQoZGZfd29ya3MpLCBdDQoNCiAgICAjIHN0ZXAgNA0KICAgIGlmICh0eXBlID09ICJmaXJzdCIpIHsNCiAgICAgICAgZm9yIChqIGluIDE6bndhdmVzKSB7DQogICAgICAgICAgICBkZl93b3Jrc193IDwtIGRmX3dvcmtzW2RmX3dvcmtzJHdvcmtzX3llYXIgPj0gd2F2ZXNbW2pdXVsxXSAmIGRmX3dvcmtzJHdvcmtzX3llYXIgPD0gd2F2ZXNbW2pdXVsyXSwNCiAgICAgICAgICAgICAgICBdDQogICAgICAgICAgICBmb3IgKGkgaW4gMTpucm93KGRmX3dvcmtzX3cpKSB7DQogICAgICAgICAgICAgICAgZWdvIDwtIGRmX3dvcmtzX3ckd29ya3NfYXV0aG9yW2ldW1sxXV0kYXVfaWRbMV0NCiAgICAgICAgICAgICAgICBhbHRlcnMgPC0gZGZfd29ya3NfdyR3b3Jrc19hdXRob3JbaV1bWzFdXSRhdV9pZFstMV0NCiAgICAgICAgICAgICAgICBpZiAoc3VtKGlkcyAlaW4lIGVnbykgPiAwICYgc3VtKGlkcyAlaW4lIGFsdGVycykgPiAwKSB7DQogICAgICAgICAgICAgICAgICBuZXRzW2osIHdoaWNoKGlkcyAlaW4lIGVnbyksIHdoaWNoKGlkcyAlaW4lIGFsdGVycyldIDwtIDENCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICB9DQoNCiAgICBpZiAodHlwZSA9PSAibGFzdCIpIHsNCiAgICAgICAgZm9yIChqIGluIDE6bndhdmVzKSB7DQogICAgICAgICAgICBkZl93b3Jrc193IDwtIGRmX3dvcmtzW2RmX3dvcmtzJHdvcmtzX3llYXIgPj0gd2F2ZXNbW2pdXVsxXSAmIGRmX3dvcmtzJHdvcmtzX3llYXIgPD0gd2F2ZXNbW2pdXVsyXSwNCiAgICAgICAgICAgICAgICBdDQogICAgICAgICAgICBmb3IgKGkgaW4gMTpucm93KGRmX3dvcmtzX3cpKSB7DQogICAgICAgICAgICAgICAgZWdvIDwtIHJldihkZl93b3Jrc193JHdvcmtzX2F1dGhvcltpXVtbMV1dJGF1X2lkKVsxXQ0KICAgICAgICAgICAgICAgIGFsdGVycyA8LSByZXYoZGZfd29ya3NfdyR3b3Jrc19hdXRob3JbaV1bWzFdXSRhdV9pZClbLTFdDQogICAgICAgICAgICAgICAgaWYgKHN1bShpZHMgJWluJSBlZ28pID4gMCAmIHN1bShpZHMgJWluJSBhbHRlcnMpID4gMCkgew0KICAgICAgICAgICAgICAgICAgbmV0c1tqLCB3aGljaChpZHMgJWluJSBlZ28pLCB3aGljaChpZHMgJWluJSBhbHRlcnMpXSA8LSAxDQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgfQ0KDQogICAgaWYgKHR5cGUgPT0gImFsbCIpIHsNCiAgICAgICAgZm9yIChqIGluIDE6bndhdmVzKSB7DQogICAgICAgICAgICBkZl93b3Jrc193IDwtIGRmX3dvcmtzW2RmX3dvcmtzJHdvcmtzX3llYXIgPj0gd2F2ZXNbW2pdXVsxXSAmIGRmX3dvcmtzJHdvcmtzX3llYXIgPD0gd2F2ZXNbW2pdXVsyXSwNCiAgICAgICAgICAgICAgICBdDQogICAgICAgICAgICBmb3IgKGkgaW4gMTpucm93KGRmX3dvcmtzX3cpKSB7DQogICAgICAgICAgICAgICAgZWdvcyA8LSBkZl93b3Jrc193JHdvcmtzX2F1dGhvcltpXVtbMV1dJGF1X2lkDQogICAgICAgICAgICAgICAgaWYgKHN1bShpZHMgJWluJSBlZ29zKSA+IDApIHsNCiAgICAgICAgICAgICAgICAgIG5ldHNbaiwgd2hpY2goaWRzICVpbiUgZWdvcyksIHdoaWNoKGlkcyAlaW4lIGVnb3MpXSA8LSAxDQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAgfQ0KICAgIG91dHB1dCA8LSBsaXN0KCkNCiAgICBvdXRwdXQkZGF0YSA8LSBzY2hvbGFyc19zZWwNCiAgICBvdXRwdXQkbmV0cyA8LSBuZXRzDQogICAgcmV0dXJuKG91dHB1dCkNCn0NCmBgYA0KDQojIyB1c2UgZnVuY3Rpb24gZm9yIHRlc3Qgb2JqZWN0IC0gY3VzdG9tIGZ1bmN0aW9uIGZyb20gYWJvdmUgKGZjb2xuZXQpDQpgYGB7cn0NCnRlc3QgPC0gZmNvbG5ldChkYXRhID0gc2Nob2xhcnMsICN1c2UgZnVuY3Rpb24gb24gb3VyIGRhdGEgb2JqZWN0LCB1c2UgZGVmYXVsdCBvYmplY3RzIG5vdyAoYnV0IGN1c3RvbWl6ZSBsYXRlcikNCiAgICAgICAgICAgICAgICB1bml2ZXJzaXR5ID0gIlJVIiwNCiAgICAgICAgICAgICAgICBkaXNjaXBsaW5lID0gInNvY2lvbG9neSIsDQogICAgICAgICAgICAgICAgd2F2ZXMgPSBsaXN0KGMoMjAxNSwgMjAxOCksIGMoMjAxOSwgMjAyMykpLA0KICAgICAgICAgICAgICAgIHR5cGUgPSBjKCJmaXJzdCIpKSAjZGlyZWN0ZWQgbmV0d29yayAtIHR5cGUgZmlyc3QNCg0Kd2F2ZTEgPC0gdGVzdCRuZXRzWzEsLF0gI2ZpcnN0IHdhdmUgc3RvcmVkIGhlcmUNCndhdmUyIDwtIHRlc3QkbmV0c1syLCxdICNzZWNvbmQgd2F2ZSBzdG9yZWQgaGVyZQ0KDQpkaW0od2F2ZTIpICNjaGVjayBpdCB3b3JrcyANCg0Kc3VtKGlzLm5hKHdhdmUyKSkgI2NoZWNrIGl0IGlzIGNvbXBsZXRlIC0tIGlmIDAgbWlzc2luZyB2YWx1ZXMNCg0Kc3VtKHdhdmUyPjApICNpbnB1dCBmb3IgcnNpZW5hID0gdGhlIGFycmF5IC8gYWRqYWNlbmN5IG1hdHJpeC4gbmVlZCB0byBjaGVjayB0aGUgZGlhZ29uYWw6IHNob3VsZCBhbGwgYmUgMCAtIGNoZWNrIGlmIGxhcmdlciB0aGFuIDEsIHNob3VsZCBiZSAwLzEvMg0KDQoNCmBgYA0KDQoNCk5vdyBwdXQgaW4gQXJyYXkNCg0KYGBge3J9DQpuZXRzIDwtIGFycmF5KGRhdGEgPSBjKHdhdmUxLCB3YXZlMiksIGRpbSA9IGMoZGltKHdhdmUxKSwgMikpDQpuZXQgPC0gc2llbmFEZXBlbmRlbnQobmV0cykNCg0KDQpkZiA8LSB0ZXN0JGRhdGENCmRmX2VnbyA8LSBkby5jYWxsKHJiaW5kLmRhdGEuZnJhbWUsIGRmJGRlbW9ncmFwaGljcykgDQoNCg0KIyB3aGF0IGtpbmQgDQp1bmlxdWUoYyhkZl9lZ28kRnVuY3RpZS4yMiwgZGZfZWdvJEZ1bmN0aWUuMjQpKQ0KDQoNCiNyZXBsYWNlIG1pc3NpbmcgdmFsdWVzIHdpdGggZW1wdHkgc3RyaW5nDQpkZl9lZ28kRnVuY3RpZS4yMltpcy5uYShkZl9lZ28kRnVuY3RpZS4yMildIDwtICIgIg0KZGZfZWdvJEZ1bmN0aWUuMjRbaXMubmEoZGZfZWdvJEZ1bmN0aWUuMjQpXSA8LSAiICINCg0KIyANCmRmX2VnbyRmdW5jdGllIDwtIGlmZWxzZShkZl9lZ28kRnVuY3RpZS4yMj09Ikhvb2dsZXJhYXIiLCAxLCAwKQ0KZGZfZWdvJGZ1bmN0aWUgPC0gaWZlbHNlKGRmX2VnbyRGdW5jdGllLjI0PT0iSG9vZ2xlcmFhciIsIDEsIGRmX2VnbyRmdW5jdGllKQ0KZGZfZWdvJGZ1bmN0aWUgPC0gaWZlbHNlKGRmX2VnbyRGdW5jdGllLjIyPT0iQmlqem9uZXIgaG9vZ2xlcmFhciIsIDEsIGRmX2VnbyRmdW5jdGllKQ0KZGZfZWdvJGZ1bmN0aWUgPC0gaWZlbHNlKGRmX2VnbyRGdW5jdGllLjI0PT0iQmlqem9uZXIgaG9vZ2xlcmFhciIsIDEsIGRmX2VnbyRmdW5jdGllKQ0KDQp0YWJsZShkZl9lZ28kZnVuY3RpZSwgdXNlTkE9ImFsd2F5cyIpICN1c2UgYXMgY29uc3RhbnQgLSANCg0KIyBzaG91bGQgc2VlIHZhcmlhYmxlIGlzIGNvcnJlY3QNCg0KZnVuY3RpZSA8LSBjb0NvdmFyKGRmX2VnbyRmdW5jdGllKQ0KZnVuY3RpZQ0KDQpgYGANCg0KDQpuZXh0IGdlbmRlcg0KYGBge3J9DQoNCm15ZGF0YSA8LSBzaWVuYURhdGFDcmVhdGUobmV0LCBmdW5jdGllKQ0KDQpgYGANCg0KIyBTVEVQIDIgRUZGRUNUUyANCmBgYHtyfQ0KbXllZmYgPC1nZXRFZmZlY3RzKG15ZGF0YSkNCm15ZWZmDQoNCm15ZWZmIDwtIGluY2x1ZGVFZmZlY3RzKG15ZWZmLCBlZ29YYWx0WCwgaW50ZXJhY3Rpb24xID0gImZ1bmN0aWUiKQ0KDQoNCiNuZXcgc3RhdGlzdGljDQpteWVmZiA8LSBpbmNsdWRlRWZmZWN0cyhteWVmZiwgZGlmZlhPdXRBY3QsIGludGVyYWN0aW9uMSA9ICJmdW5jdGllIikNCg0KI290aGVyIG5ldyBzdGF0aXN0aWMNCm15ZWZmIDwtIGluY2x1ZGVFZmZlY3RzKG15ZWZmLCB1bmVxdWFsWCwgaW50ZXJhY3Rpb24xID0gImZ1bmN0aWUiKQ0KbXllZmYNCg0KI2FsdGVybmF0aXZlOiANCm15ZWZmIDwtIGluY2x1ZGVFZmZlY3RzKG15ZWZmLCBlZ29YLCBpbnRlcmFjdGlvbjEgPSAiZnVuY3RpZSIpDQoNCiNtYXRoZW1hdGljYWwgb2YgZWdvWCA9IFYoaSksIHRpZSA9IFgoaSkoaiksIHdhbnQgdGhlIHN1bSBvZiB0aGUgdGllcyAtLT4gWChpKSgrKSANCiMgaW5kZXBlbmRlbnQgdmFyaWFibGU9ZWdvLCBkZXBlbmRlbnQgdmFyaWFibGUgPSB0aWUsIGNvdmFyaWF0ZSA9IGZ1bmN0aWUsIA0KDQoNCg0KI2Fub3RoZXIgYWx0ZXJuYXRpdmU6IA0KbXllZmYgPC0gaW5jbHVkZUVmZmVjdHMobXllZmYsIGFsdFgsIGludGVyYWN0aW9uMSA9ICJmdW5jdGllIiApIyBhbHRYIGVmZmVjdCAtLS0gaHlwb3RoZXNpczogbW9yZSBsaWtlbHkgdG8gcmVjZWl2ZT8gbW9kZWwgZnJvbSBlZ28gcGVyc3BlY3RpdmVzLCBhbmQgZWdvIHNlbmRzIHRpZXMgLS0gdGhlcmVmb3JlLCBmb3JtdWxhdGlvbiBvZiB0aWUgZGlmZmVyZW50OiBzaG91bGQgYmUgbW9yZSBsaWtlbHkgdG8gc2VuZCB0aWVzIHRvIHByb2Zlc3NvcnMgDQojIGFsdFggPSBWKGopICogU3VtIG9mIFhpag0KIyBhbHRYID0gQWx0ZXIgKiBTdW0gb2YgdGllcw0KIyBFeHBlY3QgcG9zaXRpdmUgZWZmZWN0IChvcHBvc2l0ZSBvZiBlZ28gWCkNCg0KDQoNCg0KYGBgDQoNCiMgU1RFUCAzIExPT0sgQVQgSU5JVElBTCBEQVRBIEFORCBHRVQgREVTQ1JJUFRJT04NCmBgYHtyfQ0KaWZlbHNlKCFkaXIuZXhpc3RzKCJyZXN1bHRzIiksIGRpci5jcmVhdGUoInJlc3VsdHMiKSwgRkFMU0UpICNtYWtlIGRpcmVjdG9yeSB0byBzdG9yZSByZXN1bHRzIHNlcGFyYXRlbHkgLSBsZXNzIGNyb3dkaW5nIGZvciBsYWIgam91cm5hbA0KDQpwcmludDAxUmVwb3J0KG15ZGF0YSwgbW9kZWxuYW1lPSAiLi9yZXN1bHRzL3NvY19pbml0IikNCnByaW50MDFSZXBvcnQobXlkYXRhKQ0KDQojIFRPIFZJRVcgVEhJUyAtIExPT0sgV0lUSElOIEZJTEUgRElSRUNUT1JZIC0gR0lUSFVCIC0gTEFCIEpPVVJOQUwgLSBSRVNVTFRTIDopDQoNCg0KYGBgDQoNCg0KQCBEYXRhIGlucHV0Lg0KMiBvYnNlcnZhdGlvbnMsDQo1MCBhY3RvcnMsDQoxIGRlcGVuZGVudCBuZXR3b3JrIHZhcmlhYmxlcywNCjAgZGVwZW5kZW50IGJpcGFydGl0ZSB2YXJpYWJsZXMsDQowIGRlcGVuZGVudCBkaXNjcmV0ZSBiZWhhdmlvciB2YXJpYWJsZXMsDQowIGRlcGVuZGVudCBjb250aW51b3VzIGJlaGF2aW9yIHZhcmlhYmxlcywNCjEgY29uc3RhbnQgYWN0b3IgY292YXJpYXRlcywNCjAgZXhvZ2Vub3VzIGNoYW5naW5nIGFjdG9yIGNvdmFyaWF0ZXMsDQowIGNvbnN0YW50IGR5YWRpYyBjb3ZhcmlhdGVzLA0KMCBleG9nZW5vdXMgY2hhbmdpbmcgZHlhZGljIGNvdmFyaWF0ZXMsDQowIG5vIGZpbGVzIHdpdGggdGltZXMgb2YgY29tcG9zaXRpb24gY2hhbmdlLg0KDQotIA0KLSANCi0gDQoNCkAgQ2hhbmdlIGluIG5ldHdvcmtzDQpOZXR3b3JrIGRlbnNpdHkgaW5kaWNhdG9yczoNCm9ic2VydmF0aW9uIHRpbWUgICAgICAgICAgICAgIDEgICAgICAyDQpkZW5zaXR5ICAgICAgICAgICAgICAgICAgICAwLjAxNiAgMC4wMzENCmF2ZXJhZ2UgZGVncmVlICAgICAgICAgICAgIDAuNzgwICAxLjUyMA0KbnVtYmVyIG9mIHRpZXMgICAgICAgICAgICAgICAgMzkgICAgIDc2DQptaXNzaW5nIGZyYWN0aW9uICAgICAgICAgICAwLjAwMCAgMC4wMDANCg0KV2hhdCBkb2VzIHRoZSBpbml0aWFsIGRhdGEgbWVhbj8gbnVtYmVyIG9mIHRpZXMgaW5jcmVhc2luZyByYXBpZGx5IC0tPiAzOSBpcyBoaWdoDQoNCg0KVGllIGNoYW5nZXMgYmV0d2VlbiBzdWJzZXF1ZW50IG9ic2VydmF0aW9uczoNCiBwZXJpb2RzICAgICAgICAwID0+ICAwICAgMCA9PiAgMSAgIDEgPT4gIDAgICAxID0+ICAxICAgRGlzdGFuY2UgSmFjY2FyZCAgIE1pc3NpbmcNCiAgMSA9PT4gICAyICAgICAgMjM1NCAgICAgICAgNTcgICAgICAgIDIwICAgICAgICAxOSAgICAgICAgNzcgICAgIDAuMTk4ICAgICAgICAgMCAoMCUpDQoNCkphY2NhcmQgaW5kZXggbG93ICoqIA0KSmFjY2FyZCBJbmRleDogY291bnRpbmcgYWxsIGNoYW5nZXMgKDEtPjEgLyAwLT4xLCAxLT4wLCBhbmQgMS0+MSAobm90IDAtPjAsIGJlY2F1c2UgdGhhdCBpcyBhIHZlcnkgbGFyZ2UgbnVtYmVyKSA6IGltcG9ydGFudCBtZWFzdXJlIG9mIHN0YWJpbGl0eSAtLSBsb29raW5nIGF0IGRpZmZlcmVuY2UgYmV0d2VlbiBUMSBhbmQgVDIgLS0gd2FudCBpdCBzb21ld2hlcmUgYmV0d2VlbiAwIGFuZCAxKS4NCg0KDQojIFN0ZXAgNCBFZmZlY3RzDQpgYGB7cn0NCg0KbXllZmYgPC0gaW5jbHVkZUVmZmVjdHMobXllZmYsIGlzb2xhdGVOZXQsIGluUG9wLCBvdXRBY3QpDQoNCg0KbXllZmYgPC0gaW5jbHVkZUVmZmVjdHMobXllZmYsIHVuZXF1YWxYLCBlZ29YLCBhbHRlclgpDQoNCmBgYA0KDQoNCiMgU3RlcCA1IChhc3N1bWUgaGFwcHkgd2l0aCBlZmZlY3RzKSAtIEVzdGltYXRpb24NCg0KYGBge3J9DQoNCm15QWxnb3JpdGhtIDwtIHNpZW5hQWxnb3JpdGhtQ3JlYXRlKHByb2puYW1lID0gInNvY19pbml0IikNCmFuc00xIDwtIHNpZW5hMDcobXlBbGdvcml0aG0sIGRhdGEgPSBteWRhdGEsIGVmZmVjdHMgPSBteWVmZiwgcmV0dXJuRGVwcyA9IFRSVUUpDQojIGlmIG5lY2Vzc2FyeSBlc3RpbWF0ZSBhZ2FpbiEgIGFuc00xIDwtIHNpZW5hMDcobXlBbGdvcml0aG0sIGRhdGEgPSBteWRhdGEsIGVmZmVjdHMgPSBteWVmZiwNCiMgcHJldkFucyA9IGFuc00xLCByZXR1cm5EZXBzPVRSVUUpDQphbnNNMQ0KDQpgYGANCg0KRmlyc3QgYXV0aG9yIHBhcGVycw0KVGhpcyBtYWtlcyBzZW5zZSAtIGFib3V0IDMgcGFwZXJzIHBlciB5ZWFyIHBlciBhdXRob3IsIHRoYXQgbWFrZXMgc2Vuc2UNCg0KRGVuc2l0eSBpcyBuZWdhdGl2ZTogbWFrZXMgc2Vuc2UsIHNwYXJzZSBuZXR3b3JrIA0KUmVjaXByb2NpdHk6IGhhdmUgdGhhdCwgd2hpY2ggbWFrZXMgc2Vuc2UgKGhlbHAgZWFjaG90aGVyIHdpdGggcGFwZXJzKQ0KDQoNCg0KDQpHaXZlbiB0aGVzZSBzdGF0aXN0aWNzIGluY2x1ZGVkIGluIHRoaXMgbW9kZWwsIHRoaXMgaXMgYWJsZSB0byByZXBsaWNhdGUgdGhlc2Ugc3RhdGlzdGljcyBpbiBUMiANCg0KDQoNCg0KSWYgd2UgbG9vayBhdCBkZWdyZWUgZGlzdHJpYnV0aW9uIG9yIHNlbnNpdGl2aXR5LCBjb3VsZCBiZSBjb21wbGV0ZWx5IGRpZmZlcmVudC4gDQpgYGB7cn0NCg0KYGBgDQoNCg0KTk9XIDogRUdPWCANClR3ZWFrIG1vZGVsLCB0cnkgdG8gaW50ZXJwcmV0IGVmZmVjdHMsIGluY2x1ZGUgY292YXJpYXRlIGVmZmVjdCANCg0KDQo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("gof.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

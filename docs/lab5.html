@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Paige Kemper" />
+
+<meta name="date" content="2025-10-02" />
+
+<title>lab5</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+<link rel="stylesheet" href="tweaks.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    My journal
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="lab1.html">Page 1</a>
+    </li>
+    <li>
+      <a href="lab2.html">Page 2</a>
+    </li>
+    <li>
+      <a href="lab3.html">Page 3</a>
+    </li>
+    <li>
+      <a href="lab4.html">Page 4</a>
+    </li>
+    <li>
+      <a href="lab5.html">Page 5</a>
+    </li>
+    <li>
+      <a href="lab6.html">Page 6</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Assignments
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="assignment1.html">Assignment 1</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Research
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="researchquestions.html">Research Questions</a>
+    </li>
+    <li>
+      <a href="databasedraft.html">Developing Database</a>
+    </li>
+    <li>
+      <a href="databasedraft2.html">Second draft</a>
+    </li>
+    <li>
+      <a href="workingdraft.html">Working Draft</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    codereview
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="codereview.html">codereview</a>
+    </li>
+    <li>
+      <a href="codereview2.html">codereview2</a>
+    </li>
+    <li>
+      <a href="codereview3.html">codereview3</a>
+    </li>
+    <li>
+      <a href="rsiena.html">rsiena</a>
+    </li>
+    <li>
+      <a href="rsiena2.html">rsiena2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/pkemper800/labjournal">
+    <span class="fab fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">lab5</h1>
+<h4 class="author">Paige Kemper</h4>
+<h4 class="date">2025-10-02</h4>
+
+</div>
+
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<p>Last compiled on October, 2025</p>
+<p><br></p>
+<div id="homework" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Homework</h1>
+<ul>
+<li>Work on drafting paper, make plan for database</li>
+<li>Codereview 3 for Rsiena tutorial</li>
+</ul>
+<div id="goals" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Goals:</h2>
+<ul>
+<li><p>Make list of the professors -</p></li>
+<li><p>Compile list of professors names and their respective departments
+and universities across the Netherlands</p>
+<ul>
+<li><p>Flag: Compile international academic experience/background of
+professors.</p>
+<ul>
+<li><em>To gather: 1) could look at CV/LinkedIn for each professor,
+within 1 department of 1 university; 2) could see if their PhD
+registered with dutch national registry, only looking at if PhD done in
+or outside of the Netherlands.</em></li>
+</ul></li>
+</ul></li>
+<li><p>Search OpenAlex for each Dutch professor’s publications, making
+dataframe of alters/collaborations for each professor’s
+publications.</p></li>
+<li><p>Check if collaborators are affiliated with same university,
+different dutch university, or international university.</p></li>
+<li><p>Look at international vs non-international professors to see if
+there is difference in international collaborations</p></li>
+<li><p>Then, return to department/university, and see if proportion of
+professors with international experience has an impact on international
+collaborations (or potentially research outputs in general)</p></li>
+</ul>
+<p>To make this scalable, we will break this into many smaller
+parts.</p>
+</div>
+</div>
+<div id="review" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Review</h1>
+<div id="step-0-load-packages" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Step 0: Load
+packages</h2>
+<pre class="r test"><code>fpackage.check &lt;- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave &lt;- function(x, file = NULL, location = &quot;./data/processed/&quot;) {
+    ifelse(!dir.exists(&quot;data&quot;), dir.create(&quot;data&quot;), FALSE)
+    ifelse(!dir.exists(&quot;data/processed&quot;), dir.create(&quot;data/processed&quot;), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename &lt;- substr(gsub(&quot;[:-]&quot;, &quot;&quot;, Sys.time()), 1, 8)
+    totalname &lt;- paste(location, file, &quot;_&quot;, datename, &quot;.rda&quot;, sep = &quot;&quot;)
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload &lt;- function(filename) {
+    load(filename)
+    get(ls()[ls() != &quot;filename&quot;])
+}
+
+fshowdf &lt;- function(x, ...) {
+    knitr::kable(x, digits = 2, &quot;html&quot;, ...) %&gt;%
+        kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)) %&gt;%
+        kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)
+}</code></pre>
+<div id="collect-set-of-professors" class="section level3"
+number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Collect set of
+Professors</h3>
+<pre class="r test"><code>#install.packages(&quot;readxl&quot;)
+library(readxl)
+
+# My manual data set, including manual review of professor experience abroad
+ru_soc_profs &lt;- read_excel(&quot;C:/Github/labjournal/ru_soc_profs.xlsx&quot;)
+ru_soc_profs</code></pre>
+<pre class="test2"><code>#&gt; # A tibble: 41 × 6
+#&gt;    Name                     Title                female beyond_dutch_exp nonwhite time_at_uni
+#&gt;    &lt;chr&gt;                    &lt;chr&gt;                &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;      
+#&gt;  1 Jeannette van Aarle      Management assistant 1      0                0        NA         
+#&gt;  2 Samira Azabar            Postdoc              1      1                1        2          
+#&gt;  3 Weverthon Machado        Postdoc              0      1                1        0          
+#&gt;  4 Ronald Battenburg        Endowed professor    0      0                0        8          
+#&gt;  5 Katia Begall             Assisstant professor 1      0                0        6          
+#&gt;  6 Janos Betko              Guest researcher     0      0                0        3          
+#&gt;  7 Lieselotte Blommaert     Assisstant professor 1      0                0        11         
+#&gt;  8 Nina Branten             PhD candidate        1      1                0        1          
+#&gt;  9 Annick van Brouwershaven PhD candidate        0      0                NA       3          
+#&gt; 10 Haisu Chen               PhD candidate        1      NA               NA       NA         
+#&gt; # ℹ 31 more rows</code></pre>
+<pre class="r test"><code># from tutorial
+socprofs2022 &lt;- read_excel(&quot;C:/Github/labjournal/2022scholarid_jt.xlsx&quot;)
+socprofs2024 &lt;- read_excel(&quot;C:/Github/labjournal/2024scholarid_jt.xlsx&quot;)
+
+# big datafile with everything (*very important!*)
+scholars &lt;- fload(&quot;C:/Github/labjournal/scholars_20240924.rda&quot;) #have to reload this
+
+
+# from all professors from all dutch universities - for reference, for now
+socprofs2022 &lt;- read_excel(&quot;C:/Github/labjournal/2022scholarid_jt.xlsx&quot;)
+socprofs2024 &lt;- read_excel(&quot;C:/Github/labjournal/2024scholarid_jt.xlsx&quot;)
+
+#now have list of scholars for all dutch universities </code></pre>
+<pre class="r test"><code>library(dplyr)
+library(readxl)
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+# scholars$demographics
+
+s = bind_rows(scholars$demographics) |&gt;
+  filter(
+    Universiteit.22 == &quot;RU&quot;,
+    Universiteit.24 == &quot;RU&quot;
+  )
+
+hold = c()
+for (authorid in s$au_id[1:2]){
+  print(authorid)
+  res = oa_fetch(
+    entity = &quot;works&quot;, 
+    author.id=authorid
+  )
+  # # res = bind_rows(scholars$works) |&gt; filter(id == authorid)
+  hold[[authorid]] = res
+}</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;https://openalex.org/A5014129369&quot;
+#&gt; [1] &quot;https://openalex.org/A5023395007&quot;</code></pre>
+<pre class="r test"><code>#s |&gt; filter(Naam == &quot;Katia Begall&quot;) |&gt; pull(au_id)</code></pre>
+<pre class="r test"><code>papers = hold
+
+co_authors = c()
+for (authorid in names(papers)){
+  print(authorid)
+  tab = papers[[authorid]]
+  co_authors[[authorid]] = bind_rows(tab$authorships) |&gt;
+    filter(id != authorid) |&gt;
+    mutate(ego_id = authorid) |&gt;
+    relocate(ego_id, .before = 1)
+}</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;https://openalex.org/A5014129369&quot;
+#&gt; [1] &quot;https://openalex.org/A5023395007&quot;</code></pre>
+<pre class="r test"><code>co_authors[[authorid]]</code></pre>
+<pre class="test2"><code>#&gt; # A tibble: 353 × 8
+#&gt;    ego_id     id    display_name orcid author_position is_corresponding affiliations affiliation_raw
+#&gt;    &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;           &lt;lgl&gt;            &lt;list&gt;       &lt;chr&gt;          
+#&gt;  1 https://o… http… Daniela Gru… http… first           TRUE             &lt;df [1 × 6]&gt; Goethe-Univers…
+#&gt;  2 https://o… http… Sandra Buch… http… last            FALSE            &lt;df [1 × 6]&gt; Goethe-Univers…
+#&gt;  3 https://o… http… Melinda Mil… http… first           FALSE            &lt;df [1 × 6]&gt; university of …
+#&gt;  4 https://o… http… Letizia Men… http… middle          FALSE            &lt;df [1 × 6]&gt; University of …
+#&gt;  5 https://o… http… Maria Letiz… http… last            FALSE            &lt;df [1 × 6]&gt; University of …
+#&gt;  6 https://o… http… Daniela Gru… http… middle          FALSE            &lt;df [0 × 6]&gt; &lt;NA&gt;           
+#&gt;  7 https://o… http… Sandra Buch… http… last            FALSE            &lt;df [1 × 6]&gt; Goethe Univers…
+#&gt;  8 https://o… http… Melinda Mil… http… last            FALSE            &lt;df [1 × 6]&gt; Department of …
+#&gt;  9 https://o… http… Margaret Mi… &lt;NA&gt;  last            FALSE            &lt;df [1 × 6]&gt; Department of …
+#&gt; 10 https://o… http… Melinda Mil… http… first           FALSE            &lt;df [1 × 6]&gt; Department of …
+#&gt; # ℹ 343 more rows</code></pre>
+<p>Make list of co-authors for 1 professor (eg.Jochem)</p>
+<pre class="r test"><code>#check packages are installed
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+
+
+# Next, test calling 1 professor
+options(openalexR.mailto = &quot;paige.kemper@ru.nl&quot;) 
+prof1 &lt;- oa_fetch(entity= &quot;author&quot;, search = &quot;Jochem+Tolsma&quot;)
+
+
+# Next, look at list of all of the example professor&#39;s publications
+prof1_papers &lt;- oa_fetch(entity = &quot;works&quot;, author.id = prof1$id) 
+  # within this new dataset, $authorships includes the dataframes of the coauthors (alters)
+prof1_papers[1,] #look at row 1: first publication listed by Jochem</code></pre>
+<pre class="test2"><code>#&gt; # A tibble: 1 × 43
+#&gt;   id           title display_name authorships abstract doi   publication_date publication_year  fwci
+#&gt;   &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;        &lt;list&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;date&gt;                      &lt;int&gt; &lt;dbl&gt;
+#&gt; 1 https://ope… Ethn… Ethnic Dive… &lt;tibble&gt;    Recent … http… 2014-06-27                   2014  84.1
+#&gt; # ℹ 34 more variables: cited_by_count &lt;int&gt;, counts_by_year &lt;list&gt;, cited_by_api_url &lt;chr&gt;,
+#&gt; #   ids &lt;list&gt;, type &lt;chr&gt;, is_oa &lt;lgl&gt;, is_oa_anywhere &lt;lgl&gt;, oa_status &lt;chr&gt;, oa_url &lt;chr&gt;,
+#&gt; #   any_repository_has_fulltext &lt;lgl&gt;, source_display_name &lt;chr&gt;, source_id &lt;chr&gt;, issn_l &lt;chr&gt;,
+#&gt; #   host_organization &lt;chr&gt;, host_organization_name &lt;chr&gt;, landing_page_url &lt;chr&gt;, pdf_url &lt;chr&gt;,
+#&gt; #   license &lt;chr&gt;, version &lt;chr&gt;, referenced_works &lt;list&gt;, referenced_works_count &lt;int&gt;,
+#&gt; #   related_works &lt;list&gt;, concepts &lt;list&gt;, topics &lt;list&gt;, keywords &lt;list&gt;, is_paratext &lt;lgl&gt;,
+#&gt; #   is_retracted &lt;lgl&gt;, language &lt;chr&gt;, grants &lt;list&gt;, apc &lt;list&gt;, first_page &lt;chr&gt;, …</code></pre>
+<pre class="r test"><code># Then: Create loop. 1) Make empty column; 2) For every row in the set of the professor&#39;s publications (for i:nrow(df), look at the data frame of &#39;affiliations&#39; (coauthors); 3) Make dataframe (&quot;df&quot;), and then save $display_name variable to the empty column.)
+collaborators1 &lt;- NA
+for (i in 1:nrow(prof1_papers)) {
+  print(i)
+  df &lt;- as.data.frame(prof1_papers[i,4][[1]])
+  collaborators1 &lt;- c(collaborators1, df$display_name)
+}</code></pre>
+<pre class="test2"><code>#&gt; [1] 1
+#&gt; [1] 2
+#&gt; [1] 3
+#&gt; [1] 4
+#&gt; [1] 5
+#&gt; [1] 6
+#&gt; [1] 7
+#&gt; [1] 8
+#&gt; [1] 9
+#&gt; [1] 10
+#&gt; [1] 11
+#&gt; [1] 12
+#&gt; [1] 13
+#&gt; [1] 14
+#&gt; [1] 15
+#&gt; [1] 16
+#&gt; [1] 17
+#&gt; [1] 18
+#&gt; [1] 19
+#&gt; [1] 20
+#&gt; [1] 21
+#&gt; [1] 22
+#&gt; [1] 23
+#&gt; [1] 24
+#&gt; [1] 25
+#&gt; [1] 26
+#&gt; [1] 27
+#&gt; [1] 28
+#&gt; [1] 29
+#&gt; [1] 30
+#&gt; [1] 31
+#&gt; [1] 32
+#&gt; [1] 33
+#&gt; [1] 34
+#&gt; [1] 35
+#&gt; [1] 36
+#&gt; [1] 37
+#&gt; [1] 38
+#&gt; [1] 39
+#&gt; [1] 40
+#&gt; [1] 41
+#&gt; [1] 42
+#&gt; [1] 43
+#&gt; [1] 44
+#&gt; [1] 45
+#&gt; [1] 46
+#&gt; [1] 47
+#&gt; [1] 48
+#&gt; [1] 49
+#&gt; [1] 50
+#&gt; [1] 51
+#&gt; [1] 52
+#&gt; [1] 53
+#&gt; [1] 54
+#&gt; [1] 55
+#&gt; [1] 56
+#&gt; [1] 57
+#&gt; [1] 58
+#&gt; [1] 59
+#&gt; [1] 60
+#&gt; [1] 61
+#&gt; [1] 62
+#&gt; [1] 63
+#&gt; [1] 64
+#&gt; [1] 65
+#&gt; [1] 66
+#&gt; [1] 67
+#&gt; [1] 68
+#&gt; [1] 69
+#&gt; [1] 70
+#&gt; [1] 71
+#&gt; [1] 72
+#&gt; [1] 73
+#&gt; [1] 74
+#&gt; [1] 75
+#&gt; [1] 76
+#&gt; [1] 77
+#&gt; [1] 78
+#&gt; [1] 79
+#&gt; [1] 80
+#&gt; [1] 81
+#&gt; [1] 82
+#&gt; [1] 83
+#&gt; [1] 84
+#&gt; [1] 85
+#&gt; [1] 86
+#&gt; [1] 87
+#&gt; [1] 88</code></pre>
+<pre class="r test"><code>collaborators1 #see: all of the authors for all of the papers by Jochem Tolsma are listed</code></pre>
+<pre class="test2"><code>#&gt;   [1] NA                      &quot;Tom van der Meer&quot;      &quot;Jochem Tolsma&quot;        
+#&gt;   [4] &quot;Michael Savelkoul&quot;     &quot;Peer Scheepers&quot;        &quot;Jochem Tolsma&quot;        
+#&gt;   [7] &quot;Louk Hagendoorn&quot;       &quot;Jochem Tolsma&quot;         &quot;Tom van der Meer&quot;     
+#&gt;  [10] &quot;Maurice Gesthuizen&quot;    &quot;Jochem Tolsma&quot;         &quot;Ioana van Deurzen&quot;    
+#&gt;  [13] &quot;Tobias Stark&quot;          &quot;René Veenstra&quot;         &quot;Carlijn Bussemakers&quot;  
+#&gt;  [16] &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;        
+#&gt;  [19] &quot;Marcel Lubbers&quot;        &quot;Mérove Gijsberts&quot;      &quot;Jochem Tolsma&quot;        
+#&gt;  [22] &quot;Joris Blaauw&quot;          &quot;Manfred te Grotenhuis&quot; &quot;Michael Savelkoul&quot;    
+#&gt;  [25] &quot;Joran Laméris&quot;         &quot;Jochem Tolsma&quot;         &quot;Anke Munniksma&quot;       
+#&gt;  [28] &quot;Peer Scheepers&quot;        &quot;Tobias Stark&quot;          &quot;Jochem Tolsma&quot;        
+#&gt;  [31] &quot;Jochem Tolsma&quot;         &quot;Nan Dirk de Graaf&quot;     &quot;Lincoln Quillian&quot;     
+#&gt;  [34] &quot;Jochem Tolsma&quot;         &quot;A. Need&quot;               &quot;Uulkje de Jong&quot;       
+#&gt;  [37] &quot;Josja Rokven&quot;          &quot;Gijs de Boer&quot;          &quot;Jochem Tolsma&quot;        
+#&gt;  [40] &quot;Stijn Ruiter&quot;          &quot;Jochem Tolsma&quot;         &quot;Tom van der Meer&quot;     
+#&gt;  [43] &quot;Anne Maaike Mulders&quot;   &quot;Bas Hofstra&quot;           &quot;Jochem Tolsma&quot;        
+#&gt;  [46] &quot;Jochem Tolsma&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;        
+#&gt;  [49] &quot;M.H.J. Wolbers&quot;        &quot;Jochem Tolsma&quot;         &quot;Tom van der Meer&quot;     
+#&gt;  [52] &quot;Sara Kinsbergen&quot;       &quot;Jochem Tolsma&quot;         &quot;Stijn Ruiter&quot;         
+#&gt;  [55] &quot;Thomas Feliciani&quot;      &quot;Andreas Flache&quot;        &quot;Jochem Tolsma&quot;        
+#&gt;  [58] &quot;Joran Laméris&quot;         &quot;John R. Hipp&quot;          &quot;Jochem Tolsma&quot;        
+#&gt;  [61] &quot;Daniël van Wijk&quot;       &quot;Gideon Bolt&quot;           &quot;Jochem Tolsma&quot;        
+#&gt;  [64] &quot;Rob Franken&quot;           &quot;Hidde Bekhuis&quot;         &quot;Jochem Tolsma&quot;        
+#&gt;  [67] &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;           &quot;Niels Spierings&quot;      
+#&gt;  [70] &quot;Jochem Tolsma&quot;         &quot;Sara Kinsbergen&quot;       &quot;Jochem Tolsma&quot;        
+#&gt;  [73] &quot;Roderick Sluiter&quot;      &quot;Jochem Tolsma&quot;         &quot;Peer Scheepers&quot;       
+#&gt;  [76] &quot;Joran Laméris&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;Stijn Ruiter&quot;         
+#&gt;  [79] &quot;Jochem Tolsma&quot;         &quot;Roos van der Zwan&quot;     &quot;Jochem Tolsma&quot;        
+#&gt;  [82] &quot;Marcel Lubbers&quot;        &quot;Peter Valet&quot;           &quot;Carsten Sauer&quot;        
+#&gt;  [85] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Joran Laméris&quot;        
+#&gt;  [88] &quot;Michael Savelkoul&quot;     &quot;Thijmen Jeroense&quot;      &quot;Niels Spierings&quot;      
+#&gt;  [91] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Gerbert Kraaykamp&quot;    
+#&gt;  [94] &quot;P.M. de Graaf&quot;         &quot;Matthijs Kalmijn&quot;      &quot;Christiaan Monden&quot;    
+#&gt;  [97] &quot;Dorian Schaap&quot;         &quot;Maarten J. Postma&quot;     &quot;Lisanne Jansen&quot;       
+#&gt; [100] &quot;Jochem Tolsma&quot;         &quot;Tessa Ubels&quot;           &quot;Sara Kinsbergen&quot;      
+#&gt; [103] &quot;Jochem Tolsma&quot;         &quot;Dirk‐Jan Koch&quot;         &quot;Rob Franken&quot;          
+#&gt; [106] &quot;Hidde Bekhuis&quot;         &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;        
+#&gt; [109] &quot;M.H.J. Wolbers&quot;        &quot;Josja Rokven&quot;          &quot;Jochem Tolsma&quot;        
+#&gt; [112] &quot;Stijn Ruiter&quot;          &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [115] &quot;Bas Hofstra&quot;           &quot;Anne Maaike Mulders&quot;   &quot;Tessa Ubels&quot;          
+#&gt; [118] &quot;Sara Kinsbergen&quot;       &quot;Dirk‐Jan Koch&quot;         &quot;Judith Kanshabe&quot;      
+#&gt; [121] &quot;Jochem Tolsma&quot;         &quot;Kasimir Dederichs&quot;     &quot;Rob Franken&quot;          
+#&gt; [124] &quot;Dingeman Wiertz&quot;       &quot;Jochem Tolsma&quot;         &quot;Nan Dirk de Graaf&quot;    
+#&gt; [127] &quot;Peer Scheepers&quot;        &quot;Marcel Coenders&quot;       &quot;Marcel Lubbers&quot;       
+#&gt; [130] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;M.H.J. Wolbers&quot;       
+#&gt; [133] &quot;Michael Savelkoul&quot;     &quot;Jochem Tolsma&quot;         &quot;Peer Scheepers&quot;       
+#&gt; [136] &quot;Carlijn Bussemakers&quot;   &quot;Gerbert Kraaykamp&quot;     &quot;Ingrid Schoon&quot;        
+#&gt; [139] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Niels Spierings&quot;      
+#&gt; [142] &quot;Natascha Notten&quot;       &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [145] &quot;Tom van der Meer&quot;      &quot;Jochem Tolsma&quot;         &quot;Carlijn Bussemakers&quot;  
+#&gt; [148] &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;         &quot;Marloes De Lange&quot;     
+#&gt; [151] &quot;Jochem Tolsma&quot;         &quot;M.H.J. Wolbers&quot;        &quot;Tessa Ubels&quot;          
+#&gt; [154] &quot;Sara Kinsbergen&quot;       &quot;Dirk‐Jan Koch&quot;         &quot;Jochem Tolsma&quot;        
+#&gt; [157] &quot;Jochem Tolsma&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;P.M. de Graaf&quot;        
+#&gt; [160] &quot;Matthijs Kalmijn&quot;      &quot;Christiaan Monden&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [163] &quot;M.H.J. Wolbers&quot;        &quot;Jochem Tolsma&quot;         &quot;Marcel Coenders&quot;      
+#&gt; [166] &quot;Marcel Lubbers&quot;        &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt; [169] &quot;Jochem Tolsma&quot;         &quot;S. Ruiter&quot;             &quot;Jochem Tolsma&quot;        
+#&gt; [172] &quot;Michiel de Hoon&quot;       &quot;Henk Elffers&quot;          &quot;P.H. van der Laan&quot;    
+#&gt; [175] &quot;Jochem Tolsma&quot;         &quot;S. Ruiter&quot;             &quot;Jochem Tolsma&quot;        
+#&gt; [178] &quot;Marcel Lubbers&quot;        &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;        
+#&gt; [181] &quot;Ariana Need&quot;           &quot;Uulkje de Jong&quot;        &quot;Giedo Jansen&quot;         
+#&gt; [184] &quot;Jochem Tolsma&quot;         &quot;Nan Dirk de Graaf&quot;     &quot;Thomas Feliciani&quot;     
+#&gt; [187] &quot;Jochem Tolsma&quot;         &quot;Andreas Flache&quot;        &quot;van der Roos Zwan&quot;    
+#&gt; [190] &quot;Jochem Tolsma&quot;         &quot;Peter Valet&quot;           &quot;Carsten Sauer&quot;        
+#&gt; [193] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Marcel Coenders&quot;      
+#&gt; [196] &quot;Marcel Lubbers&quot;        &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;          
+#&gt; [199] &quot;Niels Spierings&quot;       &quot;Jochem Tolsma&quot;         &quot;Rob Franken&quot;          
+#&gt; [202] &quot;Hidde Bekhuis&quot;         &quot;Jochem Tolsma&quot;         &quot;Thijmen Jeroense&quot;     
+#&gt; [205] &quot;Niels Spierings&quot;       &quot;Jochem Tolsma&quot;         &quot;Anne Maaike Mulders&quot;  
+#&gt; [208] &quot;Bas Hofstra&quot;           &quot;Jochem Tolsma&quot;         &quot;Anne Maaike Mulders&quot;  
+#&gt; [211] &quot;Bas Hofstra&quot;           &quot;Jochem Tolsma&quot;         &quot;Rob Franken&quot;          
+#&gt; [214] &quot;Hidde Bekhuis&quot;         &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;        
+#&gt; [217] &quot;Nan Dirk de Graaf&quot;     &quot;Jochem Tolsma&quot;         &quot;P.E. Thijs&quot;           
+#&gt; [220] &quot;Gerbert Kraaykamp&quot;     &quot;Margot Scholte&quot;        &quot;Jochem Tolsma&quot;        
+#&gt; [223] &quot;Thomas Feliciani&quot;      &quot;Andreas Flache&quot;        &quot;Jochem Tolsma&quot;        
+#&gt; [226] &quot;Michaël Maes&quot;          &quot;Thomas Feliciani&quot;      &quot;Andreas Flache&quot;       
+#&gt; [229] &quot;Jochem Tolsma&quot;         &quot;Josja Rokven&quot;          &quot;Jochem Tolsma&quot;        
+#&gt; [232] &quot;Stijn Ruiter&quot;          &quot;Gerbert Kraaykamp&quot;     &quot;Josja Rokven&quot;         
+#&gt; [235] &quot;Jochem Tolsma&quot;         &quot;Stijn Ruiter&quot;          &quot;Gerbert Kraaykamp&quot;    
+#&gt; [238] &quot;Jochem Tolsma&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [241] &quot;Joran Laméris&quot;         &quot;Jochem Tolsma&quot;         &quot;Marcel Lubbers&quot;       
+#&gt; [244] &quot;Marcel Coenders&quot;       &quot;Jochem Tolsma&quot;         &quot;Marcel Coenders&quot;      
+#&gt; [247] &quot;Marcel Lubbers&quot;        &quot;Josja Rokven&quot;          &quot;Jochem Tolsma&quot;        
+#&gt; [250] &quot;Stijn Ruiter&quot;          &quot;Gerbert Kraaykamp&quot;     &quot;G. H. Jansen&quot;         
+#&gt; [253] &quot;Jochem Tolsma&quot;         &quot;Nan Dirk de Graaf&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [256] &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;           &quot;Niels Spierings&quot;      
+#&gt; [259] &quot;Jochem Tolsma&quot;         &quot;Jule Adriaans&quot;         &quot;Carsten Sauer&quot;        
+#&gt; [262] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Kevin G Love&quot;         
+#&gt; [265] &quot;F. Bouman&quot;             &quot;Jochem Tolsma&quot;         &quot;Barbara Wollenberg&quot;   
+#&gt; [268] &quot;V.P.A. Lukien&quot;         &quot;A. Oudijk&quot;             &quot;Jochem Tolsma&quot;        
+#&gt; [271] &quot;Kevin G Love&quot;</code></pre>
+<pre class="r test"><code>collaborators1 &lt;- collaborators1[-1] #remove the empty cell at the begining 
+collaborators1 &lt;- collaborators1[-c(which(collaborators1==&quot;Jochem Tolsma&quot;))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+
+collaborators1 #check it again</code></pre>
+<pre class="test2"><code>#&gt;   [1] &quot;Tom van der Meer&quot;      &quot;Michael Savelkoul&quot;     &quot;Peer Scheepers&quot;       
+#&gt;   [4] &quot;Louk Hagendoorn&quot;       &quot;Tom van der Meer&quot;      &quot;Maurice Gesthuizen&quot;   
+#&gt;   [7] &quot;Ioana van Deurzen&quot;     &quot;Tobias Stark&quot;          &quot;René Veenstra&quot;        
+#&gt;  [10] &quot;Carlijn Bussemakers&quot;   &quot;Gerbert Kraaykamp&quot;     &quot;Marcel Lubbers&quot;       
+#&gt;  [13] &quot;Mérove Gijsberts&quot;      &quot;Joris Blaauw&quot;          &quot;Manfred te Grotenhuis&quot;
+#&gt;  [16] &quot;Michael Savelkoul&quot;     &quot;Joran Laméris&quot;         &quot;Anke Munniksma&quot;       
+#&gt;  [19] &quot;Peer Scheepers&quot;        &quot;Tobias Stark&quot;          &quot;Nan Dirk de Graaf&quot;    
+#&gt;  [22] &quot;Lincoln Quillian&quot;      &quot;A. Need&quot;               &quot;Uulkje de Jong&quot;       
+#&gt;  [25] &quot;Josja Rokven&quot;          &quot;Gijs de Boer&quot;          &quot;Stijn Ruiter&quot;         
+#&gt;  [28] &quot;Tom van der Meer&quot;      &quot;Anne Maaike Mulders&quot;   &quot;Bas Hofstra&quot;          
+#&gt;  [31] &quot;Gerbert Kraaykamp&quot;     &quot;M.H.J. Wolbers&quot;        &quot;Tom van der Meer&quot;     
+#&gt;  [34] &quot;Sara Kinsbergen&quot;       &quot;Stijn Ruiter&quot;          &quot;Thomas Feliciani&quot;     
+#&gt;  [37] &quot;Andreas Flache&quot;        &quot;Joran Laméris&quot;         &quot;John R. Hipp&quot;         
+#&gt;  [40] &quot;Daniël van Wijk&quot;       &quot;Gideon Bolt&quot;           &quot;Rob Franken&quot;          
+#&gt;  [43] &quot;Hidde Bekhuis&quot;         &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;          
+#&gt;  [46] &quot;Niels Spierings&quot;       &quot;Sara Kinsbergen&quot;       &quot;Roderick Sluiter&quot;     
+#&gt;  [49] &quot;Peer Scheepers&quot;        &quot;Joran Laméris&quot;         &quot;Gerbert Kraaykamp&quot;    
+#&gt;  [52] &quot;Stijn Ruiter&quot;          &quot;Roos van der Zwan&quot;     &quot;Marcel Lubbers&quot;       
+#&gt;  [55] &quot;Peter Valet&quot;           &quot;Carsten Sauer&quot;         &quot;Joran Laméris&quot;        
+#&gt;  [58] &quot;Michael Savelkoul&quot;     &quot;Thijmen Jeroense&quot;      &quot;Niels Spierings&quot;      
+#&gt;  [61] &quot;Gerbert Kraaykamp&quot;     &quot;P.M. de Graaf&quot;         &quot;Matthijs Kalmijn&quot;     
+#&gt;  [64] &quot;Christiaan Monden&quot;     &quot;Dorian Schaap&quot;         &quot;Maarten J. Postma&quot;    
+#&gt;  [67] &quot;Lisanne Jansen&quot;        &quot;Tessa Ubels&quot;           &quot;Sara Kinsbergen&quot;      
+#&gt;  [70] &quot;Dirk‐Jan Koch&quot;         &quot;Rob Franken&quot;           &quot;Hidde Bekhuis&quot;        
+#&gt;  [73] &quot;M.H.J. Wolbers&quot;        &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt;  [76] &quot;Gerbert Kraaykamp&quot;     &quot;Bas Hofstra&quot;           &quot;Anne Maaike Mulders&quot;  
+#&gt;  [79] &quot;Tessa Ubels&quot;           &quot;Sara Kinsbergen&quot;       &quot;Dirk‐Jan Koch&quot;        
+#&gt;  [82] &quot;Judith Kanshabe&quot;       &quot;Kasimir Dederichs&quot;     &quot;Rob Franken&quot;          
+#&gt;  [85] &quot;Dingeman Wiertz&quot;       &quot;Nan Dirk de Graaf&quot;     &quot;Peer Scheepers&quot;       
+#&gt;  [88] &quot;Marcel Coenders&quot;       &quot;Marcel Lubbers&quot;        &quot;M.H.J. Wolbers&quot;       
+#&gt;  [91] &quot;Michael Savelkoul&quot;     &quot;Peer Scheepers&quot;        &quot;Carlijn Bussemakers&quot;  
+#&gt;  [94] &quot;Gerbert Kraaykamp&quot;     &quot;Ingrid Schoon&quot;         &quot;Niels Spierings&quot;      
+#&gt;  [97] &quot;Natascha Notten&quot;       &quot;Gerbert Kraaykamp&quot;     &quot;Tom van der Meer&quot;     
+#&gt; [100] &quot;Carlijn Bussemakers&quot;   &quot;Gerbert Kraaykamp&quot;     &quot;Marloes De Lange&quot;     
+#&gt; [103] &quot;M.H.J. Wolbers&quot;        &quot;Tessa Ubels&quot;           &quot;Sara Kinsbergen&quot;      
+#&gt; [106] &quot;Dirk‐Jan Koch&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;P.M. de Graaf&quot;        
+#&gt; [109] &quot;Matthijs Kalmijn&quot;      &quot;Christiaan Monden&quot;     &quot;M.H.J. Wolbers&quot;       
+#&gt; [112] &quot;Marcel Coenders&quot;       &quot;Marcel Lubbers&quot;        &quot;Josja Rokven&quot;         
+#&gt; [115] &quot;Stijn Ruiter&quot;          &quot;S. Ruiter&quot;             &quot;Michiel de Hoon&quot;      
+#&gt; [118] &quot;Henk Elffers&quot;          &quot;P.H. van der Laan&quot;     &quot;S. Ruiter&quot;            
+#&gt; [121] &quot;Marcel Lubbers&quot;        &quot;Ariana Need&quot;           &quot;Uulkje de Jong&quot;       
+#&gt; [124] &quot;Giedo Jansen&quot;          &quot;Nan Dirk de Graaf&quot;     &quot;Thomas Feliciani&quot;     
+#&gt; [127] &quot;Andreas Flache&quot;        &quot;van der Roos Zwan&quot;     &quot;Peter Valet&quot;          
+#&gt; [130] &quot;Carsten Sauer&quot;         &quot;Marcel Coenders&quot;       &quot;Marcel Lubbers&quot;       
+#&gt; [133] &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;           &quot;Niels Spierings&quot;      
+#&gt; [136] &quot;Rob Franken&quot;           &quot;Hidde Bekhuis&quot;         &quot;Thijmen Jeroense&quot;     
+#&gt; [139] &quot;Niels Spierings&quot;       &quot;Anne Maaike Mulders&quot;   &quot;Bas Hofstra&quot;          
+#&gt; [142] &quot;Anne Maaike Mulders&quot;   &quot;Bas Hofstra&quot;           &quot;Rob Franken&quot;          
+#&gt; [145] &quot;Hidde Bekhuis&quot;         &quot;Nan Dirk de Graaf&quot;     &quot;P.E. Thijs&quot;           
+#&gt; [148] &quot;Gerbert Kraaykamp&quot;     &quot;Margot Scholte&quot;        &quot;Thomas Feliciani&quot;     
+#&gt; [151] &quot;Andreas Flache&quot;        &quot;Michaël Maes&quot;          &quot;Thomas Feliciani&quot;     
+#&gt; [154] &quot;Andreas Flache&quot;        &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt; [157] &quot;Gerbert Kraaykamp&quot;     &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt; [160] &quot;Gerbert Kraaykamp&quot;     &quot;Gerbert Kraaykamp&quot;     &quot;Joran Laméris&quot;        
+#&gt; [163] &quot;Marcel Lubbers&quot;        &quot;Marcel Coenders&quot;       &quot;Marcel Coenders&quot;      
+#&gt; [166] &quot;Marcel Lubbers&quot;        &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt; [169] &quot;Gerbert Kraaykamp&quot;     &quot;G. H. Jansen&quot;          &quot;Nan Dirk de Graaf&quot;    
+#&gt; [172] &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;           &quot;Niels Spierings&quot;      
+#&gt; [175] &quot;Jule Adriaans&quot;         &quot;Carsten Sauer&quot;         &quot;Kevin G Love&quot;         
+#&gt; [178] &quot;F. Bouman&quot;             &quot;Barbara Wollenberg&quot;    &quot;V.P.A. Lukien&quot;        
+#&gt; [181] &quot;A. Oudijk&quot;             &quot;Kevin G Love&quot;</code></pre>
+<pre class="r test"><code>#unique(savedata) #to look at list of collaborators without repeats</code></pre>
+<p>Get list of affiliated institutions for each coauthor of 1
+professor</p>
+<pre class="r test"><code>institutions &lt;- NA
+for (i in 1:nrow(prof1_papers)) {
+  print(i)
+  df &lt;- as.data.frame(prof1_papers[i,4][[1]])
+  df &lt;- df[-c(which(df$display_name==&quot;Jochem Tolsma&quot;))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+  institutions &lt;- c(institutions, df$affiliations[[1]][[2]])
+}</code></pre>
+<pre class="test2"><code>#&gt; [1] 1
+#&gt; [1] 2
+#&gt; [1] 3
+#&gt; [1] 4
+#&gt; [1] 5
+#&gt; [1] 6
+#&gt; [1] 7
+#&gt; [1] 8
+#&gt; [1] 9
+#&gt; [1] 10
+#&gt; [1] 11
+#&gt; [1] 12
+#&gt; [1] 13
+#&gt; [1] 14
+#&gt; [1] 15
+#&gt; [1] 16
+#&gt; [1] 17
+#&gt; [1] 18
+#&gt; [1] 19
+#&gt; [1] 20
+#&gt; [1] 21
+#&gt; [1] 22
+#&gt; [1] 23
+#&gt; [1] 24
+#&gt; [1] 25
+#&gt; [1] 26
+#&gt; [1] 27
+#&gt; [1] 28
+#&gt; [1] 29
+#&gt; [1] 30
+#&gt; [1] 31
+#&gt; [1] 32
+#&gt; [1] 33
+#&gt; [1] 34
+#&gt; [1] 35
+#&gt; [1] 36
+#&gt; [1] 37
+#&gt; [1] 38
+#&gt; [1] 39
+#&gt; [1] 40
+#&gt; [1] 41
+#&gt; [1] 42
+#&gt; [1] 43
+#&gt; [1] 44
+#&gt; [1] 45
+#&gt; [1] 46
+#&gt; [1] 47
+#&gt; [1] 48
+#&gt; [1] 49
+#&gt; [1] 50
+#&gt; [1] 51
+#&gt; [1] 52
+#&gt; [1] 53
+#&gt; [1] 54
+#&gt; [1] 55
+#&gt; [1] 56
+#&gt; [1] 57
+#&gt; [1] 58
+#&gt; [1] 59
+#&gt; [1] 60
+#&gt; [1] 61
+#&gt; [1] 62
+#&gt; [1] 63
+#&gt; [1] 64
+#&gt; [1] 65
+#&gt; [1] 66
+#&gt; [1] 67
+#&gt; [1] 68
+#&gt; [1] 69
+#&gt; [1] 70
+#&gt; [1] 71
+#&gt; [1] 72
+#&gt; [1] 73
+#&gt; [1] 74
+#&gt; [1] 75
+#&gt; [1] 76
+#&gt; [1] 77
+#&gt; [1] 78
+#&gt; [1] 79
+#&gt; [1] 80
+#&gt; [1] 81
+#&gt; [1] 82
+#&gt; [1] 83
+#&gt; [1] 84
+#&gt; [1] 85
+#&gt; [1] 86
+#&gt; [1] 87
+#&gt; [1] 88</code></pre>
+<pre class="r test"><code>institutions</code></pre>
+<pre class="test2"><code>#&gt;  [1] NA                                                                
+#&gt;  [2] &quot;University of Amsterdam&quot;                                         
+#&gt;  [3] &quot;Oxford University Press (United Kingdom)&quot;                        
+#&gt;  [4] &quot;Radboud University Nijmegen&quot;                                     
+#&gt;  [5] &quot;Radboud University Nijmegen&quot;                                     
+#&gt;  [6] &quot;Radboud University Nijmegen&quot;                                     
+#&gt;  [7] &quot;Radboud University Nijmegen&quot;                                     
+#&gt;  [8] &quot;Radboud University Nijmegen&quot;                                     
+#&gt;  [9] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [10] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [11] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [12] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [13] &quot;Wetenschappelijk Onderzoek- en Documentatiecentrum&quot;              
+#&gt; [14] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [15] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [16] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [17] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [18] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [19] &quot;University of Groningen&quot;                                         
+#&gt; [20] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [21] &quot;Netherlands Interdisciplinary Demographic Institute&quot;             
+#&gt; [22] &quot;University of Groningen&quot;                                         
+#&gt; [23] &quot;Utrecht University&quot;                                              
+#&gt; [24] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [25] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [26] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [27] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [28] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [29] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [30] &quot;University of Bamberg&quot;                                           
+#&gt; [31] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [32] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [33] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [34] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [35] &quot;Interuniversity Center for Social Science Theory and Methodology&quot;
+#&gt; [36] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [37] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [38] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [39] &quot;Netherlands Institute for the Study of Crime and Law Enforcement&quot;
+#&gt; [40] &quot;University of Groningen&quot;                                         
+#&gt; [41] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [42] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [43] &quot;Interuniversity Center for Social Science Theory and Methodology&quot;
+#&gt; [44] &quot;University of Brighton&quot;                                          
+#&gt; [45] &quot;University of Oxford&quot;                                            
+#&gt; [46] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [47] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [48] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [49] &quot;University of Groningen&quot;                                         
+#&gt; [50] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [51] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [52] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [53] &quot;University of Groningen&quot;                                         
+#&gt; [54] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [55] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [56] &quot;Utrecht University&quot;                                              
+#&gt; [57] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [58] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [59] &quot;Radboud University Nijmegen&quot;                                     
+#&gt; [60] &quot;Radboud University Nijmegen&quot;</code></pre>
+<pre class="r test"><code>institutions &lt;- institutions[-1] #smaller number - assumption that several of Jochems articles were published only by him, and am removing these articles. </code></pre>
+<p>Now: try to do this for list of authors</p>
+<pre class="r test"><code>co_authors = bind_rows(prof1_papers$authorships)</code></pre>
+<pre class="r test"><code>## make sure to reference correct university
+ru_id &lt;- institutions &lt;- oa_fetch(entity = &quot;institutions&quot;, search = &quot;Radboud University&quot;) #get Radboud&#39;s ID
+ru_id &lt;- ru_id[1,]
+ru_id</code></pre>
+<pre class="test2"><code>#&gt; # A tibble: 1 × 23
+#&gt;   id    display_name display_name_alterna…¹ display_name_acronyms international_displa…² ror   ids  
+#&gt;   &lt;chr&gt; &lt;chr&gt;        &lt;list&gt;                 &lt;list&gt;                &lt;list&gt;                 &lt;chr&gt; &lt;lis&gt;
+#&gt; 1 http… Radboud Uni… &lt;chr [3]&gt;              &lt;lgl [1]&gt;             &lt;chr [50]&gt;             http… &lt;chr&gt;
+#&gt; # ℹ abbreviated names: ¹​display_name_alternatives, ²​international_display_name
+#&gt; # ℹ 16 more variables: country_code &lt;chr&gt;, geo &lt;list&gt;, type &lt;chr&gt;, homepage_url &lt;chr&gt;,
+#&gt; #   image_url &lt;chr&gt;, image_thumbnail_url &lt;chr&gt;, associated_institutions &lt;list&gt;,
+#&gt; #   relevance_score &lt;dbl&gt;, works_count &lt;int&gt;, cited_by_count &lt;int&gt;, counts_by_year &lt;list&gt;,
+#&gt; #   summary_stats &lt;list&gt;, works_api_url &lt;chr&gt;, topics &lt;list&gt;, updated_date &lt;chr&gt;,
+#&gt; #   created_date &lt;chr&gt;</code></pre>
+<pre class="r test"><code>## then make sure to reference correct authors from correct university
+author1 &lt;- oa_fetch(entity = &quot;author&quot;, search = &quot;Jochem Tolsma&quot;, affiliations.institution.id = ru_id$id) #jochem info
+author1</code></pre>
+<pre class="test2"><code>#&gt; # A tibble: 1 × 15
+#&gt;   id      display_name display_name_alterna…¹ relevance_score ids   orcid works_count cited_by_count
+#&gt;   &lt;chr&gt;   &lt;chr&gt;        &lt;list&gt;                           &lt;dbl&gt; &lt;lis&gt; &lt;chr&gt;       &lt;int&gt;          &lt;int&gt;
+#&gt; 1 https:… Jochem Tols… &lt;chr [3]&gt;                        9055. &lt;chr&gt; http…          88           2123
+#&gt; # ℹ abbreviated name: ¹​display_name_alternatives
+#&gt; # ℹ 7 more variables: counts_by_year &lt;list&gt;, `2yr_mean_citedness` &lt;dbl&gt;, h_index &lt;int&gt;,
+#&gt; #   i10_index &lt;int&gt;, last_known_institutions &lt;list&gt;, topics &lt;list&gt;, works_api_url &lt;chr&gt;</code></pre>
+<pre class="r test"><code># HAD TO COMMENT OUT TO KNIT, BUT THIS CODE WORKED: 
+
+# author2 &lt;- oa_fetch(entity = &quot;author&quot;, search = &quot;Maurice Gesthuizen&quot;, affiliations.institution.id = ru_id$id) #maurice
+#author2
+
+#author3 &lt;- oa_fetch(entity = &quot;author&quot;, search = &quot;Michael Savelkoul&quot;, affiliations.institution.id = ru_id$id) #michael
+#author3
+
+## mini list of authors
+#mini_list &lt;- rbind(author1, author2, author3)
+#mini_list
+
+#just_names &lt;- data_frame(mini_list$display_name)
+#just_names
+
+
+# search just one name from the list 
+
+#institutions2 &lt;- data.frame()
+#for (i in 1:nrow(mini_list)) {
+#  name1_papers &lt;- oa_fetch(entity = &quot;works&quot;, author.id = mini_list[i,1])
+#  # name1_papers &lt;- oa_fetch(entity = &quot;works&quot;, author.display_name = mini_list[i,2], affiliations.institution.id = ru_id$id)
+#  name1_papers[1,]
+#  for (j in 1:nrow(name1_papers)) {
+#    print(j)
+#    df2 &lt;- as.data.frame(name1_papers[j,4][[1]])
+#    # df2 &lt;- df2[-c(which(df2$display_name==mini_list[i,2]))]
+#    # institutions2 &lt;- c(institutions2, df2$affiliations[[1]][[2]])
+#  }
+#}
+
+#authorships.affiliations.institution_ids</code></pre>
+<pre class="r test"><code>institutions &lt;- NA
+for (i in 1:nrow(prof1_papers)) {
+  print(i)
+  df &lt;- as.data.frame(prof1_papers[i,4][[1]])
+  df &lt;- df[-c(which(df$display_name==&quot;Jochem Tolsma&quot;))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+  institutions &lt;- c(institutions, df$affiliations[[1]][[2]])
+}</code></pre>
+<pre class="test2"><code>#&gt; [1] 1
+#&gt; [1] 2
+#&gt; [1] 3
+#&gt; [1] 4
+#&gt; [1] 5
+#&gt; [1] 6
+#&gt; [1] 7
+#&gt; [1] 8
+#&gt; [1] 9
+#&gt; [1] 10
+#&gt; [1] 11
+#&gt; [1] 12
+#&gt; [1] 13
+#&gt; [1] 14
+#&gt; [1] 15
+#&gt; [1] 16
+#&gt; [1] 17
+#&gt; [1] 18
+#&gt; [1] 19
+#&gt; [1] 20
+#&gt; [1] 21
+#&gt; [1] 22
+#&gt; [1] 23
+#&gt; [1] 24
+#&gt; [1] 25
+#&gt; [1] 26
+#&gt; [1] 27
+#&gt; [1] 28
+#&gt; [1] 29
+#&gt; [1] 30
+#&gt; [1] 31
+#&gt; [1] 32
+#&gt; [1] 33
+#&gt; [1] 34
+#&gt; [1] 35
+#&gt; [1] 36
+#&gt; [1] 37
+#&gt; [1] 38
+#&gt; [1] 39
+#&gt; [1] 40
+#&gt; [1] 41
+#&gt; [1] 42
+#&gt; [1] 43
+#&gt; [1] 44
+#&gt; [1] 45
+#&gt; [1] 46
+#&gt; [1] 47
+#&gt; [1] 48
+#&gt; [1] 49
+#&gt; [1] 50
+#&gt; [1] 51
+#&gt; [1] 52
+#&gt; [1] 53
+#&gt; [1] 54
+#&gt; [1] 55
+#&gt; [1] 56
+#&gt; [1] 57
+#&gt; [1] 58
+#&gt; [1] 59
+#&gt; [1] 60
+#&gt; [1] 61
+#&gt; [1] 62
+#&gt; [1] 63
+#&gt; [1] 64
+#&gt; [1] 65
+#&gt; [1] 66
+#&gt; [1] 67
+#&gt; [1] 68
+#&gt; [1] 69
+#&gt; [1] 70
+#&gt; [1] 71
+#&gt; [1] 72
+#&gt; [1] 73
+#&gt; [1] 74
+#&gt; [1] 75
+#&gt; [1] 76
+#&gt; [1] 77
+#&gt; [1] 78
+#&gt; [1] 79
+#&gt; [1] 80
+#&gt; [1] 81
+#&gt; [1] 82
+#&gt; [1] 83
+#&gt; [1] 84
+#&gt; [1] 85
+#&gt; [1] 86
+#&gt; [1] 87
+#&gt; [1] 88</code></pre>
+<pre class="r test"><code># HAD TO COMMENT OUT TO KNIT, BUT THIS CODE WORKED: 
+
+## Make double loop 
+#list1 &lt;- data.frame()
+#list2 &lt;- data.frame()
+
+#for (i in 1:nrow(just_names)) {
+#  print(i)
+#  list1 &lt;- oa_fetch(entity = &quot;works&quot;, author.id = just_names[i])
+#  df1 &lt;- c(df1, list1$display_name)
+#  for (j in 1:nrow(list1)) {
+#    print(j)
+#    df2 &lt;- as.data.frame(list1[i,4][[1]])
+#    list2 &lt;- c(list2, df2$display_name)
+#  }
+#}
+
+
+
+
+
+
+# Next, test calling 1 professor
+options(openalexR.mailto = &quot;paige.kemper@ru.nl&quot;) 
+prof1 &lt;- oa_fetch(entity= &quot;author&quot;, search = &quot;Jochem+Tolsma&quot;)
+
+
+# Next, look at list of all of the example professor&#39;s publications
+prof1_papers &lt;- oa_fetch(entity = &quot;works&quot;, author.id = prof1$id) 
+  # within this new dataset, $authorships includes the dataframes of the coauthors (alters)
+prof1_papers[1,] #look at row 1: first publication listed by Jochem</code></pre>
+<pre class="test2"><code>#&gt; # A tibble: 1 × 43
+#&gt;   id           title display_name authorships abstract doi   publication_date publication_year  fwci
+#&gt;   &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;        &lt;list&gt;      &lt;chr&gt;    &lt;chr&gt; &lt;date&gt;                      &lt;int&gt; &lt;dbl&gt;
+#&gt; 1 https://ope… Ethn… Ethnic Dive… &lt;tibble&gt;    Recent … http… 2014-06-27                   2014  84.1
+#&gt; # ℹ 34 more variables: cited_by_count &lt;int&gt;, counts_by_year &lt;list&gt;, cited_by_api_url &lt;chr&gt;,
+#&gt; #   ids &lt;list&gt;, type &lt;chr&gt;, is_oa &lt;lgl&gt;, is_oa_anywhere &lt;lgl&gt;, oa_status &lt;chr&gt;, oa_url &lt;chr&gt;,
+#&gt; #   any_repository_has_fulltext &lt;lgl&gt;, source_display_name &lt;chr&gt;, source_id &lt;chr&gt;, issn_l &lt;chr&gt;,
+#&gt; #   host_organization &lt;chr&gt;, host_organization_name &lt;chr&gt;, landing_page_url &lt;chr&gt;, pdf_url &lt;chr&gt;,
+#&gt; #   license &lt;chr&gt;, version &lt;chr&gt;, referenced_works &lt;list&gt;, referenced_works_count &lt;int&gt;,
+#&gt; #   related_works &lt;list&gt;, concepts &lt;list&gt;, topics &lt;list&gt;, keywords &lt;list&gt;, is_paratext &lt;lgl&gt;,
+#&gt; #   is_retracted &lt;lgl&gt;, language &lt;chr&gt;, grants &lt;list&gt;, apc &lt;list&gt;, first_page &lt;chr&gt;, …</code></pre>
+<pre class="r test"><code># Then: Create loop. 1) Make empty column; 2) For every row in the set of the professor&#39;s publications (for i:nrow(df), look at the data frame of &#39;affiliations&#39; (coauthors); 3) Make dataframe (&quot;df&quot;), and then save $display_name variable to the empty column.)
+collaborators1 &lt;- NA
+for (i in 1:nrow(prof1_papers)) {
+  print(i)
+  df &lt;- as.data.frame(prof1_papers[i,4][[1]])
+  collaborators1 &lt;- c(collaborators1, df$display_name)
+}</code></pre>
+<pre class="test2"><code>#&gt; [1] 1
+#&gt; [1] 2
+#&gt; [1] 3
+#&gt; [1] 4
+#&gt; [1] 5
+#&gt; [1] 6
+#&gt; [1] 7
+#&gt; [1] 8
+#&gt; [1] 9
+#&gt; [1] 10
+#&gt; [1] 11
+#&gt; [1] 12
+#&gt; [1] 13
+#&gt; [1] 14
+#&gt; [1] 15
+#&gt; [1] 16
+#&gt; [1] 17
+#&gt; [1] 18
+#&gt; [1] 19
+#&gt; [1] 20
+#&gt; [1] 21
+#&gt; [1] 22
+#&gt; [1] 23
+#&gt; [1] 24
+#&gt; [1] 25
+#&gt; [1] 26
+#&gt; [1] 27
+#&gt; [1] 28
+#&gt; [1] 29
+#&gt; [1] 30
+#&gt; [1] 31
+#&gt; [1] 32
+#&gt; [1] 33
+#&gt; [1] 34
+#&gt; [1] 35
+#&gt; [1] 36
+#&gt; [1] 37
+#&gt; [1] 38
+#&gt; [1] 39
+#&gt; [1] 40
+#&gt; [1] 41
+#&gt; [1] 42
+#&gt; [1] 43
+#&gt; [1] 44
+#&gt; [1] 45
+#&gt; [1] 46
+#&gt; [1] 47
+#&gt; [1] 48
+#&gt; [1] 49
+#&gt; [1] 50
+#&gt; [1] 51
+#&gt; [1] 52
+#&gt; [1] 53
+#&gt; [1] 54
+#&gt; [1] 55
+#&gt; [1] 56
+#&gt; [1] 57
+#&gt; [1] 58
+#&gt; [1] 59
+#&gt; [1] 60
+#&gt; [1] 61
+#&gt; [1] 62
+#&gt; [1] 63
+#&gt; [1] 64
+#&gt; [1] 65
+#&gt; [1] 66
+#&gt; [1] 67
+#&gt; [1] 68
+#&gt; [1] 69
+#&gt; [1] 70
+#&gt; [1] 71
+#&gt; [1] 72
+#&gt; [1] 73
+#&gt; [1] 74
+#&gt; [1] 75
+#&gt; [1] 76
+#&gt; [1] 77
+#&gt; [1] 78
+#&gt; [1] 79
+#&gt; [1] 80
+#&gt; [1] 81
+#&gt; [1] 82
+#&gt; [1] 83
+#&gt; [1] 84
+#&gt; [1] 85
+#&gt; [1] 86
+#&gt; [1] 87
+#&gt; [1] 88</code></pre>
+<pre class="r test"><code>collaborators1 #see: all of the authors for all of the papers by Jochem Tolsma are listed</code></pre>
+<pre class="test2"><code>#&gt;   [1] NA                      &quot;Tom van der Meer&quot;      &quot;Jochem Tolsma&quot;        
+#&gt;   [4] &quot;Michael Savelkoul&quot;     &quot;Peer Scheepers&quot;        &quot;Jochem Tolsma&quot;        
+#&gt;   [7] &quot;Louk Hagendoorn&quot;       &quot;Jochem Tolsma&quot;         &quot;Tom van der Meer&quot;     
+#&gt;  [10] &quot;Maurice Gesthuizen&quot;    &quot;Jochem Tolsma&quot;         &quot;Ioana van Deurzen&quot;    
+#&gt;  [13] &quot;Tobias Stark&quot;          &quot;René Veenstra&quot;         &quot;Carlijn Bussemakers&quot;  
+#&gt;  [16] &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;        
+#&gt;  [19] &quot;Marcel Lubbers&quot;        &quot;Mérove Gijsberts&quot;      &quot;Jochem Tolsma&quot;        
+#&gt;  [22] &quot;Joris Blaauw&quot;          &quot;Manfred te Grotenhuis&quot; &quot;Michael Savelkoul&quot;    
+#&gt;  [25] &quot;Joran Laméris&quot;         &quot;Jochem Tolsma&quot;         &quot;Anke Munniksma&quot;       
+#&gt;  [28] &quot;Peer Scheepers&quot;        &quot;Tobias Stark&quot;          &quot;Jochem Tolsma&quot;        
+#&gt;  [31] &quot;Jochem Tolsma&quot;         &quot;Nan Dirk de Graaf&quot;     &quot;Lincoln Quillian&quot;     
+#&gt;  [34] &quot;Jochem Tolsma&quot;         &quot;A. Need&quot;               &quot;Uulkje de Jong&quot;       
+#&gt;  [37] &quot;Josja Rokven&quot;          &quot;Gijs de Boer&quot;          &quot;Jochem Tolsma&quot;        
+#&gt;  [40] &quot;Stijn Ruiter&quot;          &quot;Jochem Tolsma&quot;         &quot;Tom van der Meer&quot;     
+#&gt;  [43] &quot;Anne Maaike Mulders&quot;   &quot;Bas Hofstra&quot;           &quot;Jochem Tolsma&quot;        
+#&gt;  [46] &quot;Jochem Tolsma&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;        
+#&gt;  [49] &quot;M.H.J. Wolbers&quot;        &quot;Jochem Tolsma&quot;         &quot;Tom van der Meer&quot;     
+#&gt;  [52] &quot;Sara Kinsbergen&quot;       &quot;Jochem Tolsma&quot;         &quot;Stijn Ruiter&quot;         
+#&gt;  [55] &quot;Thomas Feliciani&quot;      &quot;Andreas Flache&quot;        &quot;Jochem Tolsma&quot;        
+#&gt;  [58] &quot;Joran Laméris&quot;         &quot;John R. Hipp&quot;          &quot;Jochem Tolsma&quot;        
+#&gt;  [61] &quot;Daniël van Wijk&quot;       &quot;Gideon Bolt&quot;           &quot;Jochem Tolsma&quot;        
+#&gt;  [64] &quot;Rob Franken&quot;           &quot;Hidde Bekhuis&quot;         &quot;Jochem Tolsma&quot;        
+#&gt;  [67] &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;           &quot;Niels Spierings&quot;      
+#&gt;  [70] &quot;Jochem Tolsma&quot;         &quot;Sara Kinsbergen&quot;       &quot;Jochem Tolsma&quot;        
+#&gt;  [73] &quot;Roderick Sluiter&quot;      &quot;Jochem Tolsma&quot;         &quot;Peer Scheepers&quot;       
+#&gt;  [76] &quot;Joran Laméris&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;Stijn Ruiter&quot;         
+#&gt;  [79] &quot;Jochem Tolsma&quot;         &quot;Roos van der Zwan&quot;     &quot;Jochem Tolsma&quot;        
+#&gt;  [82] &quot;Marcel Lubbers&quot;        &quot;Peter Valet&quot;           &quot;Carsten Sauer&quot;        
+#&gt;  [85] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Joran Laméris&quot;        
+#&gt;  [88] &quot;Michael Savelkoul&quot;     &quot;Thijmen Jeroense&quot;      &quot;Niels Spierings&quot;      
+#&gt;  [91] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Gerbert Kraaykamp&quot;    
+#&gt;  [94] &quot;P.M. de Graaf&quot;         &quot;Matthijs Kalmijn&quot;      &quot;Christiaan Monden&quot;    
+#&gt;  [97] &quot;Dorian Schaap&quot;         &quot;Maarten J. Postma&quot;     &quot;Lisanne Jansen&quot;       
+#&gt; [100] &quot;Jochem Tolsma&quot;         &quot;Tessa Ubels&quot;           &quot;Sara Kinsbergen&quot;      
+#&gt; [103] &quot;Jochem Tolsma&quot;         &quot;Dirk‐Jan Koch&quot;         &quot;Rob Franken&quot;          
+#&gt; [106] &quot;Hidde Bekhuis&quot;         &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;        
+#&gt; [109] &quot;M.H.J. Wolbers&quot;        &quot;Josja Rokven&quot;          &quot;Jochem Tolsma&quot;        
+#&gt; [112] &quot;Stijn Ruiter&quot;          &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [115] &quot;Bas Hofstra&quot;           &quot;Anne Maaike Mulders&quot;   &quot;Tessa Ubels&quot;          
+#&gt; [118] &quot;Sara Kinsbergen&quot;       &quot;Dirk‐Jan Koch&quot;         &quot;Judith Kanshabe&quot;      
+#&gt; [121] &quot;Jochem Tolsma&quot;         &quot;Kasimir Dederichs&quot;     &quot;Rob Franken&quot;          
+#&gt; [124] &quot;Dingeman Wiertz&quot;       &quot;Jochem Tolsma&quot;         &quot;Nan Dirk de Graaf&quot;    
+#&gt; [127] &quot;Peer Scheepers&quot;        &quot;Marcel Coenders&quot;       &quot;Marcel Lubbers&quot;       
+#&gt; [130] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;M.H.J. Wolbers&quot;       
+#&gt; [133] &quot;Michael Savelkoul&quot;     &quot;Jochem Tolsma&quot;         &quot;Peer Scheepers&quot;       
+#&gt; [136] &quot;Carlijn Bussemakers&quot;   &quot;Gerbert Kraaykamp&quot;     &quot;Ingrid Schoon&quot;        
+#&gt; [139] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Niels Spierings&quot;      
+#&gt; [142] &quot;Natascha Notten&quot;       &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [145] &quot;Tom van der Meer&quot;      &quot;Jochem Tolsma&quot;         &quot;Carlijn Bussemakers&quot;  
+#&gt; [148] &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;         &quot;Marloes De Lange&quot;     
+#&gt; [151] &quot;Jochem Tolsma&quot;         &quot;M.H.J. Wolbers&quot;        &quot;Tessa Ubels&quot;          
+#&gt; [154] &quot;Sara Kinsbergen&quot;       &quot;Dirk‐Jan Koch&quot;         &quot;Jochem Tolsma&quot;        
+#&gt; [157] &quot;Jochem Tolsma&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;P.M. de Graaf&quot;        
+#&gt; [160] &quot;Matthijs Kalmijn&quot;      &quot;Christiaan Monden&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [163] &quot;M.H.J. Wolbers&quot;        &quot;Jochem Tolsma&quot;         &quot;Marcel Coenders&quot;      
+#&gt; [166] &quot;Marcel Lubbers&quot;        &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt; [169] &quot;Jochem Tolsma&quot;         &quot;S. Ruiter&quot;             &quot;Jochem Tolsma&quot;        
+#&gt; [172] &quot;Michiel de Hoon&quot;       &quot;Henk Elffers&quot;          &quot;P.H. van der Laan&quot;    
+#&gt; [175] &quot;Jochem Tolsma&quot;         &quot;S. Ruiter&quot;             &quot;Jochem Tolsma&quot;        
+#&gt; [178] &quot;Marcel Lubbers&quot;        &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;        
+#&gt; [181] &quot;Ariana Need&quot;           &quot;Uulkje de Jong&quot;        &quot;Giedo Jansen&quot;         
+#&gt; [184] &quot;Jochem Tolsma&quot;         &quot;Nan Dirk de Graaf&quot;     &quot;Thomas Feliciani&quot;     
+#&gt; [187] &quot;Jochem Tolsma&quot;         &quot;Andreas Flache&quot;        &quot;van der Roos Zwan&quot;    
+#&gt; [190] &quot;Jochem Tolsma&quot;         &quot;Peter Valet&quot;           &quot;Carsten Sauer&quot;        
+#&gt; [193] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Marcel Coenders&quot;      
+#&gt; [196] &quot;Marcel Lubbers&quot;        &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;          
+#&gt; [199] &quot;Niels Spierings&quot;       &quot;Jochem Tolsma&quot;         &quot;Rob Franken&quot;          
+#&gt; [202] &quot;Hidde Bekhuis&quot;         &quot;Jochem Tolsma&quot;         &quot;Thijmen Jeroense&quot;     
+#&gt; [205] &quot;Niels Spierings&quot;       &quot;Jochem Tolsma&quot;         &quot;Anne Maaike Mulders&quot;  
+#&gt; [208] &quot;Bas Hofstra&quot;           &quot;Jochem Tolsma&quot;         &quot;Anne Maaike Mulders&quot;  
+#&gt; [211] &quot;Bas Hofstra&quot;           &quot;Jochem Tolsma&quot;         &quot;Rob Franken&quot;          
+#&gt; [214] &quot;Hidde Bekhuis&quot;         &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;        
+#&gt; [217] &quot;Nan Dirk de Graaf&quot;     &quot;Jochem Tolsma&quot;         &quot;P.E. Thijs&quot;           
+#&gt; [220] &quot;Gerbert Kraaykamp&quot;     &quot;Margot Scholte&quot;        &quot;Jochem Tolsma&quot;        
+#&gt; [223] &quot;Thomas Feliciani&quot;      &quot;Andreas Flache&quot;        &quot;Jochem Tolsma&quot;        
+#&gt; [226] &quot;Michaël Maes&quot;          &quot;Thomas Feliciani&quot;      &quot;Andreas Flache&quot;       
+#&gt; [229] &quot;Jochem Tolsma&quot;         &quot;Josja Rokven&quot;          &quot;Jochem Tolsma&quot;        
+#&gt; [232] &quot;Stijn Ruiter&quot;          &quot;Gerbert Kraaykamp&quot;     &quot;Josja Rokven&quot;         
+#&gt; [235] &quot;Jochem Tolsma&quot;         &quot;Stijn Ruiter&quot;          &quot;Gerbert Kraaykamp&quot;    
+#&gt; [238] &quot;Jochem Tolsma&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [241] &quot;Joran Laméris&quot;         &quot;Jochem Tolsma&quot;         &quot;Marcel Lubbers&quot;       
+#&gt; [244] &quot;Marcel Coenders&quot;       &quot;Jochem Tolsma&quot;         &quot;Marcel Coenders&quot;      
+#&gt; [247] &quot;Marcel Lubbers&quot;        &quot;Josja Rokven&quot;          &quot;Jochem Tolsma&quot;        
+#&gt; [250] &quot;Stijn Ruiter&quot;          &quot;Gerbert Kraaykamp&quot;     &quot;G. H. Jansen&quot;         
+#&gt; [253] &quot;Jochem Tolsma&quot;         &quot;Nan Dirk de Graaf&quot;     &quot;Jochem Tolsma&quot;        
+#&gt; [256] &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;           &quot;Niels Spierings&quot;      
+#&gt; [259] &quot;Jochem Tolsma&quot;         &quot;Jule Adriaans&quot;         &quot;Carsten Sauer&quot;        
+#&gt; [262] &quot;Jochem Tolsma&quot;         &quot;Jochem Tolsma&quot;         &quot;Kevin G Love&quot;         
+#&gt; [265] &quot;F. Bouman&quot;             &quot;Jochem Tolsma&quot;         &quot;Barbara Wollenberg&quot;   
+#&gt; [268] &quot;V.P.A. Lukien&quot;         &quot;A. Oudijk&quot;             &quot;Jochem Tolsma&quot;        
+#&gt; [271] &quot;Kevin G Love&quot;</code></pre>
+<pre class="r test"><code>collaborators1 &lt;- collaborators1[-1] #remove the empty cell at the begining 
+collaborators1 &lt;- collaborators1[-c(which(collaborators1==&quot;Jochem Tolsma&quot;))] #remove repeats of Jochem Tolsma (the professor we are looking at)
+
+collaborators1 #check it again</code></pre>
+<pre class="test2"><code>#&gt;   [1] &quot;Tom van der Meer&quot;      &quot;Michael Savelkoul&quot;     &quot;Peer Scheepers&quot;       
+#&gt;   [4] &quot;Louk Hagendoorn&quot;       &quot;Tom van der Meer&quot;      &quot;Maurice Gesthuizen&quot;   
+#&gt;   [7] &quot;Ioana van Deurzen&quot;     &quot;Tobias Stark&quot;          &quot;René Veenstra&quot;        
+#&gt;  [10] &quot;Carlijn Bussemakers&quot;   &quot;Gerbert Kraaykamp&quot;     &quot;Marcel Lubbers&quot;       
+#&gt;  [13] &quot;Mérove Gijsberts&quot;      &quot;Joris Blaauw&quot;          &quot;Manfred te Grotenhuis&quot;
+#&gt;  [16] &quot;Michael Savelkoul&quot;     &quot;Joran Laméris&quot;         &quot;Anke Munniksma&quot;       
+#&gt;  [19] &quot;Peer Scheepers&quot;        &quot;Tobias Stark&quot;          &quot;Nan Dirk de Graaf&quot;    
+#&gt;  [22] &quot;Lincoln Quillian&quot;      &quot;A. Need&quot;               &quot;Uulkje de Jong&quot;       
+#&gt;  [25] &quot;Josja Rokven&quot;          &quot;Gijs de Boer&quot;          &quot;Stijn Ruiter&quot;         
+#&gt;  [28] &quot;Tom van der Meer&quot;      &quot;Anne Maaike Mulders&quot;   &quot;Bas Hofstra&quot;          
+#&gt;  [31] &quot;Gerbert Kraaykamp&quot;     &quot;M.H.J. Wolbers&quot;        &quot;Tom van der Meer&quot;     
+#&gt;  [34] &quot;Sara Kinsbergen&quot;       &quot;Stijn Ruiter&quot;          &quot;Thomas Feliciani&quot;     
+#&gt;  [37] &quot;Andreas Flache&quot;        &quot;Joran Laméris&quot;         &quot;John R. Hipp&quot;         
+#&gt;  [40] &quot;Daniël van Wijk&quot;       &quot;Gideon Bolt&quot;           &quot;Rob Franken&quot;          
+#&gt;  [43] &quot;Hidde Bekhuis&quot;         &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;          
+#&gt;  [46] &quot;Niels Spierings&quot;       &quot;Sara Kinsbergen&quot;       &quot;Roderick Sluiter&quot;     
+#&gt;  [49] &quot;Peer Scheepers&quot;        &quot;Joran Laméris&quot;         &quot;Gerbert Kraaykamp&quot;    
+#&gt;  [52] &quot;Stijn Ruiter&quot;          &quot;Roos van der Zwan&quot;     &quot;Marcel Lubbers&quot;       
+#&gt;  [55] &quot;Peter Valet&quot;           &quot;Carsten Sauer&quot;         &quot;Joran Laméris&quot;        
+#&gt;  [58] &quot;Michael Savelkoul&quot;     &quot;Thijmen Jeroense&quot;      &quot;Niels Spierings&quot;      
+#&gt;  [61] &quot;Gerbert Kraaykamp&quot;     &quot;P.M. de Graaf&quot;         &quot;Matthijs Kalmijn&quot;     
+#&gt;  [64] &quot;Christiaan Monden&quot;     &quot;Dorian Schaap&quot;         &quot;Maarten J. Postma&quot;    
+#&gt;  [67] &quot;Lisanne Jansen&quot;        &quot;Tessa Ubels&quot;           &quot;Sara Kinsbergen&quot;      
+#&gt;  [70] &quot;Dirk‐Jan Koch&quot;         &quot;Rob Franken&quot;           &quot;Hidde Bekhuis&quot;        
+#&gt;  [73] &quot;M.H.J. Wolbers&quot;        &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt;  [76] &quot;Gerbert Kraaykamp&quot;     &quot;Bas Hofstra&quot;           &quot;Anne Maaike Mulders&quot;  
+#&gt;  [79] &quot;Tessa Ubels&quot;           &quot;Sara Kinsbergen&quot;       &quot;Dirk‐Jan Koch&quot;        
+#&gt;  [82] &quot;Judith Kanshabe&quot;       &quot;Kasimir Dederichs&quot;     &quot;Rob Franken&quot;          
+#&gt;  [85] &quot;Dingeman Wiertz&quot;       &quot;Nan Dirk de Graaf&quot;     &quot;Peer Scheepers&quot;       
+#&gt;  [88] &quot;Marcel Coenders&quot;       &quot;Marcel Lubbers&quot;        &quot;M.H.J. Wolbers&quot;       
+#&gt;  [91] &quot;Michael Savelkoul&quot;     &quot;Peer Scheepers&quot;        &quot;Carlijn Bussemakers&quot;  
+#&gt;  [94] &quot;Gerbert Kraaykamp&quot;     &quot;Ingrid Schoon&quot;         &quot;Niels Spierings&quot;      
+#&gt;  [97] &quot;Natascha Notten&quot;       &quot;Gerbert Kraaykamp&quot;     &quot;Tom van der Meer&quot;     
+#&gt; [100] &quot;Carlijn Bussemakers&quot;   &quot;Gerbert Kraaykamp&quot;     &quot;Marloes De Lange&quot;     
+#&gt; [103] &quot;M.H.J. Wolbers&quot;        &quot;Tessa Ubels&quot;           &quot;Sara Kinsbergen&quot;      
+#&gt; [106] &quot;Dirk‐Jan Koch&quot;         &quot;Gerbert Kraaykamp&quot;     &quot;P.M. de Graaf&quot;        
+#&gt; [109] &quot;Matthijs Kalmijn&quot;      &quot;Christiaan Monden&quot;     &quot;M.H.J. Wolbers&quot;       
+#&gt; [112] &quot;Marcel Coenders&quot;       &quot;Marcel Lubbers&quot;        &quot;Josja Rokven&quot;         
+#&gt; [115] &quot;Stijn Ruiter&quot;          &quot;S. Ruiter&quot;             &quot;Michiel de Hoon&quot;      
+#&gt; [118] &quot;Henk Elffers&quot;          &quot;P.H. van der Laan&quot;     &quot;S. Ruiter&quot;            
+#&gt; [121] &quot;Marcel Lubbers&quot;        &quot;Ariana Need&quot;           &quot;Uulkje de Jong&quot;       
+#&gt; [124] &quot;Giedo Jansen&quot;          &quot;Nan Dirk de Graaf&quot;     &quot;Thomas Feliciani&quot;     
+#&gt; [127] &quot;Andreas Flache&quot;        &quot;van der Roos Zwan&quot;     &quot;Peter Valet&quot;          
+#&gt; [130] &quot;Carsten Sauer&quot;         &quot;Marcel Coenders&quot;       &quot;Marcel Lubbers&quot;       
+#&gt; [133] &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;           &quot;Niels Spierings&quot;      
+#&gt; [136] &quot;Rob Franken&quot;           &quot;Hidde Bekhuis&quot;         &quot;Thijmen Jeroense&quot;     
+#&gt; [139] &quot;Niels Spierings&quot;       &quot;Anne Maaike Mulders&quot;   &quot;Bas Hofstra&quot;          
+#&gt; [142] &quot;Anne Maaike Mulders&quot;   &quot;Bas Hofstra&quot;           &quot;Rob Franken&quot;          
+#&gt; [145] &quot;Hidde Bekhuis&quot;         &quot;Nan Dirk de Graaf&quot;     &quot;P.E. Thijs&quot;           
+#&gt; [148] &quot;Gerbert Kraaykamp&quot;     &quot;Margot Scholte&quot;        &quot;Thomas Feliciani&quot;     
+#&gt; [151] &quot;Andreas Flache&quot;        &quot;Michaël Maes&quot;          &quot;Thomas Feliciani&quot;     
+#&gt; [154] &quot;Andreas Flache&quot;        &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt; [157] &quot;Gerbert Kraaykamp&quot;     &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt; [160] &quot;Gerbert Kraaykamp&quot;     &quot;Gerbert Kraaykamp&quot;     &quot;Joran Laméris&quot;        
+#&gt; [163] &quot;Marcel Lubbers&quot;        &quot;Marcel Coenders&quot;       &quot;Marcel Coenders&quot;      
+#&gt; [166] &quot;Marcel Lubbers&quot;        &quot;Josja Rokven&quot;          &quot;Stijn Ruiter&quot;         
+#&gt; [169] &quot;Gerbert Kraaykamp&quot;     &quot;G. H. Jansen&quot;          &quot;Nan Dirk de Graaf&quot;    
+#&gt; [172] &quot;Thijmen Jeroense&quot;      &quot;Bas Hofstra&quot;           &quot;Niels Spierings&quot;      
+#&gt; [175] &quot;Jule Adriaans&quot;         &quot;Carsten Sauer&quot;         &quot;Kevin G Love&quot;         
+#&gt; [178] &quot;F. Bouman&quot;             &quot;Barbara Wollenberg&quot;    &quot;V.P.A. Lukien&quot;        
+#&gt; [181] &quot;A. Oudijk&quot;             &quot;Kevin G Love&quot;</code></pre>
+<pre class="r test"><code># Load author IDs or names from Excel
+
+#author_list &lt;- read_excel(&quot;authors.xlsx&quot;, sheet = &quot;Sheet1&quot;)
+#head(author_list)</code></pre>
+</div>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogImxhYjUiDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQpkYXRlOiAiMjAyNS0xMC0wMiINCm91dHB1dDogaHRtbF9kb2N1bWVudA0KLS0tDQoNCg0KYGBge3IsIGdsb2JhbHNldHRpbmdzLCBlY2hvPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCByZXN1bHRzPSdoaWRlJ30NCmxpYnJhcnkoa25pdHIpDQoNCmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSkNCm9wdHNfY2h1bmskc2V0KHRpZHkub3B0cz1saXN0KHdpZHRoLmN1dG9mZj0xMDApLHRpZHk9VFJVRSwgd2FybmluZyA9IEZBTFNFLCBtZXNzYWdlID0gRkFMU0UsY29tbWVudCA9ICIjPiIsIGNhY2hlPVRSVUUsIGNsYXNzLnNvdXJjZT1jKCJ0ZXN0IiksIGNsYXNzLm91dHB1dD1jKCJ0ZXN0MiIpKQ0Kb3B0aW9ucyh3aWR0aCA9IDEwMCkNCnJnbDo6c2V0dXBLbml0cigpDQoNCg0KY29sb3JpemUgPC0gZnVuY3Rpb24oeCwgY29sb3IpIHtzcHJpbnRmKCI8c3BhbiBzdHlsZT0nY29sb3I6ICVzOyc+JXM8L3NwYW4+IiwgY29sb3IsIHgpIH0NCg0KDQpgYGANCg0KYGBge3Iga2xpcHB5LCBlY2hvPUZBTFNFLCBpbmNsdWRlPVRSVUV9DQprbGlwcHk6OmtsaXBweShwb3NpdGlvbiA9IGMoJ3RvcCcsICdyaWdodCcpKQ0KI2tsaXBweTo6a2xpcHB5KGNvbG9yID0gJ2RhcmtyZWQnKQ0KI2tsaXBweTo6a2xpcHB5KHRvb2x0aXBfbWVzc2FnZSA9ICdDbGljayB0byBjb3B5JywgdG9vbHRpcF9zdWNjZXNzID0gJ0RvbmUnKQ0KYGBgDQoNCkxhc3QgY29tcGlsZWQgb24gYHIgZm9ybWF0KFN5cy50aW1lKCksICclQiwgJVknKWANCg0KPGJyPg0KDQoNCg0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpgYGANCg0KDQoNCg0KIyBIb21ld29yayANCi0gICBXb3JrIG9uIGRyYWZ0aW5nIHBhcGVyLCBtYWtlIHBsYW4gZm9yIGRhdGFiYXNlDQotICAgQ29kZXJldmlldyAzIGZvciBSc2llbmEgdHV0b3JpYWwgDQoNCiMjIEdvYWxzOg0KLSAgIE1ha2UgbGlzdCBvZiB0aGUgcHJvZmVzc29ycyAtIA0KLSAgIENvbXBpbGUgbGlzdCBvZiBwcm9mZXNzb3JzIG5hbWVzIGFuZCB0aGVpciByZXNwZWN0aXZlIGRlcGFydG1lbnRzIGFuZCB1bml2ZXJzaXRpZXMgYWNyb3NzIHRoZSBOZXRoZXJsYW5kcw0KDQogICAgLSAgIEZsYWc6IENvbXBpbGUgaW50ZXJuYXRpb25hbCBhY2FkZW1pYyBleHBlcmllbmNlL2JhY2tncm91bmQgb2YgcHJvZmVzc29ycy4NCg0KICAgICAgICAtICAgKlRvIGdhdGhlcjogMSkgY291bGQgbG9vayBhdCBDVi9MaW5rZWRJbiBmb3IgZWFjaCBwcm9mZXNzb3IsIHdpdGhpbiAxIGRlcGFydG1lbnQgb2YgMSB1bml2ZXJzaXR5OyAyKSBjb3VsZCBzZWUgaWYgdGhlaXIgUGhEIHJlZ2lzdGVyZWQgd2l0aCBkdXRjaCBuYXRpb25hbCByZWdpc3RyeSwgb25seSBsb29raW5nIGF0IGlmIFBoRCBkb25lIGluIG9yIG91dHNpZGUgb2YgdGhlIE5ldGhlcmxhbmRzLioNCg0KLSAgIFNlYXJjaCBPcGVuQWxleCBmb3IgZWFjaCBEdXRjaCBwcm9mZXNzb3IncyBwdWJsaWNhdGlvbnMsIG1ha2luZyBkYXRhZnJhbWUgb2YgYWx0ZXJzL2NvbGxhYm9yYXRpb25zIGZvciBlYWNoIHByb2Zlc3NvcidzIHB1YmxpY2F0aW9ucy4NCg0KLSAgIENoZWNrIGlmIGNvbGxhYm9yYXRvcnMgYXJlIGFmZmlsaWF0ZWQgd2l0aCBzYW1lIHVuaXZlcnNpdHksIGRpZmZlcmVudCBkdXRjaCB1bml2ZXJzaXR5LCBvciBpbnRlcm5hdGlvbmFsIHVuaXZlcnNpdHkuDQoNCi0gICBMb29rIGF0IGludGVybmF0aW9uYWwgdnMgbm9uLWludGVybmF0aW9uYWwgcHJvZmVzc29ycyB0byBzZWUgaWYgdGhlcmUgaXMgZGlmZmVyZW5jZSBpbiBpbnRlcm5hdGlvbmFsIGNvbGxhYm9yYXRpb25zDQoNCi0gICBUaGVuLCByZXR1cm4gdG8gZGVwYXJ0bWVudC91bml2ZXJzaXR5LCBhbmQgc2VlIGlmIHByb3BvcnRpb24gb2YgcHJvZmVzc29ycyB3aXRoIGludGVybmF0aW9uYWwgZXhwZXJpZW5jZSBoYXMgYW4gaW1wYWN0IG9uIGludGVybmF0aW9uYWwgY29sbGFib3JhdGlvbnMgKG9yIHBvdGVudGlhbGx5IHJlc2VhcmNoIG91dHB1dHMgaW4gZ2VuZXJhbCkNCg0KVG8gbWFrZSB0aGlzIHNjYWxhYmxlLCB3ZSB3aWxsIGJyZWFrIHRoaXMgaW50byBtYW55IHNtYWxsZXIgcGFydHMuDQoNCg0KDQojIFJldmlldw0KDQoNCiMjIFN0ZXAgMDogTG9hZCBwYWNrYWdlcw0KYGBge3J9DQpmcGFja2FnZS5jaGVjayA8LSBmdW5jdGlvbihwYWNrYWdlcykgew0KICAgIGxhcHBseShwYWNrYWdlcywgRlVOID0gZnVuY3Rpb24oeCkgew0KICAgICAgICBpZiAoIXJlcXVpcmUoeCwgY2hhcmFjdGVyLm9ubHkgPSBUUlVFKSkgew0KICAgICAgICAgICAgaW5zdGFsbC5wYWNrYWdlcyh4LCBkZXBlbmRlbmNpZXMgPSBUUlVFKQ0KICAgICAgICAgICAgbGlicmFyeSh4LCBjaGFyYWN0ZXIub25seSA9IFRSVUUpDQogICAgICAgIH0NCiAgICB9KQ0KfQ0KDQpmc2F2ZSA8LSBmdW5jdGlvbih4LCBmaWxlID0gTlVMTCwgbG9jYXRpb24gPSAiLi9kYXRhL3Byb2Nlc3NlZC8iKSB7DQogICAgaWZlbHNlKCFkaXIuZXhpc3RzKCJkYXRhIiksIGRpci5jcmVhdGUoImRhdGEiKSwgRkFMU0UpDQogICAgaWZlbHNlKCFkaXIuZXhpc3RzKCJkYXRhL3Byb2Nlc3NlZCIpLCBkaXIuY3JlYXRlKCJkYXRhL3Byb2Nlc3NlZCIpLCBGQUxTRSkNCiAgICBpZiAoaXMubnVsbChmaWxlKSkNCiAgICAgICAgZmlsZSA9IGRlcGFyc2Uoc3Vic3RpdHV0ZSh4KSkNCiAgICBkYXRlbmFtZSA8LSBzdWJzdHIoZ3N1YigiWzotXSIsICIiLCBTeXMudGltZSgpKSwgMSwgOCkNCiAgICB0b3RhbG5hbWUgPC0gcGFzdGUobG9jYXRpb24sIGZpbGUsICJfIiwgZGF0ZW5hbWUsICIucmRhIiwgc2VwID0gIiIpDQogICAgc2F2ZSh4LCBmaWxlID0gdG90YWxuYW1lKSAgI25lZWQgdG8gZml4IGlmIGZpbGUgaXMgcmVsb2FkZWQgYXMgaW5wdXQgbmFtZSwgbm90IGFzIHguIA0KfQ0KDQpmbG9hZCA8LSBmdW5jdGlvbihmaWxlbmFtZSkgew0KICAgIGxvYWQoZmlsZW5hbWUpDQogICAgZ2V0KGxzKClbbHMoKSAhPSAiZmlsZW5hbWUiXSkNCn0NCg0KZnNob3dkZiA8LSBmdW5jdGlvbih4LCAuLi4pIHsNCiAgICBrbml0cjo6a2FibGUoeCwgZGlnaXRzID0gMiwgImh0bWwiLCAuLi4pICU+JQ0KICAgICAgICBrYWJsZUV4dHJhOjprYWJsZV9zdHlsaW5nKGJvb3RzdHJhcF9vcHRpb25zID0gYygic3RyaXBlZCIsICJob3ZlciIpKSAlPiUNCiAgICAgICAga2FibGVFeHRyYTo6c2Nyb2xsX2JveCh3aWR0aCA9ICIxMDAlIiwgaGVpZ2h0ID0gIjMwMHB4IikNCn0NCg0KYGBgDQoNCg0KDQojIyMgQ29sbGVjdCBzZXQgb2YgUHJvZmVzc29ycw0KYGBge3J9DQojaW5zdGFsbC5wYWNrYWdlcygicmVhZHhsIikNCmxpYnJhcnkocmVhZHhsKQ0KDQojIE15IG1hbnVhbCBkYXRhIHNldCwgaW5jbHVkaW5nIG1hbnVhbCByZXZpZXcgb2YgcHJvZmVzc29yIGV4cGVyaWVuY2UgYWJyb2FkDQpydV9zb2NfcHJvZnMgPC0gcmVhZF9leGNlbCgiQzovR2l0aHViL2xhYmpvdXJuYWwvcnVfc29jX3Byb2ZzLnhsc3giKQ0KcnVfc29jX3Byb2ZzDQoNCiMgZnJvbSB0dXRvcmlhbA0Kc29jcHJvZnMyMDIyIDwtIHJlYWRfZXhjZWwoIkM6L0dpdGh1Yi9sYWJqb3VybmFsLzIwMjJzY2hvbGFyaWRfanQueGxzeCIpDQpzb2Nwcm9mczIwMjQgPC0gcmVhZF9leGNlbCgiQzovR2l0aHViL2xhYmpvdXJuYWwvMjAyNHNjaG9sYXJpZF9qdC54bHN4IikNCg0KIyBiaWcgZGF0YWZpbGUgd2l0aCBldmVyeXRoaW5nICgqdmVyeSBpbXBvcnRhbnQhKikNCnNjaG9sYXJzIDwtIGZsb2FkKCJDOi9HaXRodWIvbGFiam91cm5hbC9zY2hvbGFyc18yMDI0MDkyNC5yZGEiKSAjaGF2ZSB0byByZWxvYWQgdGhpcw0KDQoNCiMgZnJvbSBhbGwgcHJvZmVzc29ycyBmcm9tIGFsbCBkdXRjaCB1bml2ZXJzaXRpZXMgLSBmb3IgcmVmZXJlbmNlLCBmb3Igbm93DQpzb2Nwcm9mczIwMjIgPC0gcmVhZF9leGNlbCgiQzovR2l0aHViL2xhYmpvdXJuYWwvMjAyMnNjaG9sYXJpZF9qdC54bHN4IikNCnNvY3Byb2ZzMjAyNCA8LSByZWFkX2V4Y2VsKCJDOi9HaXRodWIvbGFiam91cm5hbC8yMDI0c2Nob2xhcmlkX2p0Lnhsc3giKQ0KDQojbm93IGhhdmUgbGlzdCBvZiBzY2hvbGFycyBmb3IgYWxsIGR1dGNoIHVuaXZlcnNpdGllcyANCmBgYA0KDQoNCmBgYHtyfQ0KbGlicmFyeShkcGx5cikNCmxpYnJhcnkocmVhZHhsKQ0KbGlicmFyeShzZWxlbmlkZXIpDQpsaWJyYXJ5KHJ2ZXN0KQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KG5ldHN0YXQpDQpsaWJyYXJ5KHBpbmdyKQ0KbGlicmFyeShqc29ubGl0ZSkNCmxpYnJhcnkoc3RyaW5ncikNCmxpYnJhcnkob3BlbmFsZXhSKQ0KIyBzY2hvbGFycyRkZW1vZ3JhcGhpY3MNCg0KcyA9IGJpbmRfcm93cyhzY2hvbGFycyRkZW1vZ3JhcGhpY3MpIHw+DQogIGZpbHRlcigNCiAgICBVbml2ZXJzaXRlaXQuMjIgPT0gIlJVIiwNCiAgICBVbml2ZXJzaXRlaXQuMjQgPT0gIlJVIg0KICApDQoNCmhvbGQgPSBjKCkNCmZvciAoYXV0aG9yaWQgaW4gcyRhdV9pZFsxOjJdKXsNCiAgcHJpbnQoYXV0aG9yaWQpDQogIHJlcyA9IG9hX2ZldGNoKA0KICAgIGVudGl0eSA9ICJ3b3JrcyIsIA0KICAgIGF1dGhvci5pZD1hdXRob3JpZA0KICApDQogICMgIyByZXMgPSBiaW5kX3Jvd3Moc2Nob2xhcnMkd29ya3MpIHw+IGZpbHRlcihpZCA9PSBhdXRob3JpZCkNCiAgaG9sZFtbYXV0aG9yaWRdXSA9IHJlcw0KfQ0KDQojcyB8PiBmaWx0ZXIoTmFhbSA9PSAiS2F0aWEgQmVnYWxsIikgfD4gcHVsbChhdV9pZCkNCmBgYA0KDQpgYGB7cn0NCnBhcGVycyA9IGhvbGQNCg0KY29fYXV0aG9ycyA9IGMoKQ0KZm9yIChhdXRob3JpZCBpbiBuYW1lcyhwYXBlcnMpKXsNCiAgcHJpbnQoYXV0aG9yaWQpDQogIHRhYiA9IHBhcGVyc1tbYXV0aG9yaWRdXQ0KICBjb19hdXRob3JzW1thdXRob3JpZF1dID0gYmluZF9yb3dzKHRhYiRhdXRob3JzaGlwcykgfD4NCiAgICBmaWx0ZXIoaWQgIT0gYXV0aG9yaWQpIHw+DQogICAgbXV0YXRlKGVnb19pZCA9IGF1dGhvcmlkKSB8Pg0KICAgIHJlbG9jYXRlKGVnb19pZCwgLmJlZm9yZSA9IDEpDQp9DQoNCmNvX2F1dGhvcnNbW2F1dGhvcmlkXV0NCmBgYA0KDQpNYWtlIGxpc3Qgb2YgY28tYXV0aG9ycyBmb3IgMSBwcm9mZXNzb3IgKGVnLkpvY2hlbSkNCmBgYHtyfQ0KI2NoZWNrIHBhY2thZ2VzIGFyZSBpbnN0YWxsZWQNCmxpYnJhcnkoc2VsZW5pZGVyKQ0KbGlicmFyeShydmVzdCkNCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShuZXRzdGF0KQ0KbGlicmFyeShwaW5ncikNCmxpYnJhcnkoanNvbmxpdGUpDQpsaWJyYXJ5KHN0cmluZ3IpDQpsaWJyYXJ5KG9wZW5hbGV4UikNCg0KDQojIE5leHQsIHRlc3QgY2FsbGluZyAxIHByb2Zlc3Nvcg0Kb3B0aW9ucyhvcGVuYWxleFIubWFpbHRvID0gInBhaWdlLmtlbXBlckBydS5ubCIpIA0KcHJvZjEgPC0gb2FfZmV0Y2goZW50aXR5PSAiYXV0aG9yIiwgc2VhcmNoID0gIkpvY2hlbStUb2xzbWEiKQ0KDQoNCiMgTmV4dCwgbG9vayBhdCBsaXN0IG9mIGFsbCBvZiB0aGUgZXhhbXBsZSBwcm9mZXNzb3IncyBwdWJsaWNhdGlvbnMNCnByb2YxX3BhcGVycyA8LSBvYV9mZXRjaChlbnRpdHkgPSAid29ya3MiLCBhdXRob3IuaWQgPSBwcm9mMSRpZCkgDQogICMgd2l0aGluIHRoaXMgbmV3IGRhdGFzZXQsICRhdXRob3JzaGlwcyBpbmNsdWRlcyB0aGUgZGF0YWZyYW1lcyBvZiB0aGUgY29hdXRob3JzIChhbHRlcnMpDQpwcm9mMV9wYXBlcnNbMSxdICNsb29rIGF0IHJvdyAxOiBmaXJzdCBwdWJsaWNhdGlvbiBsaXN0ZWQgYnkgSm9jaGVtDQoNCg0KIyBUaGVuOiBDcmVhdGUgbG9vcC4gMSkgTWFrZSBlbXB0eSBjb2x1bW47IDIpIEZvciBldmVyeSByb3cgaW4gdGhlIHNldCBvZiB0aGUgcHJvZmVzc29yJ3MgcHVibGljYXRpb25zIChmb3IgaTpucm93KGRmKSwgbG9vayBhdCB0aGUgZGF0YSBmcmFtZSBvZiAnYWZmaWxpYXRpb25zJyAoY29hdXRob3JzKTsgMykgTWFrZSBkYXRhZnJhbWUgKCJkZiIpLCBhbmQgdGhlbiBzYXZlICRkaXNwbGF5X25hbWUgdmFyaWFibGUgdG8gdGhlIGVtcHR5IGNvbHVtbi4pDQpjb2xsYWJvcmF0b3JzMSA8LSBOQQ0KZm9yIChpIGluIDE6bnJvdyhwcm9mMV9wYXBlcnMpKSB7DQogIHByaW50KGkpDQogIGRmIDwtIGFzLmRhdGEuZnJhbWUocHJvZjFfcGFwZXJzW2ksNF1bWzFdXSkNCiAgY29sbGFib3JhdG9yczEgPC0gYyhjb2xsYWJvcmF0b3JzMSwgZGYkZGlzcGxheV9uYW1lKQ0KfQ0KDQpjb2xsYWJvcmF0b3JzMSAjc2VlOiBhbGwgb2YgdGhlIGF1dGhvcnMgZm9yIGFsbCBvZiB0aGUgcGFwZXJzIGJ5IEpvY2hlbSBUb2xzbWEgYXJlIGxpc3RlZA0KY29sbGFib3JhdG9yczEgPC0gY29sbGFib3JhdG9yczFbLTFdICNyZW1vdmUgdGhlIGVtcHR5IGNlbGwgYXQgdGhlIGJlZ2luaW5nIA0KY29sbGFib3JhdG9yczEgPC0gY29sbGFib3JhdG9yczFbLWMod2hpY2goY29sbGFib3JhdG9yczE9PSJKb2NoZW0gVG9sc21hIikpXSAjcmVtb3ZlIHJlcGVhdHMgb2YgSm9jaGVtIFRvbHNtYSAodGhlIHByb2Zlc3NvciB3ZSBhcmUgbG9va2luZyBhdCkNCg0KY29sbGFib3JhdG9yczEgI2NoZWNrIGl0IGFnYWluDQoNCiN1bmlxdWUoc2F2ZWRhdGEpICN0byBsb29rIGF0IGxpc3Qgb2YgY29sbGFib3JhdG9ycyB3aXRob3V0IHJlcGVhdHMNCmBgYA0KDQoNCg0KR2V0IGxpc3Qgb2YgYWZmaWxpYXRlZCBpbnN0aXR1dGlvbnMgZm9yIGVhY2ggY29hdXRob3Igb2YgMSBwcm9mZXNzb3INCg0KYGBge3J9DQoNCmluc3RpdHV0aW9ucyA8LSBOQQ0KZm9yIChpIGluIDE6bnJvdyhwcm9mMV9wYXBlcnMpKSB7DQogIHByaW50KGkpDQogIGRmIDwtIGFzLmRhdGEuZnJhbWUocHJvZjFfcGFwZXJzW2ksNF1bWzFdXSkNCiAgZGYgPC0gZGZbLWMod2hpY2goZGYkZGlzcGxheV9uYW1lPT0iSm9jaGVtIFRvbHNtYSIpKV0gI3JlbW92ZSByZXBlYXRzIG9mIEpvY2hlbSBUb2xzbWEgKHRoZSBwcm9mZXNzb3Igd2UgYXJlIGxvb2tpbmcgYXQpDQogIGluc3RpdHV0aW9ucyA8LSBjKGluc3RpdHV0aW9ucywgZGYkYWZmaWxpYXRpb25zW1sxXV1bWzJdXSkNCn0NCg0KaW5zdGl0dXRpb25zDQoNCmluc3RpdHV0aW9ucyA8LSBpbnN0aXR1dGlvbnNbLTFdICNzbWFsbGVyIG51bWJlciAtIGFzc3VtcHRpb24gdGhhdCBzZXZlcmFsIG9mIEpvY2hlbXMgYXJ0aWNsZXMgd2VyZSBwdWJsaXNoZWQgb25seSBieSBoaW0sIGFuZCBhbSByZW1vdmluZyB0aGVzZSBhcnRpY2xlcy4gDQoNCmBgYA0KDQpOb3c6IHRyeSB0byBkbyB0aGlzIGZvciBsaXN0IG9mIGF1dGhvcnMNCmBgYHtyfQ0KY29fYXV0aG9ycyA9IGJpbmRfcm93cyhwcm9mMV9wYXBlcnMkYXV0aG9yc2hpcHMpDQpgYGANCg0KYGBge3J9DQojIyBtYWtlIHN1cmUgdG8gcmVmZXJlbmNlIGNvcnJlY3QgdW5pdmVyc2l0eQ0KcnVfaWQgPC0gaW5zdGl0dXRpb25zIDwtIG9hX2ZldGNoKGVudGl0eSA9ICJpbnN0aXR1dGlvbnMiLCBzZWFyY2ggPSAiUmFkYm91ZCBVbml2ZXJzaXR5IikgI2dldCBSYWRib3VkJ3MgSUQNCnJ1X2lkIDwtIHJ1X2lkWzEsXQ0KcnVfaWQNCg0KIyMgdGhlbiBtYWtlIHN1cmUgdG8gcmVmZXJlbmNlIGNvcnJlY3QgYXV0aG9ycyBmcm9tIGNvcnJlY3QgdW5pdmVyc2l0eQ0KYXV0aG9yMSA8LSBvYV9mZXRjaChlbnRpdHkgPSAiYXV0aG9yIiwgc2VhcmNoID0gIkpvY2hlbSBUb2xzbWEiLCBhZmZpbGlhdGlvbnMuaW5zdGl0dXRpb24uaWQgPSBydV9pZCRpZCkgI2pvY2hlbSBpbmZvDQphdXRob3IxDQpgYGANCg0KDQpgYGB7cn0NCiMgSEFEIFRPIENPTU1FTlQgT1VUIFRPIEtOSVQsIEJVVCBUSElTIENPREUgV09SS0VEOiANCg0KIyBhdXRob3IyIDwtIG9hX2ZldGNoKGVudGl0eSA9ICJhdXRob3IiLCBzZWFyY2ggPSAiTWF1cmljZSBHZXN0aHVpemVuIiwgYWZmaWxpYXRpb25zLmluc3RpdHV0aW9uLmlkID0gcnVfaWQkaWQpICNtYXVyaWNlDQojYXV0aG9yMg0KDQojYXV0aG9yMyA8LSBvYV9mZXRjaChlbnRpdHkgPSAiYXV0aG9yIiwgc2VhcmNoID0gIk1pY2hhZWwgU2F2ZWxrb3VsIiwgYWZmaWxpYXRpb25zLmluc3RpdHV0aW9uLmlkID0gcnVfaWQkaWQpICNtaWNoYWVsDQojYXV0aG9yMw0KDQojIyBtaW5pIGxpc3Qgb2YgYXV0aG9ycw0KI21pbmlfbGlzdCA8LSByYmluZChhdXRob3IxLCBhdXRob3IyLCBhdXRob3IzKQ0KI21pbmlfbGlzdA0KDQojanVzdF9uYW1lcyA8LSBkYXRhX2ZyYW1lKG1pbmlfbGlzdCRkaXNwbGF5X25hbWUpDQojanVzdF9uYW1lcw0KDQoNCiMgc2VhcmNoIGp1c3Qgb25lIG5hbWUgZnJvbSB0aGUgbGlzdCANCg0KI2luc3RpdHV0aW9uczIgPC0gZGF0YS5mcmFtZSgpDQojZm9yIChpIGluIDE6bnJvdyhtaW5pX2xpc3QpKSB7DQojICBuYW1lMV9wYXBlcnMgPC0gb2FfZmV0Y2goZW50aXR5ID0gIndvcmtzIiwgYXV0aG9yLmlkID0gbWluaV9saXN0W2ksMV0pDQojICAjIG5hbWUxX3BhcGVycyA8LSBvYV9mZXRjaChlbnRpdHkgPSAid29ya3MiLCBhdXRob3IuZGlzcGxheV9uYW1lID0gbWluaV9saXN0W2ksMl0sIGFmZmlsaWF0aW9ucy5pbnN0aXR1dGlvbi5pZCA9IHJ1X2lkJGlkKQ0KIyAgbmFtZTFfcGFwZXJzWzEsXQ0KIyAgZm9yIChqIGluIDE6bnJvdyhuYW1lMV9wYXBlcnMpKSB7DQojICAgIHByaW50KGopDQojICAgIGRmMiA8LSBhcy5kYXRhLmZyYW1lKG5hbWUxX3BhcGVyc1tqLDRdW1sxXV0pDQojICAgICMgZGYyIDwtIGRmMlstYyh3aGljaChkZjIkZGlzcGxheV9uYW1lPT1taW5pX2xpc3RbaSwyXSkpXQ0KIyAgICAjIGluc3RpdHV0aW9uczIgPC0gYyhpbnN0aXR1dGlvbnMyLCBkZjIkYWZmaWxpYXRpb25zW1sxXV1bWzJdXSkNCiMgIH0NCiN9DQoNCiNhdXRob3JzaGlwcy5hZmZpbGlhdGlvbnMuaW5zdGl0dXRpb25faWRzDQpgYGANCg0KDQpgYGB7cn0NCmluc3RpdHV0aW9ucyA8LSBOQQ0KZm9yIChpIGluIDE6bnJvdyhwcm9mMV9wYXBlcnMpKSB7DQogIHByaW50KGkpDQogIGRmIDwtIGFzLmRhdGEuZnJhbWUocHJvZjFfcGFwZXJzW2ksNF1bWzFdXSkNCiAgZGYgPC0gZGZbLWMod2hpY2goZGYkZGlzcGxheV9uYW1lPT0iSm9jaGVtIFRvbHNtYSIpKV0gI3JlbW92ZSByZXBlYXRzIG9mIEpvY2hlbSBUb2xzbWEgKHRoZSBwcm9mZXNzb3Igd2UgYXJlIGxvb2tpbmcgYXQpDQogIGluc3RpdHV0aW9ucyA8LSBjKGluc3RpdHV0aW9ucywgZGYkYWZmaWxpYXRpb25zW1sxXV1bWzJdXSkNCn0NCmBgYA0KDQoNCmBgYHtyfQ0KDQojIEhBRCBUTyBDT01NRU5UIE9VVCBUTyBLTklULCBCVVQgVEhJUyBDT0RFIFdPUktFRDogDQoNCiMjIE1ha2UgZG91YmxlIGxvb3AgDQojbGlzdDEgPC0gZGF0YS5mcmFtZSgpDQojbGlzdDIgPC0gZGF0YS5mcmFtZSgpDQoNCiNmb3IgKGkgaW4gMTpucm93KGp1c3RfbmFtZXMpKSB7DQojICBwcmludChpKQ0KIyAgbGlzdDEgPC0gb2FfZmV0Y2goZW50aXR5ID0gIndvcmtzIiwgYXV0aG9yLmlkID0ganVzdF9uYW1lc1tpXSkNCiMgIGRmMSA8LSBjKGRmMSwgbGlzdDEkZGlzcGxheV9uYW1lKQ0KIyAgZm9yIChqIGluIDE6bnJvdyhsaXN0MSkpIHsNCiMgICAgcHJpbnQoaikNCiMgICAgZGYyIDwtIGFzLmRhdGEuZnJhbWUobGlzdDFbaSw0XVtbMV1dKQ0KIyAgICBsaXN0MiA8LSBjKGxpc3QyLCBkZjIkZGlzcGxheV9uYW1lKQ0KIyAgfQ0KI30NCg0KDQoNCg0KDQoNCiMgTmV4dCwgdGVzdCBjYWxsaW5nIDEgcHJvZmVzc29yDQpvcHRpb25zKG9wZW5hbGV4Ui5tYWlsdG8gPSAicGFpZ2Uua2VtcGVyQHJ1Lm5sIikgDQpwcm9mMSA8LSBvYV9mZXRjaChlbnRpdHk9ICJhdXRob3IiLCBzZWFyY2ggPSAiSm9jaGVtK1RvbHNtYSIpDQoNCg0KIyBOZXh0LCBsb29rIGF0IGxpc3Qgb2YgYWxsIG9mIHRoZSBleGFtcGxlIHByb2Zlc3NvcidzIHB1YmxpY2F0aW9ucw0KcHJvZjFfcGFwZXJzIDwtIG9hX2ZldGNoKGVudGl0eSA9ICJ3b3JrcyIsIGF1dGhvci5pZCA9IHByb2YxJGlkKSANCiAgIyB3aXRoaW4gdGhpcyBuZXcgZGF0YXNldCwgJGF1dGhvcnNoaXBzIGluY2x1ZGVzIHRoZSBkYXRhZnJhbWVzIG9mIHRoZSBjb2F1dGhvcnMgKGFsdGVycykNCnByb2YxX3BhcGVyc1sxLF0gI2xvb2sgYXQgcm93IDE6IGZpcnN0IHB1YmxpY2F0aW9uIGxpc3RlZCBieSBKb2NoZW0NCg0KDQojIFRoZW46IENyZWF0ZSBsb29wLiAxKSBNYWtlIGVtcHR5IGNvbHVtbjsgMikgRm9yIGV2ZXJ5IHJvdyBpbiB0aGUgc2V0IG9mIHRoZSBwcm9mZXNzb3IncyBwdWJsaWNhdGlvbnMgKGZvciBpOm5yb3coZGYpLCBsb29rIGF0IHRoZSBkYXRhIGZyYW1lIG9mICdhZmZpbGlhdGlvbnMnIChjb2F1dGhvcnMpOyAzKSBNYWtlIGRhdGFmcmFtZSAoImRmIiksIGFuZCB0aGVuIHNhdmUgJGRpc3BsYXlfbmFtZSB2YXJpYWJsZSB0byB0aGUgZW1wdHkgY29sdW1uLikNCmNvbGxhYm9yYXRvcnMxIDwtIE5BDQpmb3IgKGkgaW4gMTpucm93KHByb2YxX3BhcGVycykpIHsNCiAgcHJpbnQoaSkNCiAgZGYgPC0gYXMuZGF0YS5mcmFtZShwcm9mMV9wYXBlcnNbaSw0XVtbMV1dKQ0KICBjb2xsYWJvcmF0b3JzMSA8LSBjKGNvbGxhYm9yYXRvcnMxLCBkZiRkaXNwbGF5X25hbWUpDQp9DQoNCmNvbGxhYm9yYXRvcnMxICNzZWU6IGFsbCBvZiB0aGUgYXV0aG9ycyBmb3IgYWxsIG9mIHRoZSBwYXBlcnMgYnkgSm9jaGVtIFRvbHNtYSBhcmUgbGlzdGVkDQpjb2xsYWJvcmF0b3JzMSA8LSBjb2xsYWJvcmF0b3JzMVstMV0gI3JlbW92ZSB0aGUgZW1wdHkgY2VsbCBhdCB0aGUgYmVnaW5pbmcgDQpjb2xsYWJvcmF0b3JzMSA8LSBjb2xsYWJvcmF0b3JzMVstYyh3aGljaChjb2xsYWJvcmF0b3JzMT09IkpvY2hlbSBUb2xzbWEiKSldICNyZW1vdmUgcmVwZWF0cyBvZiBKb2NoZW0gVG9sc21hICh0aGUgcHJvZmVzc29yIHdlIGFyZSBsb29raW5nIGF0KQ0KDQpjb2xsYWJvcmF0b3JzMSAjY2hlY2sgaXQgYWdhaW4NCg0KDQoNCg0KDQojIExvYWQgYXV0aG9yIElEcyBvciBuYW1lcyBmcm9tIEV4Y2VsDQoNCiNhdXRob3JfbGlzdCA8LSByZWFkX2V4Y2VsKCJhdXRob3JzLnhsc3giLCBzaGVldCA9ICJTaGVldDEiKQ0KI2hlYWQoYXV0aG9yX2xpc3QpDQpgYGANCg0KDQpgYGB7cn0NCg0KYGBgDQoNCg0KYGBge3J9DQoNCmBgYA0KDQo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("lab5.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

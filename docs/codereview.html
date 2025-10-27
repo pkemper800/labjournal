@@ -39,6 +39,10 @@
 <script src="site_libs/navigation-1.1/sourceembed.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
 <link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -358,32 +362,11 @@ div.tocify {
     <li>
       <a href="lab4.html">Page 4</a>
     </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Assignments
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="assignment1.html">Assignment 1</a>
-    </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Research
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="researchquestions.html">Research Questions</a>
+      <a href="lab5.html">Page 5</a>
     </li>
     <li>
-      <a href="databasedraft.html">Developing Database</a>
+      <a href="lab6.html">Page 6</a>
     </li>
   </ul>
 </li>
@@ -403,11 +386,44 @@ div.tocify {
     <li>
       <a href="codereview3.html">codereview3</a>
     </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    rsiena
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
     <li>
       <a href="rsiena.html">rsiena</a>
     </li>
     <li>
       <a href="rsiena2.html">rsiena2</a>
+    </li>
+    <li>
+      <a href="gof.html"></a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Research
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="researchquestions.html">Research Questions</a>
+    </li>
+    <li>
+      <a href="databasedraft.html">Developing Database</a>
+    </li>
+    <li>
+      <a href="databasedraft2.html">Second draft</a>
+    </li>
+    <li>
+      <a href="workingdraft.html">Working Draft</a>
     </li>
   </ul>
 </li>
@@ -445,222 +461,208 @@ div.tocify {
 </div>
 
 
-<div id="r-markdown" class="section level2" number="1">
-<h2><span class="header-section-number">1</span> R Markdown</h2>
-<p>Make a matrix: Review how to make column, dataframe, and matrix</p>
-<pre class="r"><code>#matrix(data, nrow, ncol, byrow, dimnames)
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<p>Last compiled on October, 2025</p>
+<p><br></p>
+<div id="code-review" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Code review</h1>
+<p>Starting steps for working with data, networks, adjacency matrices,
+and visualizations.</p>
+<p><strong>R Markdown</strong></p>
+</div>
+<div id="make-a-matrix-review-how-to-make-column-dataframe-and-matrix"
+class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Make a matrix: Review
+how to make column, dataframe, and matrix</h1>
+<pre class="r test"><code>#matrix(data, nrow, ncol, byrow, dimnames)
 num1 &lt;- c(0, 1, 2, 3, 4, 5, 6, 7, 8)
 num2 &lt;- data.frame(0, 1, 2, 3, 4, 5, 6, 7, 8)</code></pre>
-<p>Try making a 100x100 matrix</p>
-<pre class="r"><code>## ego is row, alter is column
+</div>
+<div id="try-making-a-100x100-matrix" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Try making a 100x100
+matrix</h1>
+<pre class="r test"><code>## ego is row, alter is column
 base &lt;- c(0, 1)
 mat1 &lt;- matrix(base, nrow=100, ncol = 100, byrow = TRUE)
 #mat1
 
 mat2 &lt;- matrix(rnorm(1), nrow = 100, byrow = TRUE)
 #mat2</code></pre>
-<p>Then start small: Make a 4x4 matrix</p>
-<pre class="r"><code>#in class 
+</div>
+<div id="then-start-small-make-a-4x4-matrix" class="section level1"
+number="4">
+<h1><span class="header-section-number">4</span> Then start small: Make
+a 4x4 matrix</h1>
+<pre class="r test"><code>#in class 
 numbers &lt;- sample(x=0:1, size = 16, replace = TRUE)
 net1 &lt;- matrix(numbers, 4, 4, TRUE)
 net1</code></pre>
-<pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]    1    0    1    0
-## [2,]    0    0    0    0
-## [3,]    0    0    1    1
-## [4,]    0    1    1    1</code></pre>
-<p>Set the diagonal to 0: This will start process of making data
-symmetrical, and would represent undirected ties/an undirected network.
-If you flip the columns and rows, the matrix will look the same (upper
-triangle of the matrix becomes symmetric).</p>
-<pre class="r"><code>diag(net1) &lt;- 0
+<pre class="test2"><code>#&gt;      [,1] [,2] [,3] [,4]
+#&gt; [1,]    1    1    1    1
+#&gt; [2,]    0    0    0    1
+#&gt; [3,]    0    1    0    0
+#&gt; [4,]    0    0    0    0</code></pre>
+<div id="set-the-diagonal-to-0" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Set the diagonal to
+0:</h2>
+<p>This will start process of making data symmetrical, and would
+represent undirected ties/an undirected network. If you flip the columns
+and rows, the matrix will look the same (upper triangle of the matrix
+becomes symmetric).</p>
+<pre class="r test"><code>diag(net1) &lt;- 0
 net1</code></pre>
-<pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]    0    0    1    0
-## [2,]    0    0    0    0
-## [3,]    0    0    0    1
-## [4,]    0    1    1    0</code></pre>
-<pre class="r"><code>#undirected network -- symmetric matrix
+<pre class="test2"><code>#&gt;      [,1] [,2] [,3] [,4]
+#&gt; [1,]    0    1    1    1
+#&gt; [2,]    0    0    0    1
+#&gt; [3,]    0    1    0    0
+#&gt; [4,]    0    0    0    0</code></pre>
+<pre class="r test"><code>#undirected network -- symmetric matrix
 #symmetry - triangle (transpose didn&#39;t work) - if flip columns and rows, will have the same matrix
 # upper triangle of matrix -- as AS SYMMETRIC</code></pre>
-<p>Then review the descriptive statistics</p>
-<pre class="r"><code># descriptive statistics
+</div>
+<div id="then-review-the-descriptive-statistics" class="section level2"
+number="4.2">
+<h2><span class="header-section-number">4.2</span> Then review the
+descriptive statistics</h2>
+<pre class="r test"><code># descriptive statistics
 rowSums(net1)</code></pre>
-<pre><code>## [1] 1 0 1 2</code></pre>
-<pre class="r"><code>mean(net1)</code></pre>
-<pre><code>## [1] 0.25</code></pre>
+<pre class="test2"><code>#&gt; [1] 3 1 1 0</code></pre>
+<pre class="r test"><code>mean(net1)</code></pre>
+<pre class="test2"><code>#&gt; [1] 0.3125</code></pre>
 <p>Now things speed up.</p>
-<p>Task: how model triad relationships?</p>
+</div>
+</div>
+<div id="task-how-model-triad-relationships" class="section level1"
+number="5">
+<h1><span class="header-section-number">5</span> Task: how model triad
+relationships?</h1>
 <p>First think how this would play out: Directed relationships: per row,
 for ego 1: if ego has a tie with alter 1, and alter 1 has a tie with
 alter 2, and alter 3 has a tie with 1 Undirected relationships: per row,
 if ego 1 has tie with ego 2 and ego 3, and ego 2 and 3 have a tie,
 XX</p>
-<div id="summary---steps-for-what-covered-today" class="section level3"
-number="1.1">
-<h3><span class="header-section-number">1.1</span> SUMMARY - STEPS FOR
-WHAT COVERED TODAY</h3>
-<pre class="r"><code>## WORKSPACE FOR LEARNING R CODE
+<p><strong>SUMMARY - STEPS FOR WHAT COVERED TODAY</strong></p>
+<pre class="r test"><code>## WORKSPACE FOR LEARNING R CODE
 # install.packages(&quot;igraph&quot;)
 #code from sample lab notebook
 ## graph &lt;- graph_from_adjacency_matrix(AM_empty, mode = &quot;directed&quot;)
 ## triad_census(graph)
 library(igraph)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;igraph&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     decompose, spectrum</code></pre>
-<pre><code>## The following object is masked from &#39;package:base&#39;:
-## 
-##     union</code></pre>
+<div id="step-1" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Step 1</h2>
 <p><strong>STEP 1: MAKE A MATRIX</strong> We will come back to this
 matrix to look at directed relationships, which is NOT symmetrical.
 Randomize start with ’set.seed;</p>
-<pre class="r"><code>set.seed(124376) #randomized start
+<pre class="r test"><code>set.seed(124376) #randomized start
 matrix1 &lt;- matrix(sample(x=0:1, size = 25, replace = TRUE), nrow = 5, ncol = 5)</code></pre>
+</div>
+<div id="step-2" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Step 2</h2>
 <p><strong>STEP 2: MAKE MATRIX SYMMETRICAL</strong> This will make it
 possible to review undirected relationships. “t” is a command for
 transpose. we next will look for the number of ties in an undirected
 network (and we will be looking at a transitive triad)</p>
-<pre class="r"><code>symmatrix1 &lt;- matrix1 + t(matrix1) #this will just add over where there are 1&#39;s, but it will be a bit redundant
+<pre class="r test"><code>symmatrix1 &lt;- matrix1 + t(matrix1) #this will just add over where there are 1&#39;s, but it will be a bit redundant
 symmatrix1</code></pre>
-<pre><code>##      [,1] [,2] [,3] [,4] [,5]
-## [1,]    0    1    2    0    1
-## [2,]    1    0    0    1    1
-## [3,]    2    0    0    1    0
-## [4,]    0    1    1    0    1
-## [5,]    1    1    0    1    0</code></pre>
-<pre class="r"><code>symmatrix1[symmatrix1 == 2] &lt;- 1 #neutralize redundancies
+<pre class="test2"><code>#&gt;      [,1] [,2] [,3] [,4] [,5]
+#&gt; [1,]    0    1    2    0    1
+#&gt; [2,]    1    0    0    1    1
+#&gt; [3,]    2    0    0    1    0
+#&gt; [4,]    0    1    1    0    1
+#&gt; [5,]    1    1    0    1    0</code></pre>
+<pre class="r test"><code>symmatrix1[symmatrix1 == 2] &lt;- 1 #neutralize redundancies
  # Replacement script -- IF/ELSE
  ## symmatrix1 &lt;- ifelse(symmatrix1==2,1,0) 
 diag(symmatrix1) &lt;- 0
 symmatrix1</code></pre>
-<pre><code>##      [,1] [,2] [,3] [,4] [,5]
-## [1,]    0    1    1    0    1
-## [2,]    1    0    0    1    1
-## [3,]    1    0    0    1    0
-## [4,]    0    1    1    0    1
-## [5,]    1    1    0    1    0</code></pre>
-<pre class="r"><code>symmatrix1G &lt;- graph_from_adjacency_matrix(symmatrix1) 
+<pre class="test2"><code>#&gt;      [,1] [,2] [,3] [,4] [,5]
+#&gt; [1,]    0    1    1    0    1
+#&gt; [2,]    1    0    0    1    1
+#&gt; [3,]    1    0    0    1    0
+#&gt; [4,]    0    1    1    0    1
+#&gt; [5,]    1    1    0    1    0</code></pre>
+<pre class="r test"><code>symmatrix1G &lt;- graph_from_adjacency_matrix(symmatrix1) 
 class(symmatrix1G)</code></pre>
-<pre><code>## [1] &quot;igraph&quot;</code></pre>
-<pre class="r"><code>plot(symmatrix1G) #now we will map the triad relationships</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;igraph&quot;</code></pre>
+<pre class="r test"><code>plot(symmatrix1G) #now we will map the triad relationships</code></pre>
 <p><img src="codereview_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<pre class="r"><code>igraph::transitivity(symmatrix1G, type = &quot;undirected&quot;)</code></pre>
-<pre><code>## [1] 0.4615385</code></pre>
-<pre class="r"><code>dyad_census(symmatrix1G)</code></pre>
-<pre><code>## $mut
-## [1] 7
-## 
-## $asym
-## [1] 0
-## 
-## $null
-## [1] 3</code></pre>
+<pre class="r test"><code>igraph::transitivity(symmatrix1G, type = &quot;undirected&quot;)</code></pre>
+<pre class="test2"><code>#&gt; [1] 0.4615385</code></pre>
+<pre class="r test"><code>dyad_census(symmatrix1G)</code></pre>
+<pre class="test2"><code>#&gt; $mut
+#&gt; [1] 7
+#&gt; 
+#&gt; $asym
+#&gt; [1] 0
+#&gt; 
+#&gt; $null
+#&gt; [1] 3</code></pre>
+</div>
+<div id="step-3" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Step 3</h2>
 <p><strong>STEP 3: Now we will look at the dyad relationships: 0 tie,
 1-way tie, or mutual (2-way) tie.</strong></p>
 <p>Now looking at dyad relationships - need to look at the direction of
 the relationships. Number of ties in a directed network is not
 symmetrical.</p>
-<pre class="r"><code>matrix1G &lt;- graph_from_adjacency_matrix(matrix1)
+<pre class="r test"><code>matrix1G &lt;- graph_from_adjacency_matrix(matrix1)
 class(matrix1G)</code></pre>
-<pre><code>## [1] &quot;igraph&quot;</code></pre>
-<pre class="r"><code>plot(matrix1G)</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;igraph&quot;</code></pre>
+<pre class="r test"><code>plot(matrix1G)</code></pre>
 <p><img src="codereview_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<pre class="r"><code>igraph::transitivity(matrix1G, type = &quot;undirected&quot;)</code></pre>
-<pre><code>## [1] 0.4615385</code></pre>
-<pre class="r"><code>dyad_census(matrix1G)</code></pre>
-<pre><code>## $mut
-## [1] 1
-## 
-## $asym
-## [1] 6
-## 
-## $null
-## [1] 3</code></pre>
+<pre class="r test"><code>igraph::transitivity(matrix1G, type = &quot;undirected&quot;)</code></pre>
+<pre class="test2"><code>#&gt; [1] 0.4615385</code></pre>
+<pre class="r test"><code>dyad_census(matrix1G)</code></pre>
+<pre class="test2"><code>#&gt; $mut
+#&gt; [1] 1
+#&gt; 
+#&gt; $asym
+#&gt; [1] 6
+#&gt; 
+#&gt; $null
+#&gt; [1] 3</code></pre>
+</div>
+<div id="step-4" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> Step 4</h2>
 <p><strong>STEP 4: We will next look at triad census function: look at
 the different types of triad relationships</strong> Can look at empty
 dyads within triad: how many one-way and two-way relationships are
 there? how many are missing?</p>
-<pre class="r"><code>triad_census(matrix1G) #from igraph package, it relays the counts for each of the 16 different configurations for directed networks but it doesn&#39;t actually say the type of configuration</code></pre>
-<pre><code>##  [1] 0 1 0 2 1 1 2 1 1 1 0 0 0 0 0 0</code></pre>
-<pre class="r"><code>install.packages(&quot;sna&quot;)</code></pre>
-<pre><code>## Installing package into &#39;C:/Users/paigek/AppData/Local/R/win-library/4.5&#39;
-## (as &#39;lib&#39; is unspecified)</code></pre>
-<pre><code>## package &#39;sna&#39; successfully unpacked and MD5 sums checked</code></pre>
-<pre><code>## Warning: cannot remove prior installation of package &#39;sna&#39;</code></pre>
-<pre><code>## Warning in file.copy(savedcopy, lib, recursive = TRUE): problem copying
-## C:\Users\paigek\AppData\Local\R\win-library\4.5\00LOCK\sna\libs\x64\sna.dll to
-## C:\Users\paigek\AppData\Local\R\win-library\4.5\sna\libs\x64\sna.dll: Permission denied</code></pre>
-<pre><code>## Warning: restored &#39;sna&#39;</code></pre>
-<pre><code>## 
-## The downloaded binary packages are in
-##  C:\Users\paigek\AppData\Local\Temp\RtmpUTtN1z\downloaded_packages</code></pre>
-<pre class="r"><code>library(sna)</code></pre>
-<pre><code>## Loading required package: statnet.common</code></pre>
-<pre><code>## 
-## Attaching package: &#39;statnet.common&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     attr, order, replace</code></pre>
-<pre><code>## Loading required package: network</code></pre>
-<pre><code>## 
-## &#39;network&#39; 1.19.0 (2024-12-08), part of the Statnet Project
-## * &#39;news(package=&quot;network&quot;)&#39; for changes since last version
-## * &#39;citation(&quot;network&quot;)&#39; for citation information
-## * &#39;https://statnet.org&#39; for help, support, and other information</code></pre>
-<pre><code>## 
-## Attaching package: &#39;network&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:igraph&#39;:
-## 
-##     %c%, %s%, add.edges, add.vertices, delete.edges, delete.vertices, get.edge.attribute,
-##     get.edges, get.vertex.attribute, is.bipartite, is.directed, list.edge.attributes,
-##     list.vertex.attributes, set.edge.attribute, set.vertex.attribute</code></pre>
-<pre><code>## sna: Tools for Social Network Analysis
-## Version 2.8 created on 2024-09-07.
-## copyright (c) 2005, Carter T. Butts, University of California-Irvine
-##  For citation information, type citation(&quot;sna&quot;).
-##  Type help(package=&quot;sna&quot;) to get started.</code></pre>
-<pre><code>## 
-## Attaching package: &#39;sna&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:igraph&#39;:
-## 
-##     betweenness, bonpow, closeness, components, degree, dyad.census, evcent, hierarchy,
-##     is.connected, neighborhood, triad.census</code></pre>
-<pre class="r"><code>triad.census(matrix1) #Option 1 for looking at the types of triad census functions</code></pre>
-<pre><code>##      003 012 102 021D 021U 021C 111D 111U 030T 030C 201 120D 120U 120C 210 300
-## [1,]   0   1   0    2    1    1    2    1    1    1   0    0    0    0   0   0</code></pre>
-<pre class="r"><code>triad_counts &lt;- triad.census(as.matrix(as_adjacency_matrix(matrix1G))) #Option 2
-print(triad_counts)</code></pre>
-<pre><code>##      003 012 102 021D 021U 021C 111D 111U 030T 030C 201 120D 120U 120C 210 300
-## [1,]   0   1   0    2    1    1    2    1    1    1   0    0    0    0   0   0</code></pre>
+<pre class="r test"><code># HAD TO COMMENT THIS TO MAKE IT KNIT 
+
+#triad_census(matrix1G) #from igraph package, it relays the counts for each of the 16 different configurations for directed networks but it doesn&#39;t actually say the type of configuration
+
+#install.packages(&quot;sna&quot;)
+#library(sna)
+#triad.census(matrix1) #Option 1 for looking at the types of triad census functions
+
+#triad_counts &lt;- triad.census(as.matrix(as_adjacency_matrix(matrix1G))) #Option 2
+#print(triad_counts)</code></pre>
+</div>
+<div id="step-5" class="section level2" number="5.5">
+<h2><span class="header-section-number">5.5</span> Step 5</h2>
 <p><strong>STEP 5: MAKE 100 ROW AND COLUMN MATRIX AND VISUALIZE DYADS
 AND TRIADS BOOM</strong></p>
-<pre class="r"><code>set.seed(178376) #randomized start
+<pre class="r test"><code>set.seed(178376) #randomized start
 matrix100 &lt;- matrix(sample(x=0:1, size = 10000, replace = TRUE), nrow = 100, ncol = 100)
 
 matrix100G &lt;- graph_from_adjacency_matrix(matrix100)
 class(matrix100G)</code></pre>
-<pre><code>## [1] &quot;igraph&quot;</code></pre>
-<pre class="r"><code>plot(matrix100G)</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;igraph&quot;</code></pre>
+<pre class="r test"><code>plot(matrix100G)</code></pre>
 <p><img src="codereview_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<pre class="r"><code>igraph::transitivity(matrix100G, type = &quot;undirected&quot;)</code></pre>
-<pre><code>## [1] 0.7410377</code></pre>
-<pre class="r"><code>dyad_census(matrix100G)</code></pre>
-<pre><code>## $mut
-## [1] 1216
-## 
-## $asym
-## [1] 2449
-## 
-## $null
-## [1] 1285</code></pre>
-<pre class="r"><code>triad.census(matrix100) </code></pre>
-<pre><code>##       003   012  102 021D 021U  021C  111D  111U  030T 030C  201 120D 120U  120C   210  300
-## [1,] 2912 16119 8021 7620 7826 15387 15228 15206 14760 4871 7647 7286 7151 14758 14500 2408</code></pre>
+<pre class="r test"><code>#igraph::transitivity(matrix100G, type = &quot;undirected&quot;)
+#dyad_census(matrix100G)
+#triad.census(matrix100G) </code></pre>
+</div>
+</div>
+<div id="workspace" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Workspace</h1>
 <p>WORKSPACE BELOW - From working session in class</p>
-<pre class="r"><code># if [1,2]=TRUE and [2,3]=TRUE and [3,1]=true
+<pre class="r test"><code># if [1,2]=TRUE and [2,3]=TRUE and [3,1]=true
 # if x=1 and 
 
 ## Text From Working in Class: 
@@ -672,165 +674,164 @@ netN &lt;- net3 + t(net3)
 netN[netN == 2] &lt;- 1
 diag(netN) &lt;- 0
 netN</code></pre>
-<pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]    0    1    1    1
-## [2,]    1    0    1    1
-## [3,]    1    1    0    1
-## [4,]    1    1    1    0</code></pre>
-<pre class="r"><code>## closed triad: 1 connected to 2 and 3, 2 to 1 and 3, and 3 connected to 1 and 2
+<pre class="test2"><code>#&gt;      [,1] [,2] [,3] [,4]
+#&gt; [1,]    0    1    1    1
+#&gt; [2,]    1    0    1    1
+#&gt; [3,]    1    1    0    1
+#&gt; [4,]    1    1    1    0</code></pre>
+<pre class="r test"><code>## closed triad: 1 connected to 2 and 3, 2 to 1 and 3, and 3 connected to 1 and 2
 netG &lt;- graph_from_adjacency_matrix(netN)
 class(netG)</code></pre>
-<pre><code>## [1] &quot;igraph&quot;</code></pre>
-<pre class="r"><code>plot(netG)</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;igraph&quot;</code></pre>
+<pre class="r test"><code>plot(netG)</code></pre>
 <p><img src="codereview_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<pre class="r"><code>igraph::transitivity(netG, type = &quot;undirected&quot;)</code></pre>
-<pre><code>## [1] 1</code></pre>
-<pre class="r"><code>dyad_census(netG)</code></pre>
-<pre><code>## $mut
-## [1] 6
-## 
-## $asym
-## [1] 0
-## 
-## $null
-## [1] 0</code></pre>
-<pre class="r"><code>## dyad: can have no, 1, or 2-way relationship. </code></pre>
+<pre class="r test"><code>igraph::transitivity(netG, type = &quot;undirected&quot;)</code></pre>
+<pre class="test2"><code>#&gt; [1] 1</code></pre>
+<pre class="r test"><code>dyad_census(netG)</code></pre>
+<pre class="test2"><code>#&gt; $mut
+#&gt; [1] 6
+#&gt; 
+#&gt; $asym
+#&gt; [1] 0
+#&gt; 
+#&gt; $null
+#&gt; [1] 0</code></pre>
+<pre class="r test"><code>## dyad: can have no, 1, or 2-way relationship. </code></pre>
 <p>different seed</p>
-<pre class="r"><code>set.seed(123643)
+<pre class="r test"><code>set.seed(123643)
 net4 &lt;- matrix(sample(0:1, 16, replace = TRUE), nrow = 4, ncol = 4)
 
 netM &lt;- net4 + t(net4)
 netM[netM == 2] &lt;- 1
 diag(netM) &lt;- 0
 netM</code></pre>
-<pre><code>##      [,1] [,2] [,3] [,4]
-## [1,]    0    1    1    1
-## [2,]    1    0    1    0
-## [3,]    1    1    0    1
-## [4,]    1    0    1    0</code></pre>
-<pre class="r"><code>netQ &lt;- graph_from_adjacency_matrix(netM)
+<pre class="test2"><code>#&gt;      [,1] [,2] [,3] [,4]
+#&gt; [1,]    0    1    1    1
+#&gt; [2,]    1    0    1    0
+#&gt; [3,]    1    1    0    1
+#&gt; [4,]    1    0    1    0</code></pre>
+<pre class="r test"><code>netQ &lt;- graph_from_adjacency_matrix(netM)
 class(netQ)</code></pre>
-<pre><code>## [1] &quot;igraph&quot;</code></pre>
-<pre class="r"><code>plot(netQ)</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;igraph&quot;</code></pre>
+<pre class="r test"><code>plot(netQ)</code></pre>
 <p><img src="codereview_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<pre class="r"><code>igraph::transitivity(netQ, type = &quot;undirected&quot;)</code></pre>
-<pre><code>## [1] 0.75</code></pre>
+<pre class="r test"><code>igraph::transitivity(netQ, type = &quot;undirected&quot;)</code></pre>
+<pre class="test2"><code>#&gt; [1] 0.75</code></pre>
 <p>From sample student notebook:</p>
-<pre class="r"><code>require(igraph)
+<pre class="r test"><code>require(igraph)
 g &lt;- make_graph(&quot;Zachary&quot;)
 plot(g)</code></pre>
 <p><img src="codereview_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-<pre class="r"><code>gmat &lt;- as_adjacency_matrix(g, type = &quot;both&quot;, sparse = FALSE)
+<pre class="r test"><code>gmat &lt;- as_adjacency_matrix(g, type = &quot;both&quot;, sparse = FALSE)
 gmat</code></pre>
-<pre><code>##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14] [,15] [,16] [,17]
-##  [1,]    0    1    1    1    1    1    1    1    1     0     1     1     1     1     0     0     0
-##  [2,]    1    0    1    1    0    0    0    1    0     0     0     0     0     1     0     0     0
-##  [3,]    1    1    0    1    0    0    0    1    1     1     0     0     0     1     0     0     0
-##  [4,]    1    1    1    0    0    0    0    1    0     0     0     0     1     1     0     0     0
-##  [5,]    1    0    0    0    0    0    1    0    0     0     1     0     0     0     0     0     0
-##  [6,]    1    0    0    0    0    0    1    0    0     0     1     0     0     0     0     0     1
-##  [7,]    1    0    0    0    1    1    0    0    0     0     0     0     0     0     0     0     1
-##  [8,]    1    1    1    1    0    0    0    0    0     0     0     0     0     0     0     0     0
-##  [9,]    1    0    1    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [10,]    0    0    1    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [11,]    1    0    0    0    1    1    0    0    0     0     0     0     0     0     0     0     0
-## [12,]    1    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [13,]    1    0    0    1    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [14,]    1    1    1    1    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [15,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [16,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [17,]    0    0    0    0    0    1    1    0    0     0     0     0     0     0     0     0     0
-## [18,]    1    1    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [19,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [20,]    1    1    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [21,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [22,]    1    1    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [23,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [24,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [25,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [26,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [27,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [28,]    0    0    1    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [29,]    0    0    1    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [30,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [31,]    0    1    0    0    0    0    0    0    1     0     0     0     0     0     0     0     0
-## [32,]    1    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
-## [33,]    0    0    1    0    0    0    0    0    1     0     0     0     0     0     1     1     0
-## [34,]    0    0    0    0    0    0    0    0    1     1     0     0     0     1     1     1     0
-##       [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25] [,26] [,27] [,28] [,29] [,30] [,31] [,32]
-##  [1,]     1     0     1     0     1     0     0     0     0     0     0     0     0     0     1
-##  [2,]     1     0     1     0     1     0     0     0     0     0     0     0     0     1     0
-##  [3,]     0     0     0     0     0     0     0     0     0     0     1     1     0     0     0
-##  [4,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-##  [5,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-##  [6,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-##  [7,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-##  [8,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-##  [9,]     0     0     0     0     0     0     0     0     0     0     0     0     0     1     0
-## [10,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [11,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [12,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [13,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [14,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [15,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [16,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [17,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [18,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [19,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [20,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [21,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [22,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [23,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [24,]     0     0     0     0     0     0     0     0     1     0     1     0     1     0     0
-## [25,]     0     0     0     0     0     0     0     0     1     0     1     0     0     0     1
-## [26,]     0     0     0     0     0     0     1     1     0     0     0     0     0     0     1
-## [27,]     0     0     0     0     0     0     0     0     0     0     0     0     1     0     0
-## [28,]     0     0     0     0     0     0     1     1     0     0     0     0     0     0     0
-## [29,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     1
-## [30,]     0     0     0     0     0     0     1     0     0     1     0     0     0     0     0
-## [31,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
-## [32,]     0     0     0     0     0     0     0     1     1     0     0     1     0     0     0
-## [33,]     0     1     0     1     0     1     1     0     0     0     0     0     1     1     1
-## [34,]     0     1     1     1     0     1     1     0     0     1     1     1     1     1     1
-##       [,33] [,34]
-##  [1,]     0     0
-##  [2,]     0     0
-##  [3,]     1     0
-##  [4,]     0     0
-##  [5,]     0     0
-##  [6,]     0     0
-##  [7,]     0     0
-##  [8,]     0     0
-##  [9,]     1     1
-## [10,]     0     1
-## [11,]     0     0
-## [12,]     0     0
-## [13,]     0     0
-## [14,]     0     1
-## [15,]     1     1
-## [16,]     1     1
-## [17,]     0     0
-## [18,]     0     0
-## [19,]     1     1
-## [20,]     0     1
-## [21,]     1     1
-## [22,]     0     0
-## [23,]     1     1
-## [24,]     1     1
-## [25,]     0     0
-## [26,]     0     0
-## [27,]     0     1
-## [28,]     0     1
-## [29,]     0     1
-## [30,]     1     1
-## [31,]     1     1
-## [32,]     1     1
-## [33,]     0     1
-## [34,]     1     0</code></pre>
+<pre class="test2"><code>#&gt;       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14] [,15] [,16] [,17]
+#&gt;  [1,]    0    1    1    1    1    1    1    1    1     0     1     1     1     1     0     0     0
+#&gt;  [2,]    1    0    1    1    0    0    0    1    0     0     0     0     0     1     0     0     0
+#&gt;  [3,]    1    1    0    1    0    0    0    1    1     1     0     0     0     1     0     0     0
+#&gt;  [4,]    1    1    1    0    0    0    0    1    0     0     0     0     1     1     0     0     0
+#&gt;  [5,]    1    0    0    0    0    0    1    0    0     0     1     0     0     0     0     0     0
+#&gt;  [6,]    1    0    0    0    0    0    1    0    0     0     1     0     0     0     0     0     1
+#&gt;  [7,]    1    0    0    0    1    1    0    0    0     0     0     0     0     0     0     0     1
+#&gt;  [8,]    1    1    1    1    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt;  [9,]    1    0    1    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [10,]    0    0    1    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [11,]    1    0    0    0    1    1    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [12,]    1    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [13,]    1    0    0    1    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [14,]    1    1    1    1    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [15,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [16,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [17,]    0    0    0    0    0    1    1    0    0     0     0     0     0     0     0     0     0
+#&gt; [18,]    1    1    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [19,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [20,]    1    1    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [21,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [22,]    1    1    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [23,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [24,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [25,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [26,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [27,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [28,]    0    0    1    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [29,]    0    0    1    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [30,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [31,]    0    1    0    0    0    0    0    0    1     0     0     0     0     0     0     0     0
+#&gt; [32,]    1    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0
+#&gt; [33,]    0    0    1    0    0    0    0    0    1     0     0     0     0     0     1     1     0
+#&gt; [34,]    0    0    0    0    0    0    0    0    1     1     0     0     0     1     1     1     0
+#&gt;       [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25] [,26] [,27] [,28] [,29] [,30] [,31] [,32]
+#&gt;  [1,]     1     0     1     0     1     0     0     0     0     0     0     0     0     0     1
+#&gt;  [2,]     1     0     1     0     1     0     0     0     0     0     0     0     0     1     0
+#&gt;  [3,]     0     0     0     0     0     0     0     0     0     0     1     1     0     0     0
+#&gt;  [4,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [5,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [6,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [7,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [8,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt;  [9,]     0     0     0     0     0     0     0     0     0     0     0     0     0     1     0
+#&gt; [10,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [11,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [12,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [13,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [14,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [15,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [16,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [17,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [18,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [19,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [20,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [21,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [22,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [23,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [24,]     0     0     0     0     0     0     0     0     1     0     1     0     1     0     0
+#&gt; [25,]     0     0     0     0     0     0     0     0     1     0     1     0     0     0     1
+#&gt; [26,]     0     0     0     0     0     0     1     1     0     0     0     0     0     0     1
+#&gt; [27,]     0     0     0     0     0     0     0     0     0     0     0     0     1     0     0
+#&gt; [28,]     0     0     0     0     0     0     1     1     0     0     0     0     0     0     0
+#&gt; [29,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     1
+#&gt; [30,]     0     0     0     0     0     0     1     0     0     1     0     0     0     0     0
+#&gt; [31,]     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+#&gt; [32,]     0     0     0     0     0     0     0     1     1     0     0     1     0     0     0
+#&gt; [33,]     0     1     0     1     0     1     1     0     0     0     0     0     1     1     1
+#&gt; [34,]     0     1     1     1     0     1     1     0     0     1     1     1     1     1     1
+#&gt;       [,33] [,34]
+#&gt;  [1,]     0     0
+#&gt;  [2,]     0     0
+#&gt;  [3,]     1     0
+#&gt;  [4,]     0     0
+#&gt;  [5,]     0     0
+#&gt;  [6,]     0     0
+#&gt;  [7,]     0     0
+#&gt;  [8,]     0     0
+#&gt;  [9,]     1     1
+#&gt; [10,]     0     1
+#&gt; [11,]     0     0
+#&gt; [12,]     0     0
+#&gt; [13,]     0     0
+#&gt; [14,]     0     1
+#&gt; [15,]     1     1
+#&gt; [16,]     1     1
+#&gt; [17,]     0     0
+#&gt; [18,]     0     0
+#&gt; [19,]     1     1
+#&gt; [20,]     0     1
+#&gt; [21,]     1     1
+#&gt; [22,]     0     0
+#&gt; [23,]     1     1
+#&gt; [24,]     1     1
+#&gt; [25,]     0     0
+#&gt; [26,]     0     0
+#&gt; [27,]     0     1
+#&gt; [28,]     0     1
+#&gt; [29,]     0     1
+#&gt; [30,]     1     1
+#&gt; [31,]     1     1
+#&gt; [32,]     1     1
+#&gt; [33,]     0     1
+#&gt; [34,]     1     0</code></pre>
 <p>A different sample</p>
-<pre class="r"><code>require(MASS)</code></pre>
-<pre><code>## Loading required package: MASS</code></pre>
-<pre class="r"><code>set.seed(9864)  # We set a seed. In this we the random numbers we will generate be the same and we thus end up with the same dataset. Please not that to be absolutely sure to get the same dataset, we need to run the same R version (and packages).
+<pre class="r test"><code>require(MASS)
+set.seed(9864)  # We set a seed. In this we the random numbers we will generate be the same and we thus end up with the same dataset. Please not that to be absolutely sure to get the same dataset, we need to run the same R version (and packages).
 
 # let us start with simulating the opinion of both partners.
 Sigma &lt;- matrix(c(10, 4, 4, 5), 2, 2)
@@ -847,17 +848,16 @@ attr(data, &quot;description&quot;) &lt;- &quot;This is a simulated dataset to i
 # I don&#39;t think the variables need any further description.
 
 summary(cars)</code></pre>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
-</div>
+<pre class="test2"><code>#&gt;      speed           dist       
+#&gt;  Min.   : 4.0   Min.   :  2.00  
+#&gt;  1st Qu.:12.0   1st Qu.: 26.00  
+#&gt;  Median :15.0   Median : 36.00  
+#&gt;  Mean   :15.4   Mean   : 42.98  
+#&gt;  3rd Qu.:19.0   3rd Qu.: 56.00  
+#&gt;  Max.   :25.0   Max.   :120.00</code></pre>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRlc2NyaXB0aXZlIFN0YXRpc3RpY3MiDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQpkYXRlOiAiMjAyNS0wOS0xMiINCm91dHB1dDogaHRtbF9kb2N1bWVudA0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCiMjIFIgTWFya2Rvd24NCg0KTWFrZSBhIG1hdHJpeDogUmV2aWV3IGhvdyB0byBtYWtlIGNvbHVtbiwgZGF0YWZyYW1lLCBhbmQgbWF0cml4DQpgYGB7cn0NCiNtYXRyaXgoZGF0YSwgbnJvdywgbmNvbCwgYnlyb3csIGRpbW5hbWVzKQ0KbnVtMSA8LSBjKDAsIDEsIDIsIDMsIDQsIDUsIDYsIDcsIDgpDQpudW0yIDwtIGRhdGEuZnJhbWUoMCwgMSwgMiwgMywgNCwgNSwgNiwgNywgOCkNCmBgYA0KDQoNClRyeSBtYWtpbmcgYSAxMDB4MTAwIG1hdHJpeA0KYGBge3J9DQojIyBlZ28gaXMgcm93LCBhbHRlciBpcyBjb2x1bW4NCmJhc2UgPC0gYygwLCAxKQ0KbWF0MSA8LSBtYXRyaXgoYmFzZSwgbnJvdz0xMDAsIG5jb2wgPSAxMDAsIGJ5cm93ID0gVFJVRSkNCiNtYXQxDQoNCm1hdDIgPC0gbWF0cml4KHJub3JtKDEpLCBucm93ID0gMTAwLCBieXJvdyA9IFRSVUUpDQojbWF0Mg0KYGBgDQoNCg0KVGhlbiBzdGFydCBzbWFsbDogTWFrZSBhIDR4NCBtYXRyaXgNCmBgYHtyfQ0KI2luIGNsYXNzIA0KbnVtYmVycyA8LSBzYW1wbGUoeD0wOjEsIHNpemUgPSAxNiwgcmVwbGFjZSA9IFRSVUUpDQpuZXQxIDwtIG1hdHJpeChudW1iZXJzLCA0LCA0LCBUUlVFKQ0KbmV0MQ0KYGBgDQoNClNldCB0aGUgZGlhZ29uYWwgdG8gMDogVGhpcyB3aWxsIHN0YXJ0IHByb2Nlc3Mgb2YgbWFraW5nIGRhdGEgc3ltbWV0cmljYWwsIGFuZCB3b3VsZCByZXByZXNlbnQgdW5kaXJlY3RlZCB0aWVzL2FuIHVuZGlyZWN0ZWQgbmV0d29yay4gSWYgeW91IGZsaXAgdGhlIGNvbHVtbnMgYW5kIHJvd3MsIHRoZSBtYXRyaXggd2lsbCBsb29rIHRoZSBzYW1lICh1cHBlciB0cmlhbmdsZSBvZiB0aGUgbWF0cml4IGJlY29tZXMgc3ltbWV0cmljKS4NCmBgYHtyfQ0KZGlhZyhuZXQxKSA8LSAwDQpuZXQxDQoNCiN1bmRpcmVjdGVkIG5ldHdvcmsgLS0gc3ltbWV0cmljIG1hdHJpeA0KI3N5bW1ldHJ5IC0gdHJpYW5nbGUgKHRyYW5zcG9zZSBkaWRuJ3Qgd29yaykgLSBpZiBmbGlwIGNvbHVtbnMgYW5kIHJvd3MsIHdpbGwgaGF2ZSB0aGUgc2FtZSBtYXRyaXgNCiMgdXBwZXIgdHJpYW5nbGUgb2YgbWF0cml4IC0tIGFzIEFTIFNZTU1FVFJJQw0KYGBgDQoNClRoZW4gcmV2aWV3IHRoZSBkZXNjcmlwdGl2ZSBzdGF0aXN0aWNzDQpgYGB7cn0NCiMgZGVzY3JpcHRpdmUgc3RhdGlzdGljcw0Kcm93U3VtcyhuZXQxKQ0KbWVhbihuZXQxKQ0KDQpgYGANCg0KDQoNCk5vdyB0aGluZ3Mgc3BlZWQgdXAuIA0KDQpUYXNrOiBob3cgbW9kZWwgdHJpYWQgcmVsYXRpb25zaGlwcz8gDQoNCkZpcnN0IHRoaW5rIGhvdyB0aGlzIHdvdWxkIHBsYXkgb3V0OiANCkRpcmVjdGVkIHJlbGF0aW9uc2hpcHM6IHBlciByb3csIGZvciBlZ28gMTogaWYgZWdvIGhhcyBhIHRpZSB3aXRoIGFsdGVyIDEsIGFuZCBhbHRlciAxIGhhcyBhIHRpZSB3aXRoIGFsdGVyIDIsIGFuZCBhbHRlciAzIGhhcyBhIHRpZSB3aXRoIDENClVuZGlyZWN0ZWQgcmVsYXRpb25zaGlwczogcGVyIHJvdywgaWYgZWdvIDEgaGFzIHRpZSB3aXRoIGVnbyAyIGFuZCBlZ28gMywgYW5kIGVnbyAyIGFuZCAzIGhhdmUgYSB0aWUsIFhYIA0KDQojIyMgU1VNTUFSWSAtIFNURVBTIEZPUiBXSEFUIENPVkVSRUQgVE9EQVkNCmBgYCB7cn0NCiMjIFdPUktTUEFDRSBGT1IgTEVBUk5JTkcgUiBDT0RFDQojIGluc3RhbGwucGFja2FnZXMoImlncmFwaCIpDQojY29kZSBmcm9tIHNhbXBsZSBsYWIgbm90ZWJvb2sNCiMjIGdyYXBoIDwtIGdyYXBoX2Zyb21fYWRqYWNlbmN5X21hdHJpeChBTV9lbXB0eSwgbW9kZSA9ICJkaXJlY3RlZCIpDQojIyB0cmlhZF9jZW5zdXMoZ3JhcGgpDQpsaWJyYXJ5KGlncmFwaCkNCmBgYCANCg0KDQoqKlNURVAgMTogTUFLRSBBIE1BVFJJWCoqDQpXZSB3aWxsIGNvbWUgYmFjayB0byB0aGlzIG1hdHJpeCB0byBsb29rIGF0IGRpcmVjdGVkIHJlbGF0aW9uc2hpcHMsIHdoaWNoIGlzIE5PVCBzeW1tZXRyaWNhbC4gUmFuZG9taXplIHN0YXJ0IHdpdGggJ3NldC5zZWVkOw0KYGBgIHtyfQ0Kc2V0LnNlZWQoMTI0Mzc2KSAjcmFuZG9taXplZCBzdGFydA0KbWF0cml4MSA8LSBtYXRyaXgoc2FtcGxlKHg9MDoxLCBzaXplID0gMjUsIHJlcGxhY2UgPSBUUlVFKSwgbnJvdyA9IDUsIG5jb2wgPSA1KQ0KYGBgDQoNCg0KKipTVEVQIDI6IE1BS0UgTUFUUklYIFNZTU1FVFJJQ0FMKioNClRoaXMgd2lsbCBtYWtlIGl0IHBvc3NpYmxlIHRvIHJldmlldyB1bmRpcmVjdGVkIHJlbGF0aW9uc2hpcHMuICJ0IiBpcyBhIGNvbW1hbmQgZm9yIHRyYW5zcG9zZS4gd2UgbmV4dCB3aWxsIGxvb2sgZm9yIHRoZSBudW1iZXIgb2YgdGllcyBpbiBhbiB1bmRpcmVjdGVkIG5ldHdvcmsgKGFuZCB3ZSB3aWxsIGJlIGxvb2tpbmcgYXQgYSB0cmFuc2l0aXZlIHRyaWFkKSANCg0KYGBgIHtyfQ0Kc3ltbWF0cml4MSA8LSBtYXRyaXgxICsgdChtYXRyaXgxKSAjdGhpcyB3aWxsIGp1c3QgYWRkIG92ZXIgd2hlcmUgdGhlcmUgYXJlIDEncywgYnV0IGl0IHdpbGwgYmUgYSBiaXQgcmVkdW5kYW50DQpzeW1tYXRyaXgxDQpzeW1tYXRyaXgxW3N5bW1hdHJpeDEgPT0gMl0gPC0gMSAjbmV1dHJhbGl6ZSByZWR1bmRhbmNpZXMNCiAjIFJlcGxhY2VtZW50IHNjcmlwdCAtLSBJRi9FTFNFDQogIyMgc3ltbWF0cml4MSA8LSBpZmVsc2Uoc3ltbWF0cml4MT09MiwxLDApIA0KZGlhZyhzeW1tYXRyaXgxKSA8LSAwDQpzeW1tYXRyaXgxDQpgYGANCg0KDQpgYGAge3J9DQpzeW1tYXRyaXgxRyA8LSBncmFwaF9mcm9tX2FkamFjZW5jeV9tYXRyaXgoc3ltbWF0cml4MSkgDQpjbGFzcyhzeW1tYXRyaXgxRykNCnBsb3Qoc3ltbWF0cml4MUcpICNub3cgd2Ugd2lsbCBtYXAgdGhlIHRyaWFkIHJlbGF0aW9uc2hpcHMNCmlncmFwaDo6dHJhbnNpdGl2aXR5KHN5bW1hdHJpeDFHLCB0eXBlID0gInVuZGlyZWN0ZWQiKQ0KDQpkeWFkX2NlbnN1cyhzeW1tYXRyaXgxRykNCg0KYGBgDQoNCioqU1RFUCAzOiBOb3cgd2Ugd2lsbCBsb29rIGF0IHRoZSBkeWFkIHJlbGF0aW9uc2hpcHM6IDAgdGllLCAxLXdheSB0aWUsIG9yIG11dHVhbCAoMi13YXkpIHRpZS4qKg0KDQpOb3cgbG9va2luZyBhdCBkeWFkIHJlbGF0aW9uc2hpcHMgLSBuZWVkIHRvIGxvb2sgYXQgdGhlIGRpcmVjdGlvbiBvZiB0aGUgcmVsYXRpb25zaGlwcy4gTnVtYmVyIG9mIHRpZXMgaW4gYSBkaXJlY3RlZCBuZXR3b3JrIGlzIG5vdCBzeW1tZXRyaWNhbC4gDQpgYGAge3J9DQptYXRyaXgxRyA8LSBncmFwaF9mcm9tX2FkamFjZW5jeV9tYXRyaXgobWF0cml4MSkNCmNsYXNzKG1hdHJpeDFHKQ0KcGxvdChtYXRyaXgxRykNCmlncmFwaDo6dHJhbnNpdGl2aXR5KG1hdHJpeDFHLCB0eXBlID0gInVuZGlyZWN0ZWQiKQ0KZHlhZF9jZW5zdXMobWF0cml4MUcpDQoNCmBgYA0KDQoNCioqU1RFUCA0OiBXZSB3aWxsIG5leHQgbG9vayBhdCB0cmlhZCBjZW5zdXMgZnVuY3Rpb246IGxvb2sgYXQgdGhlIGRpZmZlcmVudCB0eXBlcyBvZiB0cmlhZCByZWxhdGlvbnNoaXBzKioNCkNhbiBsb29rIGF0IGVtcHR5IGR5YWRzIHdpdGhpbiB0cmlhZDogaG93IG1hbnkgb25lLXdheSBhbmQgdHdvLXdheSByZWxhdGlvbnNoaXBzIGFyZSB0aGVyZT8gaG93IG1hbnkgYXJlIG1pc3Npbmc/IA0KYGBgIHtyfQ0KdHJpYWRfY2Vuc3VzKG1hdHJpeDFHKSAjZnJvbSBpZ3JhcGggcGFja2FnZSwgaXQgcmVsYXlzIHRoZSBjb3VudHMgZm9yIGVhY2ggb2YgdGhlIDE2IGRpZmZlcmVudCBjb25maWd1cmF0aW9ucyBmb3IgZGlyZWN0ZWQgbmV0d29ya3MgYnV0IGl0IGRvZXNuJ3QgYWN0dWFsbHkgc2F5IHRoZSB0eXBlIG9mIGNvbmZpZ3VyYXRpb24NCg0KaW5zdGFsbC5wYWNrYWdlcygic25hIikNCmxpYnJhcnkoc25hKQ0KdHJpYWQuY2Vuc3VzKG1hdHJpeDEpICNPcHRpb24gMSBmb3IgbG9va2luZyBhdCB0aGUgdHlwZXMgb2YgdHJpYWQgY2Vuc3VzIGZ1bmN0aW9ucw0KDQp0cmlhZF9jb3VudHMgPC0gdHJpYWQuY2Vuc3VzKGFzLm1hdHJpeChhc19hZGphY2VuY3lfbWF0cml4KG1hdHJpeDFHKSkpICNPcHRpb24gMg0KcHJpbnQodHJpYWRfY291bnRzKQ0KYGBgIA0KDQoNCioqU1RFUCA1OiBNQUtFIDEwMCBST1cgQU5EIENPTFVNTiBNQVRSSVggQU5EIFZJU1VBTElaRSBEWUFEUyBBTkQgVFJJQURTIEJPT00qKg0KYGBgIHtyfQ0Kc2V0LnNlZWQoMTc4Mzc2KSAjcmFuZG9taXplZCBzdGFydA0KbWF0cml4MTAwIDwtIG1hdHJpeChzYW1wbGUoeD0wOjEsIHNpemUgPSAxMDAwMCwgcmVwbGFjZSA9IFRSVUUpLCBucm93ID0gMTAwLCBuY29sID0gMTAwKQ0KDQptYXRyaXgxMDBHIDwtIGdyYXBoX2Zyb21fYWRqYWNlbmN5X21hdHJpeChtYXRyaXgxMDApDQpjbGFzcyhtYXRyaXgxMDBHKQ0KcGxvdChtYXRyaXgxMDBHKQ0KaWdyYXBoOjp0cmFuc2l0aXZpdHkobWF0cml4MTAwRywgdHlwZSA9ICJ1bmRpcmVjdGVkIikNCmR5YWRfY2Vuc3VzKG1hdHJpeDEwMEcpDQp0cmlhZC5jZW5zdXMobWF0cml4MTAwKSANCmBgYCANCg0KDQoNCg0KV09SS1NQQUNFIEJFTE9XIC0gRnJvbSB3b3JraW5nIHNlc3Npb24gaW4gY2xhc3MgDQpgYGAge3J9DQoNCg0KIyBpZiBbMSwyXT1UUlVFIGFuZCBbMiwzXT1UUlVFIGFuZCBbMywxXT10cnVlDQojIGlmIHg9MSBhbmQgDQoNCiMjIFRleHQgRnJvbSBXb3JraW5nIGluIENsYXNzOiANCmxpYnJhcnkoaWdyYXBoKQ0Kc2V0LnNlZWQoMTIzNDQzKQ0KbmV0MyA8LSBtYXRyaXgoc2FtcGxlKDA6MSwgMTYsIHJlcGxhY2UgPSBUUlVFKSwgbnJvdyA9IDQsIG5jb2wgPSA0KQ0KDQpuZXROIDwtIG5ldDMgKyB0KG5ldDMpDQpuZXROW25ldE4gPT0gMl0gPC0gMQ0KZGlhZyhuZXROKSA8LSAwDQpuZXRODQoNCiMjIGNsb3NlZCB0cmlhZDogMSBjb25uZWN0ZWQgdG8gMiBhbmQgMywgMiB0byAxIGFuZCAzLCBhbmQgMyBjb25uZWN0ZWQgdG8gMSBhbmQgMg0KbmV0RyA8LSBncmFwaF9mcm9tX2FkamFjZW5jeV9tYXRyaXgobmV0TikNCmNsYXNzKG5ldEcpDQpwbG90KG5ldEcpDQppZ3JhcGg6OnRyYW5zaXRpdml0eShuZXRHLCB0eXBlID0gInVuZGlyZWN0ZWQiKQ0KDQpkeWFkX2NlbnN1cyhuZXRHKQ0KIyMgZHlhZDogY2FuIGhhdmUgbm8sIDEsIG9yIDItd2F5IHJlbGF0aW9uc2hpcC4gDQoNCg0KDQpgYGANCg0KDQpkaWZmZXJlbnQgc2VlZA0KYGBgIHtyfQ0Kc2V0LnNlZWQoMTIzNjQzKQ0KbmV0NCA8LSBtYXRyaXgoc2FtcGxlKDA6MSwgMTYsIHJlcGxhY2UgPSBUUlVFKSwgbnJvdyA9IDQsIG5jb2wgPSA0KQ0KDQpuZXRNIDwtIG5ldDQgKyB0KG5ldDQpDQpuZXRNW25ldE0gPT0gMl0gPC0gMQ0KZGlhZyhuZXRNKSA8LSAwDQpuZXRNDQpuZXRRIDwtIGdyYXBoX2Zyb21fYWRqYWNlbmN5X21hdHJpeChuZXRNKQ0KY2xhc3MobmV0USkNCnBsb3QobmV0USkNCmlncmFwaDo6dHJhbnNpdGl2aXR5KG5ldFEsIHR5cGUgPSAidW5kaXJlY3RlZCIpDQoNCmBgYA0KDQpGcm9tIHNhbXBsZSBzdHVkZW50IG5vdGVib29rOg0KYGBgIHtyfQ0KcmVxdWlyZShpZ3JhcGgpDQpnIDwtIG1ha2VfZ3JhcGgoIlphY2hhcnkiKQ0KcGxvdChnKQ0KZ21hdCA8LSBhc19hZGphY2VuY3lfbWF0cml4KGcsIHR5cGUgPSAiYm90aCIsIHNwYXJzZSA9IEZBTFNFKQ0KZ21hdA0KDQpgYGANCg0KDQpBIGRpZmZlcmVudCBzYW1wbGUgDQpgYGAge3J9DQpyZXF1aXJlKE1BU1MpDQpzZXQuc2VlZCg5ODY0KSAgIyBXZSBzZXQgYSBzZWVkLiBJbiB0aGlzIHdlIHRoZSByYW5kb20gbnVtYmVycyB3ZSB3aWxsIGdlbmVyYXRlIGJlIHRoZSBzYW1lIGFuZCB3ZSB0aHVzIGVuZCB1cCB3aXRoIHRoZSBzYW1lIGRhdGFzZXQuIFBsZWFzZSBub3QgdGhhdCB0byBiZSBhYnNvbHV0ZWx5IHN1cmUgdG8gZ2V0IHRoZSBzYW1lIGRhdGFzZXQsIHdlIG5lZWQgdG8gcnVuIHRoZSBzYW1lIFIgdmVyc2lvbiAoYW5kIHBhY2thZ2VzKS4NCg0KIyBsZXQgdXMgc3RhcnQgd2l0aCBzaW11bGF0aW5nIHRoZSBvcGluaW9uIG9mIGJvdGggcGFydG5lcnMuDQpTaWdtYSA8LSBtYXRyaXgoYygxMCwgNCwgNCwgNSksIDIsIDIpDQpvcGluaW9ucyA8LSBtdnJub3JtKG4gPSAxMDAwLCBtdSA9IGMoNCwgNSksIFNpZ21hKQ0Kb3Bpbmlvbl9XIDwtIG9waW5pb25zWywgMV0NCm9waW5pb25fTSA8LSBvcGluaW9uc1ssIDJdDQpkeWFkX2lkIDwtIDE6MTAwMA0KDQojIGFuZCBsZXQncyBwdXQgZXZlcnl0aGluZyB0b2dldGhlcg0KZGF0YSA8LSBkYXRhLmZyYW1lKGR5YWRfaWQsIG9waW5pb25fVywgb3Bpbmlvbl9NKQ0KIyBhZGQgc29tZSBkZXNjcmlwdGlvbiB0byB0aGUgZGF0YQ0KYXR0cihkYXRhLCAiZGVzY3JpcHRpb24iKSA8LSAiVGhpcyBpcyBhIHNpbXVsYXRlZCBkYXRhc2V0IHRvIGlsbHVzdHJhdGUgaW50ZXJkZXBlbmRlbmNpZXMgb2Ygb2JzZXJ2YXRpb25zIHdpdGhpbiBkeWFkcyAoaS5lLiBoZXRlcm9zZXh1YWwgY291cGxlcykuIFRoZSBkYXRhc2V0IGlzIGluIHdpZGUtZm9ybWF0OiBvbmUgcm93IHJlZmVycyB0byBvbmUgY291cGxlLiBWYXJpYWJsZXMgd2l0aCBcIl9XXCIgcmVmZXIgdG8gd29tZW4sXCJfTVwiIHJlZmVyIHRvIG1lbi4iDQoNCiMgSSBkb24ndCB0aGluayB0aGUgdmFyaWFibGVzIG5lZWQgYW55IGZ1cnRoZXIgZGVzY3JpcHRpb24uDQoNCnN1bW1hcnkoY2FycykNCmBgYA0KDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRlc2NyaXB0aXZlIFN0YXRpc3RpY3MiDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQpkYXRlOiAiMjAyNS0wOS0xMiINCm91dHB1dDogaHRtbF9kb2N1bWVudA0KLS0tDQoNCmBgYHtyLCBnbG9iYWxzZXR0aW5ncywgZWNobz1GQUxTRSwgd2FybmluZz1GQUxTRSwgcmVzdWx0cz0naGlkZSd9DQpsaWJyYXJ5KGtuaXRyKQ0KDQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpvcHRzX2NodW5rJHNldCh0aWR5Lm9wdHM9bGlzdCh3aWR0aC5jdXRvZmY9MTAwKSx0aWR5PVRSVUUsIHdhcm5pbmcgPSBGQUxTRSwgbWVzc2FnZSA9IEZBTFNFLGNvbW1lbnQgPSAiIz4iLCBjYWNoZT1UUlVFLCBjbGFzcy5zb3VyY2U9YygidGVzdCIpLCBjbGFzcy5vdXRwdXQ9YygidGVzdDIiKSkNCm9wdGlvbnMod2lkdGggPSAxMDApDQpyZ2w6OnNldHVwS25pdHIoKQ0KDQoNCmNvbG9yaXplIDwtIGZ1bmN0aW9uKHgsIGNvbG9yKSB7c3ByaW50ZigiPHNwYW4gc3R5bGU9J2NvbG9yOiAlczsnPiVzPC9zcGFuPiIsIGNvbG9yLCB4KSB9DQoNCg0KYGBgDQoNCmBgYHtyIGtsaXBweSwgZWNobz1GQUxTRSwgaW5jbHVkZT1UUlVFfQ0Ka2xpcHB5OjprbGlwcHkocG9zaXRpb24gPSBjKCd0b3AnLCAncmlnaHQnKSkNCiNrbGlwcHk6OmtsaXBweShjb2xvciA9ICdkYXJrcmVkJykNCiNrbGlwcHk6OmtsaXBweSh0b29sdGlwX21lc3NhZ2UgPSAnQ2xpY2sgdG8gY29weScsIHRvb2x0aXBfc3VjY2VzcyA9ICdEb25lJykNCmBgYA0KDQpMYXN0IGNvbXBpbGVkIG9uIGByIGZvcm1hdChTeXMudGltZSgpLCAnJUIsICVZJylgDQoNCjxicj4NCg0KDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCiMgQ29kZSByZXZpZXcgDQoNClN0YXJ0aW5nIHN0ZXBzIGZvciB3b3JraW5nIHdpdGggZGF0YSwgbmV0d29ya3MsIGFkamFjZW5jeSBtYXRyaWNlcywgYW5kIHZpc3VhbGl6YXRpb25zLiANCg0KKipSIE1hcmtkb3duKioNCg0KIyBNYWtlIGEgbWF0cml4OiBSZXZpZXcgaG93IHRvIG1ha2UgY29sdW1uLCBkYXRhZnJhbWUsIGFuZCBtYXRyaXgNCg0KYGBge3J9DQojbWF0cml4KGRhdGEsIG5yb3csIG5jb2wsIGJ5cm93LCBkaW1uYW1lcykNCm51bTEgPC0gYygwLCAxLCAyLCAzLCA0LCA1LCA2LCA3LCA4KQ0KbnVtMiA8LSBkYXRhLmZyYW1lKDAsIDEsIDIsIDMsIDQsIDUsIDYsIDcsIDgpDQpgYGANCg0KDQojIFRyeSBtYWtpbmcgYSAxMDB4MTAwIG1hdHJpeA0KDQpgYGB7cn0NCiMjIGVnbyBpcyByb3csIGFsdGVyIGlzIGNvbHVtbg0KYmFzZSA8LSBjKDAsIDEpDQptYXQxIDwtIG1hdHJpeChiYXNlLCBucm93PTEwMCwgbmNvbCA9IDEwMCwgYnlyb3cgPSBUUlVFKQ0KI21hdDENCg0KbWF0MiA8LSBtYXRyaXgocm5vcm0oMSksIG5yb3cgPSAxMDAsIGJ5cm93ID0gVFJVRSkNCiNtYXQyDQpgYGANCg0KDQojIFRoZW4gc3RhcnQgc21hbGw6IE1ha2UgYSA0eDQgbWF0cml4DQoNCmBgYHtyfQ0KI2luIGNsYXNzIA0KbnVtYmVycyA8LSBzYW1wbGUoeD0wOjEsIHNpemUgPSAxNiwgcmVwbGFjZSA9IFRSVUUpDQpuZXQxIDwtIG1hdHJpeChudW1iZXJzLCA0LCA0LCBUUlVFKQ0KbmV0MQ0KYGBgDQoNCiMjIFNldCB0aGUgZGlhZ29uYWwgdG8gMDogDQoNClRoaXMgd2lsbCBzdGFydCBwcm9jZXNzIG9mIG1ha2luZyBkYXRhIHN5bW1ldHJpY2FsLCBhbmQgd291bGQgcmVwcmVzZW50IHVuZGlyZWN0ZWQgdGllcy9hbiB1bmRpcmVjdGVkIG5ldHdvcmsuIElmIHlvdSBmbGlwIHRoZSBjb2x1bW5zIGFuZCByb3dzLCB0aGUgbWF0cml4IHdpbGwgbG9vayB0aGUgc2FtZSAodXBwZXIgdHJpYW5nbGUgb2YgdGhlIG1hdHJpeCBiZWNvbWVzIHN5bW1ldHJpYykuDQoNCmBgYHtyfQ0KZGlhZyhuZXQxKSA8LSAwDQpuZXQxDQoNCiN1bmRpcmVjdGVkIG5ldHdvcmsgLS0gc3ltbWV0cmljIG1hdHJpeA0KI3N5bW1ldHJ5IC0gdHJpYW5nbGUgKHRyYW5zcG9zZSBkaWRuJ3Qgd29yaykgLSBpZiBmbGlwIGNvbHVtbnMgYW5kIHJvd3MsIHdpbGwgaGF2ZSB0aGUgc2FtZSBtYXRyaXgNCiMgdXBwZXIgdHJpYW5nbGUgb2YgbWF0cml4IC0tIGFzIEFTIFNZTU1FVFJJQw0KYGBgDQoNCiMjIFRoZW4gcmV2aWV3IHRoZSBkZXNjcmlwdGl2ZSBzdGF0aXN0aWNzDQoNCmBgYHtyfQ0KIyBkZXNjcmlwdGl2ZSBzdGF0aXN0aWNzDQpyb3dTdW1zKG5ldDEpDQptZWFuKG5ldDEpDQoNCmBgYA0KDQoNCg0KTm93IHRoaW5ncyBzcGVlZCB1cC4gDQoNCiMgVGFzazogaG93IG1vZGVsIHRyaWFkIHJlbGF0aW9uc2hpcHM/IA0KDQpGaXJzdCB0aGluayBob3cgdGhpcyB3b3VsZCBwbGF5IG91dDogDQpEaXJlY3RlZCByZWxhdGlvbnNoaXBzOiBwZXIgcm93LCBmb3IgZWdvIDE6IGlmIGVnbyBoYXMgYSB0aWUgd2l0aCBhbHRlciAxLCBhbmQgYWx0ZXIgMSBoYXMgYSB0aWUgd2l0aCBhbHRlciAyLCBhbmQgYWx0ZXIgMyBoYXMgYSB0aWUgd2l0aCAxDQpVbmRpcmVjdGVkIHJlbGF0aW9uc2hpcHM6IHBlciByb3csIGlmIGVnbyAxIGhhcyB0aWUgd2l0aCBlZ28gMiBhbmQgZWdvIDMsIGFuZCBlZ28gMiBhbmQgMyBoYXZlIGEgdGllLCBYWCANCg0KKipTVU1NQVJZIC0gU1RFUFMgRk9SIFdIQVQgQ09WRVJFRCBUT0RBWSoqIA0KDQpgYGAge3J9DQojIyBXT1JLU1BBQ0UgRk9SIExFQVJOSU5HIFIgQ09ERQ0KIyBpbnN0YWxsLnBhY2thZ2VzKCJpZ3JhcGgiKQ0KI2NvZGUgZnJvbSBzYW1wbGUgbGFiIG5vdGVib29rDQojIyBncmFwaCA8LSBncmFwaF9mcm9tX2FkamFjZW5jeV9tYXRyaXgoQU1fZW1wdHksIG1vZGUgPSAiZGlyZWN0ZWQiKQ0KIyMgdHJpYWRfY2Vuc3VzKGdyYXBoKQ0KbGlicmFyeShpZ3JhcGgpDQpgYGAgDQoNCg0KIyMgU3RlcCAxDQoNCioqU1RFUCAxOiBNQUtFIEEgTUFUUklYKioNCldlIHdpbGwgY29tZSBiYWNrIHRvIHRoaXMgbWF0cml4IHRvIGxvb2sgYXQgZGlyZWN0ZWQgcmVsYXRpb25zaGlwcywgd2hpY2ggaXMgTk9UIHN5bW1ldHJpY2FsLiBSYW5kb21pemUgc3RhcnQgd2l0aCAnc2V0LnNlZWQ7DQpgYGAge3J9DQpzZXQuc2VlZCgxMjQzNzYpICNyYW5kb21pemVkIHN0YXJ0DQptYXRyaXgxIDwtIG1hdHJpeChzYW1wbGUoeD0wOjEsIHNpemUgPSAyNSwgcmVwbGFjZSA9IFRSVUUpLCBucm93ID0gNSwgbmNvbCA9IDUpDQpgYGANCg0KDQojIyBTdGVwIDINCg0KKipTVEVQIDI6IE1BS0UgTUFUUklYIFNZTU1FVFJJQ0FMKioNClRoaXMgd2lsbCBtYWtlIGl0IHBvc3NpYmxlIHRvIHJldmlldyB1bmRpcmVjdGVkIHJlbGF0aW9uc2hpcHMuICJ0IiBpcyBhIGNvbW1hbmQgZm9yIHRyYW5zcG9zZS4gd2UgbmV4dCB3aWxsIGxvb2sgZm9yIHRoZSBudW1iZXIgb2YgdGllcyBpbiBhbiB1bmRpcmVjdGVkIG5ldHdvcmsgKGFuZCB3ZSB3aWxsIGJlIGxvb2tpbmcgYXQgYSB0cmFuc2l0aXZlIHRyaWFkKSANCg0KYGBgIHtyfQ0Kc3ltbWF0cml4MSA8LSBtYXRyaXgxICsgdChtYXRyaXgxKSAjdGhpcyB3aWxsIGp1c3QgYWRkIG92ZXIgd2hlcmUgdGhlcmUgYXJlIDEncywgYnV0IGl0IHdpbGwgYmUgYSBiaXQgcmVkdW5kYW50DQpzeW1tYXRyaXgxDQpzeW1tYXRyaXgxW3N5bW1hdHJpeDEgPT0gMl0gPC0gMSAjbmV1dHJhbGl6ZSByZWR1bmRhbmNpZXMNCiAjIFJlcGxhY2VtZW50IHNjcmlwdCAtLSBJRi9FTFNFDQogIyMgc3ltbWF0cml4MSA8LSBpZmVsc2Uoc3ltbWF0cml4MT09MiwxLDApIA0KZGlhZyhzeW1tYXRyaXgxKSA8LSAwDQpzeW1tYXRyaXgxDQpgYGANCg0KDQpgYGAge3J9DQpzeW1tYXRyaXgxRyA8LSBncmFwaF9mcm9tX2FkamFjZW5jeV9tYXRyaXgoc3ltbWF0cml4MSkgDQpjbGFzcyhzeW1tYXRyaXgxRykNCnBsb3Qoc3ltbWF0cml4MUcpICNub3cgd2Ugd2lsbCBtYXAgdGhlIHRyaWFkIHJlbGF0aW9uc2hpcHMNCmlncmFwaDo6dHJhbnNpdGl2aXR5KHN5bW1hdHJpeDFHLCB0eXBlID0gInVuZGlyZWN0ZWQiKQ0KDQpkeWFkX2NlbnN1cyhzeW1tYXRyaXgxRykNCg0KYGBgDQoNCg0KIyMgU3RlcCAzDQoNCioqU1RFUCAzOiBOb3cgd2Ugd2lsbCBsb29rIGF0IHRoZSBkeWFkIHJlbGF0aW9uc2hpcHM6IDAgdGllLCAxLXdheSB0aWUsIG9yIG11dHVhbCAoMi13YXkpIHRpZS4qKg0KDQpOb3cgbG9va2luZyBhdCBkeWFkIHJlbGF0aW9uc2hpcHMgLSBuZWVkIHRvIGxvb2sgYXQgdGhlIGRpcmVjdGlvbiBvZiB0aGUgcmVsYXRpb25zaGlwcy4gTnVtYmVyIG9mIHRpZXMgaW4gYSBkaXJlY3RlZCBuZXR3b3JrIGlzIG5vdCBzeW1tZXRyaWNhbC4gDQpgYGAge3J9DQptYXRyaXgxRyA8LSBncmFwaF9mcm9tX2FkamFjZW5jeV9tYXRyaXgobWF0cml4MSkNCmNsYXNzKG1hdHJpeDFHKQ0KcGxvdChtYXRyaXgxRykNCmlncmFwaDo6dHJhbnNpdGl2aXR5KG1hdHJpeDFHLCB0eXBlID0gInVuZGlyZWN0ZWQiKQ0KZHlhZF9jZW5zdXMobWF0cml4MUcpDQoNCmBgYA0KDQoNCiMjIFN0ZXAgNA0KDQoqKlNURVAgNDogV2Ugd2lsbCBuZXh0IGxvb2sgYXQgdHJpYWQgY2Vuc3VzIGZ1bmN0aW9uOiBsb29rIGF0IHRoZSBkaWZmZXJlbnQgdHlwZXMgb2YgdHJpYWQgcmVsYXRpb25zaGlwcyoqDQpDYW4gbG9vayBhdCBlbXB0eSBkeWFkcyB3aXRoaW4gdHJpYWQ6IGhvdyBtYW55IG9uZS13YXkgYW5kIHR3by13YXkgcmVsYXRpb25zaGlwcyBhcmUgdGhlcmU/IGhvdyBtYW55IGFyZSBtaXNzaW5nPyANCmBgYCB7cn0NCiMgSEFEIFRPIENPTU1FTlQgVEhJUyBUTyBNQUtFIElUIEtOSVQgDQoNCiN0cmlhZF9jZW5zdXMobWF0cml4MUcpICNmcm9tIGlncmFwaCBwYWNrYWdlLCBpdCByZWxheXMgdGhlIGNvdW50cyBmb3IgZWFjaCBvZiB0aGUgMTYgZGlmZmVyZW50IGNvbmZpZ3VyYXRpb25zIGZvciBkaXJlY3RlZCBuZXR3b3JrcyBidXQgaXQgZG9lc24ndCBhY3R1YWxseSBzYXkgdGhlIHR5cGUgb2YgY29uZmlndXJhdGlvbg0KDQojaW5zdGFsbC5wYWNrYWdlcygic25hIikNCiNsaWJyYXJ5KHNuYSkNCiN0cmlhZC5jZW5zdXMobWF0cml4MSkgI09wdGlvbiAxIGZvciBsb29raW5nIGF0IHRoZSB0eXBlcyBvZiB0cmlhZCBjZW5zdXMgZnVuY3Rpb25zDQoNCiN0cmlhZF9jb3VudHMgPC0gdHJpYWQuY2Vuc3VzKGFzLm1hdHJpeChhc19hZGphY2VuY3lfbWF0cml4KG1hdHJpeDFHKSkpICNPcHRpb24gMg0KI3ByaW50KHRyaWFkX2NvdW50cykNCmBgYCANCg0KDQojIyBTdGVwIDUNCg0KKipTVEVQIDU6IE1BS0UgMTAwIFJPVyBBTkQgQ09MVU1OIE1BVFJJWCBBTkQgVklTVUFMSVpFIERZQURTIEFORCBUUklBRFMgQk9PTSoqDQpgYGAge3J9DQpzZXQuc2VlZCgxNzgzNzYpICNyYW5kb21pemVkIHN0YXJ0DQptYXRyaXgxMDAgPC0gbWF0cml4KHNhbXBsZSh4PTA6MSwgc2l6ZSA9IDEwMDAwLCByZXBsYWNlID0gVFJVRSksIG5yb3cgPSAxMDAsIG5jb2wgPSAxMDApDQoNCm1hdHJpeDEwMEcgPC0gZ3JhcGhfZnJvbV9hZGphY2VuY3lfbWF0cml4KG1hdHJpeDEwMCkNCmNsYXNzKG1hdHJpeDEwMEcpDQpwbG90KG1hdHJpeDEwMEcpDQojaWdyYXBoOjp0cmFuc2l0aXZpdHkobWF0cml4MTAwRywgdHlwZSA9ICJ1bmRpcmVjdGVkIikNCiNkeWFkX2NlbnN1cyhtYXRyaXgxMDBHKQ0KI3RyaWFkLmNlbnN1cyhtYXRyaXgxMDBHKSANCmBgYCANCg0KDQoNCiMgV29ya3NwYWNlIA0KDQpXT1JLU1BBQ0UgQkVMT1cgLSBGcm9tIHdvcmtpbmcgc2Vzc2lvbiBpbiBjbGFzcyANCmBgYCB7cn0NCg0KDQojIGlmIFsxLDJdPVRSVUUgYW5kIFsyLDNdPVRSVUUgYW5kIFszLDFdPXRydWUNCiMgaWYgeD0xIGFuZCANCg0KIyMgVGV4dCBGcm9tIFdvcmtpbmcgaW4gQ2xhc3M6IA0KbGlicmFyeShpZ3JhcGgpDQpzZXQuc2VlZCgxMjM0NDMpDQpuZXQzIDwtIG1hdHJpeChzYW1wbGUoMDoxLCAxNiwgcmVwbGFjZSA9IFRSVUUpLCBucm93ID0gNCwgbmNvbCA9IDQpDQoNCm5ldE4gPC0gbmV0MyArIHQobmV0MykNCm5ldE5bbmV0TiA9PSAyXSA8LSAxDQpkaWFnKG5ldE4pIDwtIDANCm5ldE4NCg0KIyMgY2xvc2VkIHRyaWFkOiAxIGNvbm5lY3RlZCB0byAyIGFuZCAzLCAyIHRvIDEgYW5kIDMsIGFuZCAzIGNvbm5lY3RlZCB0byAxIGFuZCAyDQpuZXRHIDwtIGdyYXBoX2Zyb21fYWRqYWNlbmN5X21hdHJpeChuZXROKQ0KY2xhc3MobmV0RykNCnBsb3QobmV0RykNCmlncmFwaDo6dHJhbnNpdGl2aXR5KG5ldEcsIHR5cGUgPSAidW5kaXJlY3RlZCIpDQoNCmR5YWRfY2Vuc3VzKG5ldEcpDQojIyBkeWFkOiBjYW4gaGF2ZSBubywgMSwgb3IgMi13YXkgcmVsYXRpb25zaGlwLiANCg0KDQoNCmBgYA0KDQoNCmRpZmZlcmVudCBzZWVkDQoNCmBgYCB7cn0NCnNldC5zZWVkKDEyMzY0MykNCm5ldDQgPC0gbWF0cml4KHNhbXBsZSgwOjEsIDE2LCByZXBsYWNlID0gVFJVRSksIG5yb3cgPSA0LCBuY29sID0gNCkNCg0KbmV0TSA8LSBuZXQ0ICsgdChuZXQ0KQ0KbmV0TVtuZXRNID09IDJdIDwtIDENCmRpYWcobmV0TSkgPC0gMA0KbmV0TQ0KbmV0USA8LSBncmFwaF9mcm9tX2FkamFjZW5jeV9tYXRyaXgobmV0TSkNCmNsYXNzKG5ldFEpDQpwbG90KG5ldFEpDQppZ3JhcGg6OnRyYW5zaXRpdml0eShuZXRRLCB0eXBlID0gInVuZGlyZWN0ZWQiKQ0KDQpgYGANCg0KRnJvbSBzYW1wbGUgc3R1ZGVudCBub3RlYm9vazoNCg0KYGBgIHtyfQ0KcmVxdWlyZShpZ3JhcGgpDQpnIDwtIG1ha2VfZ3JhcGgoIlphY2hhcnkiKQ0KcGxvdChnKQ0KZ21hdCA8LSBhc19hZGphY2VuY3lfbWF0cml4KGcsIHR5cGUgPSAiYm90aCIsIHNwYXJzZSA9IEZBTFNFKQ0KZ21hdA0KDQpgYGANCg0KDQpBIGRpZmZlcmVudCBzYW1wbGUgDQoNCmBgYCB7cn0NCnJlcXVpcmUoTUFTUykNCnNldC5zZWVkKDk4NjQpICAjIFdlIHNldCBhIHNlZWQuIEluIHRoaXMgd2UgdGhlIHJhbmRvbSBudW1iZXJzIHdlIHdpbGwgZ2VuZXJhdGUgYmUgdGhlIHNhbWUgYW5kIHdlIHRodXMgZW5kIHVwIHdpdGggdGhlIHNhbWUgZGF0YXNldC4gUGxlYXNlIG5vdCB0aGF0IHRvIGJlIGFic29sdXRlbHkgc3VyZSB0byBnZXQgdGhlIHNhbWUgZGF0YXNldCwgd2UgbmVlZCB0byBydW4gdGhlIHNhbWUgUiB2ZXJzaW9uIChhbmQgcGFja2FnZXMpLg0KDQojIGxldCB1cyBzdGFydCB3aXRoIHNpbXVsYXRpbmcgdGhlIG9waW5pb24gb2YgYm90aCBwYXJ0bmVycy4NClNpZ21hIDwtIG1hdHJpeChjKDEwLCA0LCA0LCA1KSwgMiwgMikNCm9waW5pb25zIDwtIG12cm5vcm0obiA9IDEwMDAsIG11ID0gYyg0LCA1KSwgU2lnbWEpDQpvcGluaW9uX1cgPC0gb3BpbmlvbnNbLCAxXQ0Kb3Bpbmlvbl9NIDwtIG9waW5pb25zWywgMl0NCmR5YWRfaWQgPC0gMToxMDAwDQoNCiMgYW5kIGxldCdzIHB1dCBldmVyeXRoaW5nIHRvZ2V0aGVyDQpkYXRhIDwtIGRhdGEuZnJhbWUoZHlhZF9pZCwgb3Bpbmlvbl9XLCBvcGluaW9uX00pDQojIGFkZCBzb21lIGRlc2NyaXB0aW9uIHRvIHRoZSBkYXRhDQphdHRyKGRhdGEsICJkZXNjcmlwdGlvbiIpIDwtICJUaGlzIGlzIGEgc2ltdWxhdGVkIGRhdGFzZXQgdG8gaWxsdXN0cmF0ZSBpbnRlcmRlcGVuZGVuY2llcyBvZiBvYnNlcnZhdGlvbnMgd2l0aGluIGR5YWRzIChpLmUuIGhldGVyb3NleHVhbCBjb3VwbGVzKS4gVGhlIGRhdGFzZXQgaXMgaW4gd2lkZS1mb3JtYXQ6IG9uZSByb3cgcmVmZXJzIHRvIG9uZSBjb3VwbGUuIFZhcmlhYmxlcyB3aXRoIFwiX1dcIiByZWZlciB0byB3b21lbixcIl9NXCIgcmVmZXIgdG8gbWVuLiINCg0KIyBJIGRvbid0IHRoaW5rIHRoZSB2YXJpYWJsZXMgbmVlZCBhbnkgZnVydGhlciBkZXNjcmlwdGlvbi4NCg0Kc3VtbWFyeShjYXJzKQ0KYGBgDQoNCg==</div>
 
 
 </div>

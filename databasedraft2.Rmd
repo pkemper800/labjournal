@@ -58,6 +58,7 @@ library(pingr)
 library(jsonlite)
 library(stringr)
 library(openalexR)
+library(dplyr)
 ```
 
 # Step 1: Pull data

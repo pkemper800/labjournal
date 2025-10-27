@@ -5,6 +5,39 @@ date: "2025-10-02"
 output: html_document
 ---
 
+
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
 VISUALIZING NETWORK 
 
 # Goal: Visualize network of collaborations for RU Sociology professors
@@ -285,8 +318,6 @@ plot(test_w2,
   edge.arrow.size =0.2)
 
 
-plot(test_w1)
-plot(test_w2)
 ```
 
 
@@ -354,8 +385,8 @@ igraph::triad.census(test_w2) #with plot -- works
 
 
 
-install.packages("sna")
-library(sna)
+#install.packages("sna")
+#library(sna)
 
 # Wave 1
 sna::triad.census(test$nets[1,,]) #with adj matrix of test_w1 -- triad.census of (test_w1) doesn't work. 
@@ -411,7 +442,9 @@ plot(test_w1, mode = "undirected")
 
 set.seed(2345)
 l <- layout_with_mds(test_w1)  #https://igraph.org/r/doc/layout_with_mds.html
-plot(test_w1, layout = l)
+plot(test_w1, 
+     vertex.label = NA,
+     layout = l)
 # story in second plot: 3 clusters, around 1, around 34 - and in between (which wasn't as clear before)
 
 
@@ -441,22 +474,99 @@ plot(test_w1, layout = l)
 
 # Webscraping manual
 ## load data
+
+
+## get institutions
+```{r}
+#FROM WEBSCRAPING MANUAL - GET INSTITUTIONS
+
+#need df_scholars dataframe
+```
+
+
+
+```{r}
+df22_soc <- readxl::read_xlsx("C:/Github/labjournal/2022scholarid_jt.xlsx", sheet = 1)
+df22_soc$discipline <- "sociology"
+df22_soc$Specialisatie <- NA
+df22_pol <- readxl::read_xlsx("C:/Github/labjournal/2022scholarid_jt.xlsx", sheet = 2)
+df22_pol$discipline <- "political science"
+df22 <- rbind(df22_soc, df22_pol)
+df22$year <- 22
+df24_soc <- readxl::read_xlsx("C:/Github/labjournal/2024scholarid_jt.xlsx", sheet = 1)
+df24_soc$discipline <- "sociology"
+df24_soc$Specialisatie <- NA
+df24_pol <- readxl::read_xlsx("C:/Github/labjournal/2024scholarid_jt.xlsx", sheet = 2)
+df24_pol$discipline <- "political science"
+df24 <- rbind(df24_soc, df24_pol)
+df24$year <- 24
+```
+
+
+
+Had to comment out all of the following to get to knit 
+
+```{r}
+
+# df22 <- df22 %>%
+#    filter(!is.na(Naam)) %>%
+#    mutate(Universiteit1 = sapply(str_split(Universiteit, "/"), "[", 1), Universiteit2 = sapply(str_split(Universiteit,
+#        "/"), "[", 2))
+# remove duplicates
+#df24 <- df24 %>%
+#    filter(!is.na(Naam)) %>%
+#    mutate(Universiteit1 = sapply(str_split(Universiteit, "/"), "[", 1), Universiteit2 = sapply(str_split(Universiteit,
+#        "/"), "[", 2))
+
+#df_scholars <- full_join(x = df22, y = df24, by = "Naam", suffix = c(".22", ".24"))
+# table(df_scholars$Universiteit.22[is.na(df_scholars$Universiteit.24)], useNA = 'always')
+# table(df_scholars$Universiteit.24[is.na(df_scholars$Universiteit.22)], useNA = 'always')
+
+df_scholars <- scholars
+
+# correct typos
+df_scholars$Universiteit2.22[df_scholars$Naam == "David van der Duin"] <- "UvA"
+
+df_scholars$Universiteit1.22[df_scholars$Naam == "Duygu Uysal Dincol"] <- "Koc University"
+
+df_scholars$Universiteit2.22[df_scholars$Naam == "Duygu Uysal Dincol"] <- "UvA"
+
+
+# correct the type
+#df_scholars <- df_scholars %>%
+#    mutate(across(c(Universiteit1.22, Universiteit2.22, Universiteit1.24, Universiteit2.24), ~case_when(.x ==
+#        "Uvt" ~ "UvT", .x == "UU?" ~ "UU", .x == "Leiden uni" ~ "Leiden", .x == "UvA?" ~ "UvA", .x ==
+#        "Uva" ~ "UvA", .x == "UU?" ~ "UU", .x == "Tilburg" ~ "UvT", is.na(.x) ~ "", .default = as.character(.x))))
+
+#fshowdf(df_scholars)
+
+
+
+instituties <- na.omit(unique(c(df_scholars$Universiteit1.22, df_scholars$Universiteit2.22, df_scholars$Universiteit1.24,
+    df_scholars$Universiteit2.24)))
+df_instituties <- data.frame(instituties)
+fshowdf(instituties)
+```
+
+
+
 ```{r}
 #FROM WEBSCRAPING MANUAL/TUTORIAL
 socprofs2022$Universiteit1.22[socprofs2022$Naam == "Duygu Uysal Dincol"] <- "Koc University"
 socprofs2022$Universiteit2.22[socprofs2022$Naam == "Duygu Uysal Dincol"] <- "UvA"
 
+
+#COMMENT OUT FOR KNITTING : 
 # correct the type
-socprofs2022 <- socprofs2022 %>%
-    mutate(across(c(Universiteit1.22, Universiteit2.22, Universiteit1.24, Universiteit2.24), ~case_when(.x ==
-        "Uvt" ~ "UvT", .x == "UU?" ~ "UU", .x == "Leiden uni" ~ "Leiden", .x == "UvA?" ~ "UvA", .x ==
-        "Uva" ~ "UvA", .x == "UU?" ~ "UU", .x == "Tilburg" ~ "UvT", is.na(.x) ~ "", .default = as.character(.x))))
-fshowdf(socprofs2022)
+#socprofs2022 <- socprofs2022 %>%
+#    mutate(across(c(Universiteit1.22, Universiteit2.22, Universiteit1.24, Universiteit2.24), ~case_when(.x ==
+#        "Uvt" ~ "UvT", .x == "UU?" ~ "UU", .x == "Leiden uni" ~ "Leiden", .x == "UvA?" ~ "UvA", .x ==
+#        "Uva" ~ "UvA", .x == "UU?" ~ "UU", .x == "Tilburg" ~ "UvT", is.na(.x) ~ "", .default = as.character(.x))))
+#fshowdf(socprofs2022)
 ```
 
-## get institutions
+
 ```{r}
-#FROM WEBSCRAPING MANUAL - GET INSTITUTIONS
 instituties <- na.omit(unique(c(df_scholars$Universiteit1.22, df_scholars$Universiteit2.22, df_scholars$Universiteit1.24,
     df_scholars$Universiteit2.24)))
 df_instituties <- data.frame(instituties)
@@ -493,54 +603,60 @@ df_instituties$inst.id[df_instituties$instituties == "WUR"] <- f_inst("Wageninge
 
 # SCHOLARS ID FROM WEBSCRAPING
 df_scholars_list <- list()  #object where to save all author info
+```
 
-for (i in 1:nrow(df_scholars)) {
-    naam <- df_scholars$Naam[i]  #retrieve name of scholar of interest
 
-    # retrieve the affiliations/universities of this scholar
-    universities <- unique(na.omit(c(df_scholars$Universiteit1.22[i], df_scholars$Universiteit2.22[i],
-        df_scholars$Universiteit1.24[i], df_scholars$Universiteit2.24[i])))
+ Had to comment out all of the following to get to knit 
+
+
+```{r}
+#for (i in 1:nrow(df_scholars$demographics)) {
+#    naam <- df_scholars$Naam[i]  #retrieve name of scholar of interest
+
+#    # retrieve the affiliations/universities of this scholar
+#    universities <- unique(na.omit(c(df_scholars$Universiteit1.22[i], df_scholars$Universiteit2.22[i],
+#        df_scholars$Universiteit1.24[i], df_scholars$Universiteit2.24[i])))
     
-    inst.ids <- na.omit(df_instituties$inst.id[df_instituties$instituties %in% universities])
+#    inst.ids <- na.omit(df_instituties$inst.id[df_instituties$instituties %in% universities])
 
-    # search for the id(s) of this name filtering on all possible affiliations
-    naam_list <- list()
-    if (length(inst.ids) > 0) {
-        # just to jump over scholars without affiliation (some external phds)
-        for (j in 1:length(inst.ids)) {
-            naam_list[[j]] <- oa_fetch(entity = "author", search = naam, affiliations.institution.id = inst.ids[j])
-        }
-        naam_list <- do.call(rbind.data.frame, naam_list)  #put everything in a dataframe
-        naam_list <- naam_list[!duplicated(naam_list), ]  #remove duplicates
+#    # search for the id(s) of this name filtering on all possible affiliations
+#    naam_list <- list()
+#    if (length(inst.ids) > 0) {
+#        # just to jump over scholars without affiliation (some external phds)
+#        for (j in 1:length(inst.ids)) {
+#            naam_list[[j]] <- oa_fetch(entity = "author", search = naam, affiliations.institution.id = inst.ids[j])
+#        }
+#        naam_list <- do.call(rbind.data.frame, naam_list)  #put everything in a dataframe
+#        naam_list <- naam_list[!duplicated(naam_list), ]  #remove duplicates
 
-        # and save
-        df_scholars_list[[i]] <- naam_list
-    }
-}
-fsave(df_scholars_list, file = "df_scholars_list")
+#        # and save
+#        df_scholars_list[[i]] <- naam_list
+#    }
+#}
+#fsave(df_scholars_list, file = "df_scholars_list")
 
 
 # THEN DF WITH ID AND FIRST ID
-df_scholars$no_oa_id <- as.numeric(sapply(df_scholars_list, length) == 0)
-df_scholars$au_id <- sapply(df_scholars_list, function(l) {
-    if (is.null(l$id[1])) {
-        NA
-    } else {
-        l$id[1]
-    }
-})
-fshowdf(df_scholars)
+#df_scholars$no_oa_id <- as.numeric(sapply(df_scholars_list, length) == 0)
+#df_scholars$au_id <- sapply(df_scholars_list, function(l) {
+#    if (is.null(l$id[1])) {
+#        NA
+#    } else {
+#        l$id[1]
+#    }
+#})
+#fshowdf(df_scholars)
 
 
 # MAKE LIST OF WORKS FROM WEBSCRAPING TUTORIAL
-works <- list()
-nrow(df_scholars)
-for (i in 1:nrow(df_scholars)) {
-    if (df_scholars$no_oa_id[i] == 0) {
-        id <- df_scholars_list[[i]]$id
-        works[[i]] <- oa_fetch(entity = "works", author.id = id)
-    }
-}
+#works <- list()
+#nrow(df_scholars)
+#for (i in 1:nrow(df_scholars)) {
+#    if (df_scholars$no_oa_id[i] == 0) {
+#        id <- df_scholars_list[[i]]$id
+#        works[[i]] <- oa_fetch(entity = "works", author.id = id)
+#    }
+#}
 
 # note that for quite some works we have a truncated author list. perhaps best to loop again ove
 # all papers to find all authors.  apply(c('W2097078822', 'W1680837216'), \(x) oa_fetch(identifier
@@ -548,37 +664,37 @@ for (i in 1:nrow(df_scholars)) {
 
 # also note that there are many duplicates in the publications because i query for each author
 # separately.
-fsave(works, "works")
+#fsave(works, "works")
 
-df_works <- fload("./data/processed/works_20240918.rda") # SAVE IT!!
+#df_works <- fload("./data/processed/works_20240918.rda") # SAVE IT!!
 ```
 
 
 ## COMBINE AND CLEAN DATA - 1.9.1
 ```{r}
-no_id <- which(df_scholars$no_oa_id == 1)
-df_scholars_sel <- df_scholars[-no_id, ]
-df_scholars_list_sel <- df_scholars_list[-no_id]
-df_works_sel <- df_works[-no_id]
+#no_id <- which(df_scholars$no_oa_id == 1)
+#df_scholars_sel <- df_scholars[-no_id, ]
+#df_scholars_list_sel <- df_scholars_list[-no_id]
+#df_works_sel <- df_works[-no_id]
 
-duplicates <- which(duplicated(df_scholars_sel$au_id) == 1)
-df_scholars_sel <- df_scholars_sel[-duplicates, ]
-df_scholars_list_sel <- df_scholars_list_sel[-duplicates]
-df_works_sel <- df_works_sel[-duplicates]
-demographics <- split(df_scholars_sel, row(df_scholars_sel)[, 1])
+#duplicates <- which(duplicated(df_scholars_sel$au_id) == 1)
+#df_scholars_sel <- df_scholars_sel[-duplicates, ]
+#df_scholars_list_sel <- df_scholars_list_sel[-duplicates]
+#df_works_sel <- df_works_sel[-duplicates]
+#demographics <- split(df_scholars_sel, row(df_scholars_sel)[, 1])
 
-scholars <- list(demographics = demographics, scholars_oa = df_scholars_list_sel, works = df_works_sel)
+#scholars <- list(demographics = demographics, scholars_oa = df_scholars_list_sel, works = df_works_sel)
 
-scholars$demographics[[1]]$Naam
-scholars$scholars_oa[[1]]$display_name
-scholars$demographics[[1]]$Naam %in% scholars$works[[1]]$author[[1]]$au_display_name
+#scholars$demographics[[1]]$Naam
+#scholars$scholars_oa[[1]]$display_name
+#scholars$demographics[[1]]$Naam %in% scholars$works[[1]]$author[[1]]$au_display_name
 
-scholars$demographics[[675]]$Naam
-scholars$scholars_oa[[675]]$display_name
-scholars$demographics[[675]]$Naam %in% scholars$works[[675]]$author[[1]]$au_display_name
+#scholars$demographics[[675]]$Naam
+#scholars$scholars_oa[[675]]$display_name
+#scholars$demographics[[675]]$Naam %in% scholars$works[[675]]$author[[1]]$au_display_name
 
 # matching seems in order.
-fsave(scholars, "scholars")
+#fsave(scholars, "scholars")
 
 ```
 

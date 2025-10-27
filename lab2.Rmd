@@ -32,26 +32,18 @@ Date: `r colorize("12 September 2025", "navy")`
 
 _This page will first review the course homework assignments (to have prepared on 12 September), and then assignments from class will follow._
 
-**Week 2 Assignments:**
+# Week 2 Assignments:
 
-1.  Review: Chapter 2, 3,3 and 4
+1.  Review: Chapter 2, 3,3 and 4 in SNASS
+
+-   Note to remember - **Homophily** - When looking at it as a consequence of the tie in dyads, focus on dynamic characteristics (like political opinion) and the shared context and influence processes.
+
+-   Also remember ego: Individual / node / agent / actor
 
 2.  Assignment from Chapter 2
 
-# Homework Review
 
-## Chapter 2
 
--   Ego: Individual / node / agent / actor
-
-## Chapter 3.3
-
--   Homogamy:
--   Homophily: . When looking at it as a consequence of the tie in dyads, focus on dynamic characteristics (like political opinion) and the shared context and influence processes
-
-## Chapter 4
-
-Assignment code:
 
 ------------------------------------------------------------------------
 
@@ -207,4 +199,6 @@ table(cv08$lftop_new, useNA = "always") #Check results
 |:-------------------------------------------|
 | \## The above could also be re-written as: |
 
-**In class work: Code Review**
+**In class work: go to Code Review**
+
+

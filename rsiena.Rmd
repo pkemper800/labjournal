@@ -1,7 +1,43 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "rsiena"
+output:
+  html_document:
+    df_print: paged
 ---
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
 
 # R Sienna example: 
 
@@ -52,6 +88,23 @@ fpackage.check(packages)
 # devtools::install_github('JochemTolsma/RsienaTwoStep', build_vignettes=TRUE)
 packages = c("RsienaTwoStep")
 fpackage.check(packages)
+
+
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+packages <- c("devtools", "igraph")
+
+fpackage.check(packages)
+
+library(readxl)
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+library(dplyr)
 ```
 
 NEED DATA - use build in datasets from RSIENNA 
@@ -82,7 +135,7 @@ dim(s501) #says 50x50: 50 rows, 50 columns in data.
 nets <- array (data = c(s501, s502), dim = c(dim(s501), 2)) #
 c(dim(s501),2)
 
-# dimentions of array are number of columns and number of rows 
+# dimensions of array are number of columns and number of rows 
 ```
  could replace this with data set from last week 
  
@@ -161,7 +214,7 @@ outAct
 
 We know tie distributions are skewed, some people send a lot of ties and others dont. 
 
-inPop: in degree activity: people who reseive a lot of in-degrees send a lot of out-degrees 
+inPop: in degree activity: people who receive a lot of in-degrees send a lot of out-degrees 
 
 isolateNet: people without a lot of indegree nets. 
 

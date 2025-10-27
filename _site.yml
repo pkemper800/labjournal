@@ -33,10 +33,31 @@ navbar:
         href: lab6.html
         
         
-    - text: "Assignments"
+    - text: "codereview"
       menu:
-      - text: "Assignment 1"
-        href: assignment1.html
+      - text: "codereview"
+        href: codereview.html
+        
+      - text: "codereview2"
+        href: codereview2.html
+      
+      - text: "codereview3"
+        href: codereview3.html
+  
+  
+        
+    - text: "rsiena"
+      menu:
+      - text: "rsiena"
+        href: rsiena.html
+        
+      - text: "rsiena2"
+        href: rsiena2.html
+        
+      - text: "gof"
+        href: gof.html
+  
+  
         
     - text: "Research"
       menu:
@@ -52,22 +73,10 @@ navbar:
       - text: "Working Draft"
         href: workingdraft.html
         
-    - text: "codereview"
-      menu:
-      - text: "codereview"
-        href: codereview.html
+      - text: "finalpaperdraft"
+        href: finalpaperdraft.html
         
-      - text: "codereview2"
-        href: codereview2.html
-      
-      - text: "codereview3"
-        href: codereview3.html
-        
-      - text: "rsiena"
-        href: rsiena.html
-        
-      - text: "rsiena2"
-        href: rsiena2.html
+
 
 
 

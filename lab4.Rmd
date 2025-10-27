@@ -5,11 +5,40 @@ date: "2025-09-16"
 output: html_document
 ---
 
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-DURING CLASS:
+# DURING CLASS:
+
+## sample using igraph
 
 ``` {r}
 require(igraph)
@@ -22,6 +51,17 @@ plot(g)
 # So: degree centrality, then bridges -- so, if the story is that there are differences in degree centrality, could illustrate nodes by differing size
 ``` 
 
+Note: 
+*Measures of centrality:*
+Degrees - is the most simple term for centrality is the degrees of connection. 
+
+If want to describe network, what dimensions describe? 
+-   If it is complete, the size of it, what kind of relationship (un/directed), if the tie is weighed (and the node type)
+
+So: degree centrality, then bridges -- if the story is that there are differences in degree centrality, could illustrate nodes by differing size for example. 
+
+
+## Local transitivity
 
 ``` {r}
 gmat <- as_adjacency_matrix(g, type = "both", sparse = FALSE)
@@ -52,20 +92,27 @@ igraph::transitivity(g, type = c("localundirected"), isolates = c("NaN", "zero")
 
 ``` 
 
-Next, moving from local to global transitivity - look at triads. Global transitivity 
-* reviewing dyad - then triad - and since it is undirected, it is less difficult to calculate. now, triad census vs triad allegation
-* global: number of observed over possible - can identify all transitive triads and all possible triads 
-``` {r}
-igraph::dyad.census(g)
 
-igraph::triad.census(g)
+## Global transitivity 
+
+Next, moving from local to global transitivity - look at triads. Global transitivity below. 
+
+Note: reviewing dyad - then triad - and since it is undirected, it is less difficult to calculate. 
+Now, triad census vs triad allegation. Global: number of observed over possible - **can identify all transitive triads and all possible triads.** 
+
+``` {r}
+# Had to comment this out to get it to knit ? 
+
+#igraph::dyad.census(g)
+
+#igraph::triad.census(g)
 # I will use sna because it shows the names of the triads as well.
 
-install.packages("sna")
-library(sna)
+#install.packages("sna")
+#library(sna)
 
-sna::triad.census(gmat)
-unloadNamespace("sna")  #I will detach this package again, otherwise it will interfere with all kind of functions from igraph, and my students will hate me for that.
+#sna::triad.census(gmat)
+#unloadNamespace("sna")  #I will detach this package again, otherwise it will interfere with all kind of functions from igraph, and my students will hate me for that.
 
 ####
 
@@ -81,7 +128,9 @@ transitivity_g
 
 ``` 
 
-Network visualisation: Let’s make size proportional to betweenness score
+
+## Network visualization: Let’s make size proportional to betweeness score
+
 ``` {r}
 # changing V
 V(g)$size = betweenness(g, normalized = T, directed = FALSE) * 60 + 10  #after some trial and error
@@ -91,6 +140,9 @@ plot(g, mode = "undirected")
 
 ``` 
 
+
+## Reduce overlap
+Goal: I want to hold printing device constant, and then reduce overlap. To do this, the idea is to push least central egos out. 
 
 ``` {r}
 # igraph, want no pverlap - igraph plotting no overlap -- a lot of layout functions -- want to hold printing device constant, and then reduce overlap...the idea is to push least central egos out 
@@ -102,6 +154,8 @@ plot(g, layout = l)
 
 ``` 
 
+
+### Can also do this manually
 **can save coordinates of layout, and then tweak coordinates ourself - but that is no longer an objective layout function**
 
 ``` {r}
@@ -114,7 +168,11 @@ plot(g, layout = l)
 
 looking at this, maybe 1, 33 and 34 are instructures, and numbers closer to 1 are more similar to 1 and 34, 34. 
 
+
+## Get final picture 
+
 Last step, manipulate data more and get final picture
+
 ``` {r}
 plot(g, layout = l, margin = c(0, 0, 0, 0))
 legend(x = -2, y = -1.5, c("Note: the position of nodes 1 and 34 have been set by Jochem Tolsma \n for visualisation purposes only and do not reflect network properties"),
@@ -122,25 +180,25 @@ legend(x = -2, y = -1.5, c("Note: the position of nodes 1 and 34 have been set b
 ``` 
 
 
+**Other notes** 
+
 Notes: size ---> degree of centrality! 
 
+Review of twitter research -- 
 
 jochemtolsma.github.io/Twitter/figures.html
 
-looking at data of parliament from twitter -- some type of segmentation by party - coloring the different parties makes it much easier to discern differences. can look at directed / undirected (mutual)
-
-then used same plots, differed by algorithm - same colors (party) cluster together - prove to reviewer that algorithm outputs cluster. 
-
-Then, take home message: clustering by party. PVV is outlier. proves that there is differing levels of segmentation, too. 
+-    Looking at data of parliament from twitter -- some type of segmentation by party - coloring the different parties makes it much easier to discern differences. can look at directed / undirected (mutual).
+-    Then used same plots, differed by algorithm - same colors (party) cluster together - prove to reviewer that algorithm outputs cluster. 
+Take home message: clustering by party. PVV is outlier. proves that there is differing levels of segmentation, too. 
 
 
+Remember: 
 descriptive: macro level, ego, triad, etc. 
 descriptive research question - 50-75% of final project assignment 
 
 
 
-
-
 ``` {r}
 ``` 
 
@@ -149,15 +207,24 @@ descriptive research question - 50-75% of final project assignment
 ``` 
 
 
+# After class: 
+Codereview 2 
 
-BEFORE CLASS: 
 
-First Open Alex Attempt
 
+# BEFORE CLASS: 
+
+## First Open Alex Attempt
+
+### clean workspace
 ``` {r}
 # start with clean workspace
 rm(list = ls())
+```
 
+### Install packages 
+
+``` {r}
 #install.packages('data.table')
 library(data.table)  # mainly for faster data handling
 
@@ -172,17 +239,23 @@ require(devtools)
 
 #RSelenium usefull for websites where the data is 'loaded in', rvest cant handle that
 #packages: "RSelenium", "rvest", "tidyverse", "netstat", "pingr", "stringr"
+
 #install.packages("RSelenium")
 #install.packages("netstat")
 #install.packages("pingr")
+```
 
-install.packages("RSelenium")
-install.packages("rvest")
-install.packages("tidyverse")
-install.packages("netstat")
-install.packages("pingr")
-install.packages("stringr")
-install.packages("selenider")
+
+Had to comment this out to knit 
+
+``` {r}
+# install.packages("RSelenium") # 
+#install.packages("rvest")
+#install.packages("tidyverse")
+# install.packages("netstat") # had to comment this out to knit
+#install.packages("pingr") # had to comment this out to knit
+#install.packages("stringr")# had to comment this out to knit
+#install.packages("selenider")# had to comment this out to knit
 
 library(selenider)
 library(rvest)
@@ -194,17 +267,60 @@ library(stringr)
 ```
 
 
+
+
+```{r}
+rm(list = ls())
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+```
+
+
+### Code for attmepting to scrape Open Alex (just radboud)
+
 ``` {r}
 options(openalexR.mailto = "paige.kemper@ru.nl") 
 
 library(openalexR)
-df_test <- oa_fetch(entity= "author", search = "Jochem+Tolsma", mailto = "paige.kemper@ru.nl")
-df_test
+ df_test <- oa_fetch(entity= "author", search = "Jochem+Tolsma", mailto = "paige.kemper@ru.nl")
+ df_test
+``` 
 
+Had to comment out following code to knit
+``` {R}
 require(openalexR)
-fshowdf(df_test)
+fshowdf(df_test) # had to comment this out to knit
 
-#test finding radboud university institution in Open Alex 
+# test finding radboud university institution in Open Alex 
 
 df_ru <-oa_fetch(entity = "institution", search = "Radboud+University+Nijmegen", mailto="paige.kemper@ru.nl") #author.id = df_test$id)
 df_ru
@@ -216,12 +332,15 @@ f_inst <- function(x) {
     oa_fetch(entity = "institutions", search = x)$id[1]
 }
 df_insts
+```
 
 
+### Code for attempting to search for specific author in Open Alex
 
-
+``` {r}
 ## find authors with specific names
 #start with column
+
 authors <- c("Jochem Tolsma", "Tom van der Meer", "Maurice Gesthuizen", "Michael Savelkoul")
 
 df_authors <- NA
@@ -243,12 +362,14 @@ df_authors #returns websites for each author
 ```
 
 
+### Searching institution in Open Alex - another attempt
+
 ``` {r}
 #can search institutions within openalex
 df_institution <- oa_fetch(entity = "institutions", search = "radboud university nijmegen")$id[1]
 df_institution
 
-df_institution2 <- oa_fetch()
+# df_institution2 <- oa_fetch()
 
 #can search authors
 df_author <- oa_fetch(entity = "author", search = "Tolsma")
@@ -271,283 +392,8 @@ uva_id
 
 
 
-# Chapter 5
-
 ``` {r}
 ```
+
 load("C:/Users/paigek/Downloads/liss_cdn.Rdata")
 
-
-#### clean the environment ####.
-rm(list = ls())
-load("C:/Users/paigek/Downloads/liss_cdn.Rdata")
-
-#### packages ####.
-require(tidyverse)
-require(lavaan)
-
-##### Data input ###.
-load("addfiles/liss_cdn.Rdata")
-
-liss_l <- liss_cdn[[1]]
-liss_w <- liss_cdn[[2]]
-
-
-# we need to disaggregate our data. thus each ego, wave, alter per row.
-liss_ll <- rbind(liss_l, liss_l, liss_l, liss_l, liss_l)
-liss_ll$index_alter <- rep(1:5, each = length(liss_l[, 1]))
-liss_ll$educ_alter <- NA
-
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 1, liss_ll$educ_alter1, liss_ll$educ_alter)
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 2, liss_ll$educ_alter2, liss_ll$educ_alter)
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 3, liss_ll$educ_alter3, liss_ll$educ_alter)
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 4, liss_ll$educ_alter4, liss_ll$educ_alter)
-liss_ll$educ_alter <- ifelse(liss_ll$index_alter == 5, liss_ll$educ_alter5, liss_ll$educ_alter)
-
-liss_ll_sel <- liss_ll %>%
-    filter(survey_wave == 11)
-
-model1 <- "
-  euthanasia ~ educ_alter
-  euthanasia ~ 1
-  euthanasia ~~ euthanasia
-  "
-
-fit1 <- lavaan(model1, data = liss_ll_sel)
-summary(fit1)
-
-
-## AGGREGATION METHOD
-liss_l <- liss_l %>%
-    mutate(educ_alter_mean = rowMeans(cbind(educ_alter1, educ_alter2, educ_alter3, educ_alter4, educ_alter5),
-        na.rm = TRUE))  #calculate the mean educational level of the alters. 
-
-liss_l_sel <- liss_l %>%
-    filter(survey_wave == 11)
-
-model1 <- "
-  euthanasia ~ educ_alter_mean
-  euthanasia ~ 1
-  euthanasia ~~ euthanasia
-  "
-
-fit2 <- lavaan(model1, data = liss_l_sel, missing = "fiml")
-summary(fit2)
-
-
-## MICRO-MACRO MODEL
-liss_l_sel <- liss_l %>%
-    filter(survey_wave == 11)
-
-model <- "
-  #latent variable
-  FX =~ 1*educ_alter1
-  FX =~ 1*educ_alter2
-  FX =~ 1*educ_alter3
-  FX =~ 1*educ_alter4
-  FX =~ 1*educ_alter5
-  
-  #variances
-  educ_alter1 ~~ b*educ_alter1
-  educ_alter2 ~~ b*educ_alter2
-  educ_alter3 ~~ b*educ_alter3
-  educ_alter4 ~~ b*educ_alter4
-  educ_alter5 ~~ b*educ_alter5
-  
-  
-  FX ~~ FX
-  euthanasia ~~ euthanasia
-  
-  #regression model
-  euthanasia ~ FX
-  euthanasia ~ 1
-  
-  #intercepts/means
-  educ_alter1 ~ e*1
-  educ_alter2 ~ e*1
-  educ_alter3 ~ e*1
-  educ_alter4 ~ e*1
-  educ_alter5 ~ e*1
-"
-
-fit3 <- lavaan(model, data = liss_l_sel, missing = "fiml", fixed.x = FALSE)
-summary(fit3)
-
-
-## MEASUREMENT MODEL
-myModel <- '
-
-FX6 =~ 1*educ_alter1.6 + 1*educ_alter2.6 + 1*educ_alter3.6 + 1*educ_alter4.6 + 1*educ_alter5.6   
-FX7 =~ 1*educ_alter1.7 + 1*educ_alter2.7 + 1*educ_alter3.7 + 1*educ_alter4.7 + 1*educ_alter5.7   
-FX8 =~ 1*educ_alter1.8 + 1*educ_alter2.8 + 1*educ_alter3.8 + 1*educ_alter4.8 + 1*educ_alter5.8   
-FX9 =~ 1*educ_alter1.9 + 1*educ_alter2.9 + 1*educ_alter3.9 + 1*educ_alter4.9 + 1*educ_alter5.9   
-
-#variances of latent variables
-FX6 ~~ FX6
-FX7 ~~ FX7
-FX8 ~~ FX8
-FX9 ~~ FX9
-
-#constrained variances of manifest variables
-educ_alter1.6 ~~ a*educ_alter1.6
-educ_alter2.6 ~~ a*educ_alter2.6
-educ_alter3.6 ~~ a*educ_alter3.6
-educ_alter4.6 ~~ a*educ_alter4.6
-educ_alter5.6 ~~ a*educ_alter5.6
-
-educ_alter1.7 ~~ b*educ_alter1.7
-educ_alter2.7 ~~ b*educ_alter2.7
-educ_alter3.7 ~~ b*educ_alter3.7
-educ_alter4.7 ~~ b*educ_alter4.7
-educ_alter5.7 ~~ b*educ_alter5.7
-
-educ_alter1.8 ~~ c*educ_alter1.8
-educ_alter2.8 ~~ c*educ_alter2.8
-educ_alter3.8 ~~ c*educ_alter3.8
-educ_alter4.8 ~~ c*educ_alter4.8
-educ_alter5.8 ~~ c*educ_alter5.8
-
-educ_alter1.9 ~~ d*educ_alter1.9
-educ_alter2.9 ~~ d*educ_alter2.9
-educ_alter3.9 ~~ d*educ_alter3.9
-educ_alter4.9 ~~ d*educ_alter4.9
-educ_alter5.9 ~~ d*educ_alter5.9
-
-
-
-#contrained intercepts of the manifest variables (structural changes are picked up by the latent variables)
-educ_alter1.6 ~ e*1
-educ_alter2.6 ~ e*1
-educ_alter3.6 ~ e*1
-educ_alter4.6 ~ e*1
-educ_alter5.6 ~ e*1
-
-educ_alter1.7 ~ e*1
-educ_alter2.7 ~ e*1
-educ_alter3.7 ~ e*1
-educ_alter4.7 ~ e*1
-educ_alter5.7 ~ e*1
-
-educ_alter1.8 ~ e*1
-educ_alter2.8 ~ e*1
-educ_alter3.8 ~ e*1
-educ_alter4.8 ~ e*1
-educ_alter5.8 ~ e*1
-
-educ_alter1.9 ~ e*1
-educ_alter2.9 ~ e*1
-educ_alter3.9 ~ e*1
-educ_alter4.9 ~ e*1
-educ_alter5.9 ~ e*1
-
-
-
-#free the means of the latent variables
-
-FX7 ~ 1
-FX8 ~ 1
-FX9 ~ 1
-'
-fit <- lavaan(myModel, data = liss_w, missing = 'ML', fixed.x=FALSE, meanstructure = T)
-summary(fit, standardized = T)
-
-
-
-## THE STRUCTURAL MODEL 
-
-RICLPM <- '
-  # Create between components (random intercepts)
-  RIx =~ 1*FX6 + 1*FX7 + 1*FX8 + 1*FX9 
-  RIy =~ 1*euthanasia.6 + 1*euthanasia.7 + 1*euthanasia.8 + 1*euthanasia.9
-  
-  # Create within-person centered variables
-  wx6 =~ 1*FX6
-  wx7 =~ 1*FX7
-  wx8 =~ 1*FX8 
-  wx9 =~ 1*FX9
-  
-  wy6 =~ 1*euthanasia.6
-  wy7 =~ 1*euthanasia.7
-  wy8 =~ 1*euthanasia.8
-  wy9 =~ 1*euthanasia.9
-  
-  # Estimate the lagged effects between the within-person centered variables.
-  wx7 ~ a*wx6 + b*wy6
-  wx8 ~ a*wx7 + b*wy7
-  wx9 ~ a*wx8 + b*wy8
-  
-  wy7 ~ c*wx6 + d*wy6
-  wy8 ~ c*wx7 + d*wy7
-  wy9 ~ c*wx8 + d*wy8
-  
-  # Estimate the (residual) covariance between the within-person centered variables
-  wx6 ~~ wy6
-  wx7 ~~ wy7
-  wx8 ~~ wy8
-  wx9 ~~ wy9
-  
-  # Estimate the variance and covariance of the random intercepts. 
-  RIx ~~ RIx
-  RIy ~~ RIy
-  RIx ~~ RIy
-
-  # Estimate the (residual) variance of the within-person centered variables.
-  wx6 ~~ wx6
-  wy6 ~~ wy6
-  wx7 ~~ wx7
-  wy7 ~~ wy7 
-  wx8 ~~ wx8 
-  wy8 ~~ wy8 
-  wx9 ~~ wx9 
-  wy9 ~~ wy9 
-
-  #include intercepts 
-  FX6 ~ 1
-  FX7 ~ 1
-  FX8 ~ 1
-  FX9 ~ 1
-  
-  euthanasia.6 ~ 1
-  euthanasia.7 ~ 1
-  euthanasia.8 ~ 1
-  euthanasia.9 ~ 1
-'  
-
-fit5 <- lavaan(RICLPM, data=liss_w, missing = "fiml.x", meanstructure = T )
-summary(fit5, standardized = T)
-
-
-```{r}
-```
-
--   
-
-
-
-
-
-
-
-
-
-------------------------------------------------------------------------
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

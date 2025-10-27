@@ -1,0 +1,1980 @@
+---
+title: "finalpaperdraft"
+author: "Paige Kemper"
+date: "2025-10-26"
+output: html_document
+---
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+Code for SNA Final Paper: Draft 
+
+----
+
+
+# Data Prep Work 
+
+
+## Clear data
+```{r}
+rm(list=ls()) #start clean
+```
+
+
+## Load Functions + Packages
+```{r}
+library(readxl)
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+
+
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+packages <- c("devtools", "igraph")
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, file, "_", datename, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+```
+
+
+
+
+## Access large data file of professors (the set of egos for research)
+
+### Load Dataset - new dataset (from Jos)
+```{r}
+scholars <- fload("C:/Github/labjournal/20251017scholars.Rda") 
+```
+
+
+### Isolate RU from RUG (rename Groningen Uni) 
+This will make it easier to isolate Radboud, to run analysis on only Radboud before scaling to all universities in the Netherlands.
+```{r}
+scholars$demographics = scholars$demographics |>
+  mutate(
+    universiteit.22 = str_replace(universiteit.22, 'RUG', "UvG"),
+    universiteit.24 = str_replace(universiteit.24, 'RUG', "UvG"),
+    universiteit.25 = str_replace(universiteit.25, 'RUG', "UvG")
+)
+```
+
+
+
+
+## New fcolnet function
+
+### Define Network Data Helper Function
+Note: Includes all other universities (and 'NA') + both sociology AND political science disciplines, so function will be able to first apply to Radboud AND scale to include all other universities. 
+```{r}
+fcolnet = function(data = scholars, university = c("RU", 'UU', 'VU', 'UvA', 'UvG', 'UvT', 'Leiden', 'EUR', 'NA'), discipline = c('Sociologie', 'Politicologie'), waves = list(c(2015,
+    2018), c(2019, 2023), c(2024, 2025)), type = c("first")) {
+
+    university = paste0('(', paste0(university, collapse='|' ), ')')
+    discipline = paste0('(', paste0(discipline, collapse='|' ), ')')
+
+    # step 1
+    demographics = data$demographics
+    sample = which(
+        (str_detect(demographics$universiteit.22, university)
+            | str_detect(demographics$universiteit.24, university)
+            | str_detect(demographics$universiteit.25, university)
+        ) & (
+            str_detect(demographics$discipline.22, discipline)
+            | str_detect(demographics$discipline.24, discipline)
+            | str_detect(demographics$discipline.25, discipline)
+        ) |> replace_na(FALSE))
+
+    demographics_soc = demographics[sample, ] |> drop_na(id)
+
+    # step 2
+    ids = demographics_soc$id |> unique()
+
+
+    scholars_sel = list() 
+    for (id_ in ids){
+        scholars_sel[[id_]] = bind_rows(scholars$works) |>
+            filter(author_id == id_)
+    }
+    scholars_sel = bind_rows(scholars$works) 
+    
+
+    nwaves = length(waves)
+    nets = array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works = tibble(
+            works_id = scholars_sel$id, 
+            works_author = scholars_sel$authorships, 
+            works_year = scholars_sel$publication_year
+        )
+
+
+    df_works = df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == "first") {
+        for (j in 1:length(waves)) {
+            df_works_w = df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego = df_works_w$works_author[i][[1]]$id[1]
+                alters = df_works_w$works_author[i][[1]]$id[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] = 1
+                }
+            }
+        }
+    }
+
+    if (type == "last") {
+        for (j in 1:length(waves)) {
+            df_works_w = df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego = rev(df_works_w$works_author[i][[1]]$id[1])
+                alters = rev(df_works_w$works_author[i][[1]]$id[-1])
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] = 1
+                }
+            }
+        }
+    }
+    if (type == "all") {
+        for (j in 1:length(waves)) {
+            df_works_w = df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos = df_works_w$works_author[i][[1]]$id
+                if (sum(ids %in% egos) > 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] = 1
+                }
+            }
+            diag(nets[j,,]) = 0
+        }
+    }
+
+    output = list()
+    output$data = demographics_soc
+    output$nets = nets
+    return(output)
+}
+```
+
+This includes three waves of data, waves separated per the time they were pulled. For my analysis, I will only focus on the first two waves, since the third wave covers a smaller time period and may inadvertently distort results. 
+
+In the future, it would be more ideal to include and confirm this analysis on a third wave of data, ideally with a similar time frame and/or analysis that would account for the difference in time frames. I myself do not try to redistribute the years of the waves because that would be quite complicated, and using the first two waves of the data should address the research questions as is.
+
+
+
+### load Rsiena packages
+Loading additional packages necessary for analysis of data. 
+```{r}
+packages = c(
+    "RSiena", "tidyverse",
+    'dplyr', 'stringr' # these packages were added to make the code run
+)
+fpackage.check(packages)
+
+```
+
+
+
+----
+
+
+# Getting Data for Radboud 
+
+## Application: Create an adjacency matrix ('test') with the subset of professors from Radboud University, as well as a data frame with the ego-level characteristics I will be investigating. 
+
+### Load Data
+```{r}
+# Radboud only (where I want to start)
+test = fcolnet(scholars, university = c("RU")) #only Radboud 
+df_ego = bind_rows(test$data)
+```
+
+This establishes the dataframes for analysis - a subset from "scholars" with just professors from RU. Will try this with Radboud before scaling to all the universities. Notably, it already includes both disciplines. I will analyze gender in collaborations, though it will be important later to control for the department. 
+
+Ideally this could also expand to controlling for university level differences, though in this research I was not able to do this. 
+
+
+
+### Wrangle Data
+NOTE: POTENTIALLY EXCLUDE WAVE 3!! <- COME BACK TO THIS***
+Separate data waves (from when the data was pulled) to better analyze the evolution over time. 
+
+```{r}
+wave1 = test$nets[1,,]
+wave2 = test$nets[2,,]
+wave3 = test$nets[3,,] # code currently includes wave 3, however this wave is not included in my analysis (my analysis prioritizes waves 1 and 2). 
+
+nets = array(
+    data = c(wave1, wave2), # NOTE TO SELF: REMOVED WAVE 3 FROM 'NETS' 
+    dim = c(dim(wave2), 2)
+)
+
+net = sienaDependent(nets)
+```
+
+
+
+## Isolate Gender variable (binary)
+Make sure to include binary variable for gender, as gender is the independent variable that is analyzed in this research. With this, male = 0, and female = 1. 
+
+```{r}
+# Recoding for gender
+df_ego = df_ego |>
+    mutate(
+        female = case_when(
+            gender == "female" ~ 1,
+            gender == "male" ~ 0,
+            .default = NA 
+        )
+    )
+
+female = coCovar(df_ego$female) #CREATE GENDER CO VARIABLE
+
+```
+
+
+
+## Isolate disicipline variable (binary, used for control)
+I want to be able to control for the department, so I will create an additional binary variable denoting if the ego/professor is affiliated with sociology (0) or political science (1). This will serve as a constant covariate, looking at EgoX effect per discipline. 
+
+Ideally, I would also control for each university. 
+
+```{r}
+# Recoding for discipline
+df_ego = df_ego |>
+    mutate(
+        polsci = case_when(
+            discipline.22 == "Politicologie" ~ 1, #assume discipline remains the same?
+            discipline.22 == "Sociologie" ~ 0,
+            .default = NA
+        )
+    )
+
+polsci = coCovar(df_ego$polsci) #CREATE DISCIPLINE CO VAR
+
+```
+
+
+
+----
+
+
+
+# Descriptive Statistics - Radboud Professors 
+
+
+With this, we are looking at measures of centrality. The number of degrees of connections is the most simple term for centrality. 
+
+We want to describe if this network is complete, the size of this network, and what kind of relationships there are (whether or not it is directed), and the node type (as well as if the tie is weighted).
+
+When looking at degree centrality, if there are differences in degree centrality then we could illustrate nodes by differing size (for example) to accommodate for this. 
+
+We will briefly look at local and global transitivity, looking at both the dyads and triads that form in this collaboration network for reference. Considering this is not a big part of the research questions though, we will not focus on this in the analysis. 
+
+## NOW - LOOK AT DESCRIPTIVE STATISTICS FOR RU ONLY 
+Note to self: Could segment by wave?
+
+### Packages
+```{r}
+require(igraph)
+
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+packages <- c("devtools", "igraph")
+```
+
+
+### Size 
+```{r}
+#SIZE
+# number of nodes for RU professors - both sociology and political science 
+vcount(test_wave1ru) #returns 111
+vcount(test_wave2ru) #returns 111
+
+#SIZE - for reference
+# number of nodes for all professors
+#vcount(test_w1) #returns 674
+#vcount(test_w2) #returns 674
+```
+
+
+### Edges
+```{r}
+#EDGES
+# number of edges for RU professors
+ecount(test_wave1ru) #returns 31
+ecount(test_wave2ru) #returns 85
+```
+
+
+### Degree
+```{r}
+#DEGREE
+# looking at clustering and spread
+igraph::degree(test_wave1ru)
+igraph::degree(test_wave2ru)
+
+
+hist(table(degree(test_wave1ru)), xlab='indegree', main= 'Histogram of indegree') 
+# every number is the degree level of each actor -- and see it is heavily skewed to the left
+# Wave 1: see frequency of 7 for indegree 0:50, frequency of 0 for indegree 50:100, frequency 1 for indegree 100:150
+
+hist(table(degree(test_wave2ru)), xlab='indegree', main= 'Histogram of indegree') # every number is the degree level of each actor -- and see it is heavily left skewed too  
+# Wave 2: see frequency of 10 for indegree 0:20, frequency of 2 for indegree 20:40, 0 for 40:60, 1 for 60:80
+```
+
+
+### Transitivity
+Note: Transitivity is not a main focus for this research, as we focus on the effect of gender in collaborations rather than XXX.
+```{r}
+#TRANSITIVITY -- all of these return "NAN" -- check?
+#ALSO: DIRECTED/UNDIRECTED FOR DATA?
+
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+## FLAG - ERROR WITH THIS - NOT ABLE TO REALLY USE/VIEW RESULTS
+igraph::transitivity(test_wave1ru, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+igraph::transitivity(test_wave2ru, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+
+hist(table(transitivity(test_wave1ru, type = c("localundirected"), isolates = c("NaN", "zero"))))
+hist(table(transitivity(test_wave2ru, type = c("localundirected"), isolates = c("NaN", "zero"))))
+
+
+#BETWEENNESS
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+igraph::transitivity(test_wave1ru, type = c("localundirected"), isolates = c("NaN", "zero"))
+igraph::transitivity(test_wave2ru, type = c("localundirected"), isolates = c("NaN", "zero"))
+
+```
+
+
+
+### Dyad and Triad Census (for ref.)
+Moving from local to global transitivity 
+-   Look at triads for more global transitivity. 
+-   Note: Global = number of observed over possible - can identify all transitive triads and all possible triads 
+-   Reviewing dyads - then triads. Undirected is less difficult to calculate. 
+
+```{r}
+# plot: igraph - XX <- make_graph(y) <- test$nets[1,,] ??
+# adj mat: XX <- as_adj_matrix((plot), type = "both", sparse = FALSE) -- adj mat = test_w1 =  test$nets[1,,]
+
+
+igraph::dyad_census(test_wave1ru) #with plot -- works 
+  # Returns: 4 mut, 23 asym, 6078 null 
+igraph::dyad_census(test_wave2ru) #with plot -- works
+  # Returns: 7 mut, 71 asym, 6027 null 
+
+
+igraph::triad_census(test_wave1ru) #with plot -- works
+  # Returns:  [1] 218926   2422    416     10     14      8      9      6      1      0      1      0      0      1      1      0
+
+igraph::triad_census(test_wave2ru) #with plot -- works
+  # Returns:   [1] 213567   7306    709     25    106     41     34      6     10      1      0      1      4      2      2      1
+
+```
+
+
+### Triad census, transitivity and triad allegation (for ref.)
+-   Now, looking at triad census vs triad allegation. Not essential to research, but interesting to consider.
+
+```{r}
+library(sna)
+
+# Wave 1
+sna::triad.census(test$nets[1,,]) #with adj matrix of test_wave1ru -- triad.census of (test_w1) doesn't work. 
+unloadNamespace("sna")  #detach this package again to avoid interference with other igraph functions 
+  # Returns:         003  012  102   021D 021U 021C 111D 111U 030T 030C 201 120D 120U 120C 210 300
+           # [1,] 218926 2422  416   10   14    8    9    6    1    0   1    0    0    1   1   0
+  # Same as igraph triad census! 
+
+
+igraph::transitivity(test_wave1ru, type = "global") #with plot
+  # Returns: [1] 0.1578947
+sna::gtrans(test$nets[1,,]) #triad census a different way, but this is with plot - need with adj mat:
+  # Returns: [1] 0.1515152
+  ## Prev Code: sna::gtrans(test$nets[1,,]) #with adj matrix
+
+triad_w1ru <- data.frame(sna::triad.census(test$nets[1,,])) #save as df, #with adj matrix
+transitivity_w1 <- (3 * triad_w1ru$X300)/(triad_w1ru$X201 + 3 * triad_w1ru$X300) #X300 is variable for transitive triad (the fully closed triad) - we multiply by 3 because there are 3 possible transitive triads
+transitivity_w1
+  # Returns 0 (?)
+
+
+# Wave 2
+sna::triad.census(test$nets[2,,])
+unloadNamespace("sna")  #I will detach this package again
+   # Returns: 003    012   102   021D  021U  021C  111D  111U  030T  030C 201  120D  120U 120C  210  300
+      # [1,] 213567  7306  709   25    106   41    34     6    10    1    0    1     4    2     2    1
+
+
+triad_w2ru <- data.frame(sna::triad.census(test$nets[2,,])) #save as df
+
+igraph::transitivity(test_wave2ru, type = "global")
+  # Returns: [1] 0.2290909
+sna::gtrans(test$nets[2,,]) #triad census a different way 
+  # Returns: [1] 0.2741935
+
+
+transitivity_w2 <- (3 * triad_w2ru$X300)/(triad_w2ru$X201 + 3 * triad_w2ru$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_w2
+  # Returns: [1] 1
+
+```
+
+
+
+
+**NOTE TO COME BACK TO**: 
+NEED TO INCLUDE TRIADS - TRANSITIVITY 
+OUTDEGREE AND RECIPROCITY ARE ALWAYS IN THERE, ALSO NEED OUTDEGREE ACTIVITY OR IN DEGREE POPULARITY. ALSO NEED SOMETHING FOR TRANSITIVITY - GWESP VARIABLE AND EFFECTS TO INCLUDE - MAKE SURE TO INCLUDE ONE OF THESE TOO.
+
+
+
+**Notes about network**: 
+Network is directional: we can see that with a reciprocity output, we know that the collaborations in this network are directional. 
+
+Reflection: While there is a directional assumption of this Social network, in reality the directionality does not mayyer in the framing of publication output used for merit... The professor that initiated the collaboration, for all intensive purposes, is not directly informative for answering these research questions. Future research that could further investigate the directionality of these collaborations, such as if women or men are more likely to initiate collaborations, would be a way to further develop this research. 
+
+
+
+----
+
+
+
+# Network Visualizations - Radboud Professors
+
+## Visualizing RU Waves
+
+### Make adjacency matrix for first wave of RU data
+```{r}
+# make adjacency matrix with first wave of data
+test_wave1ru <- igraph::graph_from_adjacency_matrix(
+  test$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+test_wave1ru
+```
+
+
+### RU Wave 1 - First plot of data (colored: women represented with red and men represented with blue)
+```{r}
+# changing V: Let’s make size proportional to betweenness score
+V(test_wave1ru)$size = betweenness(test_wave1ru, normalized = T, directed = TRUE) * 100 + 8  #after some trial and error
+
+#plot to see if it worked 
+plot(test_wave1ru,
+  vertex.color = ifelse(df_ego$female == 1, "red", "blue"),
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+dim(test_wave1ru) #check it works 
+sum(is.na(test_wave1ru)) #check it is complete -- if 0 missing values
+
+
+# how do I plot only the collaborations? 
+# test_wave1ru_collabs <- 
+
+```
+
+
+### RU Wave 1 - Second network visualisation: Closer look at clustering 
+``` {r}
+# igraph, want no overlap: igraph plotting no overlap -- a lot of layout functions -- want to hold printing device constant, and then reduce overlap...the idea is to push least central egos out. 
+V(test_wave1ru)$size = betweenness(test_wave1ru, normalized = T, directed = TRUE) *400 + 10  #after some trial and error
+
+set.seed(2345)
+l <- layout_with_mds(test_wave1ru)  #https://igraph.org/r/doc/layout_with_mds.html
+
+plot(test_wave1ru, 
+     vertex.color = ifelse(df_ego$female == 1, "red", "blue"),
+     vertex.label = NA,
+     layout = l, 
+     edge.width = 0.2,
+     edge.arrow.size =0.2
+     )
+# story in second plot: looks like more clustering by gender 
+
+```
+
+
+### Make adjacency matrix for second wave of RU data
+```{r}
+test_wave2ru <- igraph::graph_from_adjacency_matrix(
+  test$nets[2,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+```
+
+
+### RU Wave 2 - First plot of data (colored: women represented with red and men represented with blue)
+```{r}
+V(test_wave2ru)$size = betweenness(test_wave2ru, normalized = T, directed = TRUE) * 100 + 8  #after some trial and error
+
+#plot to see if it worked 
+plot(test_wave2ru,
+  vertex.color = ifelse(df_ego$female == 1, "red", "blue"),
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+### RU Wave 2 - Second network visualisation: Closer look at clustering 
+``` {r}
+# igraph, want no overlap: igraph plotting no overlap -- a lot of layout functions -- want to hold printing device constant, and then reduce overlap...the idea is to push least central egos out. 
+V(test_wave2ru)$size = betweenness(test_wave2ru, normalized = T, directed = TRUE) *400 + 10  #after some trial and error
+
+set.seed(2345)
+l <- layout_with_mds(test_wave2ru)  #https://igraph.org/r/doc/layout_with_mds.html
+
+plot(test_wave2ru, 
+     vertex.color = ifelse(df_ego$female == 1, "red", "blue"),
+     vertex.label = NA,
+     layout = l, 
+     edge.width = 0.2,
+     edge.arrow.size =0.2
+     )
+# story in second plot: looks like more clustering by gender 
+
+```
+
+
+
+
+----
+
+
+
+# RSiena Analysis - Radboud Profs 
+
+## Rsiena Analysis: RQ 1
+
+**Research Question 1** (Descriptive): What proportion of collaborations happen with professors that have different genders? 
+-    a.	What proportion of collaborations happen with professors that have the same gender? 
+-    b.	How does this vary per department (political science vs. sociology)? 
+
+Hypothesis: 
+
+
+How to answer: Make a 2x2 table, looking at cross-gender collaborations and same-gender collaborations. 
+
+First, we will look at the total number of collaborations across both waves. We will look at the proportion of men who participated in collaborations out of the total number of men. We will look at the total number of women who participated in collaborations out of the total number of women. 
+
+The table will compare the proportion of cross-gender collaborations out of the total number of collaborations, and the proportion of same-gender collaborations out of the total number of collaborations. T
+
+Then we will look at the proportion of women in the cross gender collaborations and the proportion of men in the cross gender collaborations.  
+
+
+```{r}
+
+
+```
+
+
+
+## Rsiena Analysis: RQ 2
+
+**Research Question 2** (Explanatory, Hypothesis testing): How does gender effect potential for collaborations? 
+-    Is one gender more likely to collaborate than the other? 
+
+Hypothesis: Women are more likely to collaborate than men. 
+
+
+How to answer: Look at egoX effect, including the interaction with "female" and the control for department with "polsci". 
+
+```{r}
+mydata = sienaDataCreate(net, female) 
+myeff = getEffects(mydata)
+myeff = includeEffects(myeff, isolateNet, inPop.c)
+myeff = includeEffects(myeff, egoX, interaction1 = "female") # Independent variable under investigation
+myeff = includeEffects(myeff, egoX, interaction1 = "polsci") # Control for sociology vs political science departments
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "finalpaper_ru")
+
+ansM1 = siena07(
+    myAlgorithm, 
+    data = mydata, 
+    effects = myeff,
+    returnDeps = TRUE
+)
+
+ansM1
+
+```
+
+
+### Rsiena results
+**1**
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Random initialization of random number stream.
+Current random number seed is 376539.
+Effects object used: myeff 
+Model Type:
+ Standard actor-oriented model 
+Estimation method: conditional moment estimation.
+Conditioning variable is the total number of observed changes ("distance") 
+in the network variable.
+Distance for simulations is   82 .
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  0. Rate parameter                           1.4926
+  1. eval:  outdegree (density)                            -1.5585
+  2. eval:  reciprocity                                     0.0000
+  3. eval:  indegree-popularity (centrd)                    0.0000
+  4. eval:  network-isolate                                 0.0000
+  5. eval:  female ego                                      0.0000
+
+
+Values of target statistics are
+  1. Number of ties                                                      85.0000
+  2. Number of reciprocated ties                                         14.0000
+  3. Sum of squared indegrees (centrd)                                  370.5856
+  4. Number of isolates                                                  56.0000
+  5. Sum outdegrees x female                                              3.7273
+These were calculated from the data.
+
+ 5 parameters, 5 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+**2**
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 2620 iterations.
+Parameter estimates based on 1620 iterations,
+basic rate parameter as well as 
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+  1.   1.3000   7.2743   0.1787 
+  2.  -0.4860   4.1213  -0.1179 
+  3. 218.9707 540.4946   0.4051 
+  4.  -0.6430   4.7556  -0.1352 
+  5.  -0.5408   5.3366  -0.1013 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  0.4173 .
+One or more of the t-statistics are rather large.
+
+
+
+**2**
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 2620 iteration steps.
+
+
+**3**
+Estimates and standard errors
+                             
+Rate parameters:
+ 0. Rate parameter                            2.7065  (   0.5315)
+
+Other parameters:
+ 1. eval:  outdegree (density)                                    -1.7166  (   1.0115)
+ 2. eval:  reciprocity                                             1.5285  (   0.5281)
+ 3. eval:  indegree-popularity (centrd)                            0.4090  (   0.0729)
+ 4. eval:  network-isolate                                         6.6438  (   2.6391)
+ 5. eval:  female ego                                              2.0976  (   1.8346)
+
+
+**3**
+Covariance matrices
+                   
+Covariance matrix of estimates (correlations below diagonal):
+     1.023      0.038     -0.012      2.537      1.766
+     0.072      0.279     -0.002      0.058      0.146
+    -0.161     -0.064      0.005     -0.017     -0.004
+     0.950      0.041     -0.090      6.965      4.460
+     0.952      0.151     -0.030      0.921      3.366
+
+Derivative matrix of expected statistics X by parameters and
+covariance/correlation matrix of X can be found using
+summary(ans) within R, or by using the 'verbose' option in Siena07.
+
+
+
+
+```{r}
+mydata = sienaDataCreate(net, female) 
+myeff = getEffects(mydata)
+myeff = includeEffects(myeff, isolateNet, inPop.c)
+myeff = includeEffects(myeff, egoX, sameX, interaction1 = "female") # better to include sameX too? 
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "finalpaper_ru")
+
+ansM1 = siena07(
+    myAlgorithm, 
+    data = mydata, 
+    effects = myeff,
+    returnDeps = TRUE
+)
+
+ansM1
+
+```
+
+
+
+
+## Need to look at female (independent variable) effect on collaborations 
+
+### New code added --> female = indep, + controls (review if want these***) 
+
+```{r}
+mydata = sienaDataCreate(net, female) #why does this not work now? 
+myeff = getEffects(mydata)
+myeff = includeEffects(myeff, isolateNet, inPop.c)
+myeff = includeEffects(myeff, egoX, interaction1 = "female")
+
+# myeff = includeEffects(myeff, egoX, altX, diffX, interaction1 = "female") -- removing altX and diffX because they didn't help initial model at all! 
+
+# FILL THIS OUT IF INCLUDE TWO DEPARTMENTS 
+# myeff = includeEffects(myeff, egoX, interaction1 = "soc")
+
+myeff = includeInteraction(myeff, egoX, sameX, interaction1 = c("female", "female"))
+# check this for RQ3 with loop fucntion (if prev collaborated X gender) 
+# include interaction**** in manual 
+
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "soc_init")
+
+ansM1 = siena07(
+    myAlgorithm, 
+    data = mydata, 
+    effects = myeff,
+    returnDeps = TRUE
+)
+
+ansM1
+```
+
+
+
+
+
+## Count cross gender ties in W1 and W2 
+
+Looking at my data - specifically the effect of female (male=0, female=1) over collaborations by RU professors. I also want to compare this effect to controls/statistics (egoX, sameX, etc.).
+
+IF PEOPLE HAVE CROSS GENDER COLLABS
+
+```{r}
+# RQ3.1 
+# loop over network of who connects with whom, return count of different gender collaborations** 
+
+# adj matrix = test 
+# test > data: gender 
+# test > net: collaborations
+
+
+# Function to count cross-gender ties 
+count_xgen <- function(test, gender) {
+  edges <- which(test != 0, arr.ind = TRUE)
+  sum (
+    (gender[edges[,1]] == "female" & gender[edges[,2]] == "male") | 
+      (gender[edges[,1]] == "male" & gender[edges[,2]] == "female") 
+    )
+}
+
+
+# Wave 1
+valid_nodes_w1 <- which(!is.na(df_ego$gender))
+adj_w1_clean <- test$nets[1, valid_nodes_w1, valid_nodes_w1]
+discipline_w1_clean <- df_ego$gender[valid_nodes_w1]
+
+xgen_w1 <- count_xgen(adj_w1_clean, discipline_w1_clean)
+
+
+# Wave 2 -- swap w W1
+valid_nodes_w2 <- which(!is.na(df_ego$gender))
+adj_w2_clean <- test$nets[2, valid_nodes_w2, valid_nodes_w2]
+discipline_w2_clean <- df_ego$gender[valid_nodes_w2]
+
+xgen_w2 <- count_xgen(adj_w2_clean, discipline_w2_clean)
+
+#make summary table
+cross_gender_collabs_table <- data.frame(wave = c(1, 2), 
+                              cross_gender_ties = c(xgen_w1, xgen_w2))
+
+print(cross_gender_collabs_table)
+```
+
+
+
+### Cross gender collaborations in W1
+THIS IS WHERE DILEMMA IS
+Tracking which egos had cross gender collaborations 
+
+```{r}
+# make column in df_ego dataframe for wave1 cross gender collabs: returns 1 if professor has had cross-gender collabs, and 0 if they do not have xgen collabs 
+
+# oa id: test$data[2]
+
+# make list of collaborators + their genders???
+
+
+col <- ()
+prof_list <- data.frame()
+
+for (j in (1:nrow(df_ego))) {
+  print(df_ego$id[j])
+  
+  prof_list <- data.frame(df_ego$id[j], df_ego$gender)
+  
+  if (df_ego$gender[j] = "male" {
+    
+  }
+}
+
+
+for (i in 1:nrow(test$data[2])) {
+  if test$data[8] = "male" {
+    # look for test$data[2] in test$nets to see if cross gender collab?
+    
+  } else {
+    if test$data[8] = "female" {
+      
+    } else {
+      return NA
+    }
+  }
+    
+  print i 
+}
+
+#for (i in test$data[2](1:nrow(test$data)) {
+ # print i
+#}
+
+
+ for (i in df_ego$id[1:nrow(df_ego)]){
+    print(df_ego$id)
+    if i test$nets
+  }  
+
+
+
+
+xgen_func <- function(test, gender) {
+  edges <- which(test != 0, arr.ind = TRUE)
+  xgen_collabs = 
+  if (
+    (gender[edges[,1]] == "female" & gender[edges[,2]] == "male") | 
+      (gender[edges[,1]] == "male" & gender[edges[,2]] == "female") 
+    )
+    xgen_collabs[i] = 1
+  else = 0
+  
+}
+
+
+
+
+df_ego = df_ego |>
+  for (i in df_ego$id[1:nrow(df_ego)]){
+    print(df_ego$id)
+    if i test$nets
+  }  
+  
+  mutate(
+        xgen_collabs_w1 = case_when(
+           # id?
+            discipline.22 == "Politicologie" ~ 1, #assume discipline remains the same?
+            discipline.22 == "Sociologie" ~ 0,
+            .default = NA
+        )
+    )
+
+xgen_collabs_w1 = coCovar(df_ego$xgen_collabs_w1) #CREATE W1 X-GENDER COLLABS COVAR?
+
+
+
+hold = c()
+for (authorid in s$au_id[1:nrow(s)]){
+  print(authorid)
+  res = oa_fetch(
+    entity = "works", 
+    author.id=authorid
+  )
+  # # res = bind_rows(scholars$works) |> filter(id == authorid)
+  hold[[authorid]] = res
+}
+
+
+```
+
+
+
+### Same gender ties 
+
+```{r}
+# RQ3.2 REVERSE OF 3.1 
+# loop over network of who connects with whom, return if same gender or different gender** 
+
+# Function to count same-gender ties 
+count_same_gen <- function(test, gender) {
+  edges <- which(test != 0, arr.ind = TRUE)
+  sum (
+    (gender[edges[,1]] == "male" & gender[edges[,2]] == "male") | 
+      (gender[edges[,1]] == "female" & gender[edges[,2]] == "female") 
+    )
+}
+
+
+# Wave 1
+validnodesw1 <- which(!is.na(df_ego$gender))
+adjw1clean <- test$nets[1, validnodesw1, validnodesw1]
+disciplinew1clean <- df_ego$gender[validnodesw1]
+
+same_gen_w1 <- count_same_gen(adjw1clean, disciplinew1clean)
+
+# Wave 2 -- swap w W1
+validnodesw2 <- which(!is.na(df_ego$gender))
+adjw2clean <- test$nets[2, validnodesw2, validnodesw2]
+disciplinew2clean <- df_ego$gender[validnodesw2]
+
+same_gen_w2 <- count_same_gen(adjw2clean, disciplinew2clean)
+
+#make summary table
+same_gender_collabs_table <- data.frame(wave = c(1, 2), 
+                              same_gender_ties = c(same_gen_w1, same_gen_w2))
+
+print(same_gender_collabs_table)
+```
+
+
+
+
+
+
+
+
+
+
+Delete this later?
+```{r}
+# need to add this as ego-level characteristic
+
+xgencol
+
+test wave 1 
+  row
+    collaborations they have had 
+      collaborator gender 
+        if same , next 
+          if different, return 1 and move to next row 
+
+
+
+df_ego = df_ego |>
+    mutate(
+        xgencol = case_when(
+            gender == "female" ~ 1,
+              has collaborations;
+                and collaborators gender = 0 
+                  return xgencol = 1
+            gender == "male" ~ 0,
+              has collaborations
+                and has collaborator with gender 1 
+                  return xgencol = 1
+            .default = NA
+        )
+    )
+
+
+
+xgencol = coCovar(df_ego$xgencol)
+
+
+
+```
+
+
+
+
+```{r}
+
+```
+
+#### example loop?
+```{r}
+#Example loop
+
+papers = hold
+
+co_authors = c()
+for (authorid in names(papers)){
+  print(authorid)
+  tab = papers[[authorid]]
+  co_authors[[authorid]] = bind_rows(tab$authorships) |> #Next: get the collaborations and the affiliate institutions
+    filter(id != authorid) |> #make sure that ego id isn't a collaborator - remove egoID from coauthor IDs
+    mutate(ego_id = authorid) |> #rename - ego ID = author ID
+    relocate(ego_id, .before = 1) # Put ego ID in the front 
+#  co_authors <- append(affil = papers[[author]] ## potentially add column with values for affiliations?
+
+#    mutate(affiliations = affiliations[[1, 4]]) - alternative 
+#  co_authors[[affiliations]] = bind_rows(tab$[[j,6]][[1]] - alternative 
+
+}
+```
+
+
+
+
+```{r}
+effectsDocumentation(myeff)
+
+print01Report(mydata)
+
+```
+
+
+
+
+## RSiena results 
+
+-----------------------------------
+New Analysis started.
+Date and time: 24/10/2025 04:09:00
+New results follow.
+-----------------------------------
+
+RSiena version 1.5.0 (06 Jul 25)
+
+
+**1**
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Random initialization of random number stream.
+Current random number seed is 131184.
+Effects object used: myeff 
+Model Type:
+ Standard actor-oriented model 
+Estimation method: conditional moment estimation.
+Conditioning variable is the total number of observed changes ("distance") 
+in the network variable.
+Distance for simulations is   58 .
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  0. Rate parameter                           2.1120
+  1. eval:  outdegree (density)                            -1.4979
+  2. eval:  reciprocity                                     0.0000
+  3. eval:  indegree-popularity (centrd)                    0.0000
+  4. eval:  network-isolate                                 0.0000
+  5. eval:  female alter                                    0.0000
+  6. eval:  female ego                                      0.0000
+  7. eval:  female difference                               0.0000
+
+
+Values of target statistics are
+  1. Number of ties                                                      62.0000
+   3. Sum of squared indegrees (centrd)                                  294.6071
+  4. Number of isolates                                                  21.0000
+  5. Sum indegrees x female                                             -13.8929
+  6. Sum outdegrees x female                                              9.1071
+  7. Sum_ties diff female                                               -23.0000
+These were calculated from the data.
+
+ 7 parameters, 7 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+**2**
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 2351 iterations.
+Parameter estimates based on 1351 iterations,
+basic rate parameter as well as 
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+Overall maximum t-ratio for convergence not computable.
+  1.   0.0840   5.4507   0.0154 
+  2.   0.0960   4.1192   0.0233 
+  3.  19.4065 204.3501   0.0950 
+  4.  -0.0640   3.0481  -0.0210 
+  5.  -0.0745   5.2938  -0.0141 
+  6.  -0.2485   3.8390  -0.0647 
+  7.   0.1740   5.4613   0.0319 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  NA .
+*** Warning: Covariance matrix not positive definite *** 
+***            Standard errors not reliable           *** 
+The approximate linear combination that has variance 0 is
+-1 * beta[5] + 1 * beta[6] + 1 * beta[7]
+Do not use any reported standard errors.
+
+
+
+**2**
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 2351 iteration steps.
+
+
+**3**
+Estimates and standard errors
+                             
+Rate parameters:
+ 0. Rate parameter                            2.8993  (   0.5803)
+
+Other parameters:
+ 1. eval:  outdegree (density)                                  NANA
+ 2. eval:  reciprocity                                          NANA
+ 3. eval:  indegree-popularity (centrd)                         NANA
+ 4. eval:  network-isolate                                      NANA
+ 5. eval:  female alter                                         NANA
+ 6. eval:  female ego                                           NANA
+ 7. eval:  female difference                                    NANA
+
+
+**3**
+Covariance matrices
+                   
+There is a linear dependency between the parameter estimates
+ therefore the covariance matrix should not be used.
+
+
+
+
+
+
+
+
+
+# GOODNESS OF FIT 
+
+## RU Profs - look at how myeff (which accounts for female as indep var) in algorithm actually distributes
+
+```{r}
+# see here: ?'sienaGOF-auxiliary'
+
+# The geodesic distribution is not available from within RSiena, and therefore is copied from the help page of sienaGOF-auxiliary:
+
+# GeodesicDistribution calculates the distribution of non-directed geodesic distances; see
+# ?sna::geodist The default for \code{levls} reflects the usual phenomenon that geodesic distances
+# larger than 5 do not differ appreciably with respect to interpretation.  Note that the levels of
+# the result are named; these names are used in the \code{plot} method.
+
+GeodesicDistribution <- function(i, data, sims, period, groupName, varName, levls = c(1:5, Inf), cumulative = TRUE,
+    ...) {
+    x <- networkExtraction(i, data, sims, period, groupName, varName)
+    require(sna)
+    a <- sna::geodist(symmetrize(x))$gdist
+    if (cumulative) {
+        gdi <- sapply(levls, function(i) {
+            sum(a <= i)
+        })
+    } else {
+        gdi <- sapply(levls, function(i) {
+            sum(a == i)
+        })
+    }
+    names(gdi) <- as.character(levls)
+    gdi
+}
+
+# The following function is taken from the help page for sienaTest -- use "ansM1"
+
+testall <- function(ansM1) {
+    for (i in which(ansM1$test)) {
+        sct <- score.Test(ansM1, i)
+        cat(ansM1$requestedEffects$effectName[i], "\n")
+        print(sct)
+    }
+    invisible(score.Test(ansM1))
+}
+```
+
+
+# First GOF model  
+
+```{r}
+gofi0 <- sienaGOF(ansM1, IndegreeDistribution, verbose = FALSE, join = TRUE, varName = "net")
+gofi0
+plot(gofi0)
+
+# variable name from example = net
+# x-axis = indegree 
+# y-axis = frequency (plotting the people with 0 in-degrees)
+
+```
+
+# GOF Analysis - RU profs 
+[NEED TO FILL IN]
+
+Notes from lecture for references: 
+
+  Box Plot v Violin plot
+
+box plot: looking at degree of spread - for many simulations - based on parameters / estimation, we have simulated networks. for each simulated network, we do an in-degree count. for the median value of the simulated networks, is about 20 in this?? 
+Violin plot - represents where the majority of the data is.. 
+
+red line - red is the observed network. Simulated SHOULD match the observed networks - and matches, if the red points are within the plots, and ideally close to the median of each. 
+
+  Why do the numbers increase? 
+
+Cumulative in-degree? No. We have 12 nodes in observed network with 0 degrees. 17 more with one. Is counter intuitive?
+we underestimate number of isolates, and overestimate the number of actors with 3-4-5 ties, and over estimate people with FEW degrees... 
+Is cumulative because it is stacked throughout one plot. 
+
+
+  Testing with p-value: 
+Values are fixed - there are not randomness in targets. we have a random variable, so we test a set of randome variables against a set of fixed values, and combine it in one test (where we take into account if there is a covariance in all of this. if covariance in random variables). 
+
+If have 1 random variable and 1 fixed variable: T-test (one-sample t-test)
+This test is more complicated: Monte Carlo Mahalanobis distance test p-value (in this example, is:  0.542) 
+
+
+** can also do this for OUT DEGREE DISTRIBUTION ** 
+   IMPORTANT TO DO TESTS ON DYAD CENSUS AND TRIAD CENSUS - DON'T GET FARTHER THAN DYADIC EFFECT OR TRIAD EFFECT, SO WANT TO MAKE SURE THAT MODEL AT LEAST CAN EXPLAIN DYAD AND TRIAD CONFIGURATIONS
+Triad configuration of
+
+This is MACRO LEVEL INVESTIGATION
+
+```{r}
+# TBD: outdegree distribution
+gofi1 <- sienaGOF(ansM1, OutdegreeDistribution, verbose = FALSE, join = TRUE, varName = "net")
+
+# error:   You need to supply the parameter <<varName>>.
+
+# gofi1 <- sienaGOF(ansM1, OutdegreeDistribution, verbose = FALSE, join = TRUE, levls = c(0:10, 15, 20), varname = "net")
+
+```
+
+
+
+# RELATIVE INFLUENCE 
+
+```{r}
+# RI <- sienaRI(data = mydata, ans = ansM1)
+# RI <- sienaRI(data = mydata_example, ans = answer_ex)
+
+RSiena:::sienaRI(data = mydata, ans = ansM1)
+# RSiena:::sienaRI(data = mydata_example, ans = answer_ex)
+
+RI <- RSiena:::sienaRI(data = mydata, ans = ansM1)
+
+class(RI)
+# siena RI
+
+#plot(RI, addPieChart = TRUE)
+#plot.sienaRI(RI, addPieChart = TRUE)
+RSiena:::plot.sienaRI(RI, addPieChart = TRUE)
+```
+
+# Relative Influence Analysis - RU profs 
+[NEED TO FILL IN]
+
+Notes for reference: 
+  With this plot, can look at the proportion of each effect on predicting - the more effects included, the longer the list. 
+
+Why does relative importance vary per actors? 
+-   could be varying node characterstics (though for this we only have one node characteristic)
+-   **TIME CHARACTERISTICS** - as an isolate, then node characteristic is not a parameter?
+
+This is a micro-level - this does not reflect parameter estimates, reciprocity could have large effect - and yet in each tiny-step, it could have a smaller effect on the decisions. 
+* when it is relevant, it might have a large effect, but it might not always be relevant to each individual. This is looking at whether it is actually relevant for many people* 
+
+* the other is macro level - 
+
+
+
+  One Final Goodness of Fit 
+What we can also do: tweak estimates, and simulate based on tweaked estimates. 
+
+Just the logic for now. 
+
+If we plug in our own values, would it meet different macro level dynamics?? 
+how to set effect to 0. would it be to different macro level structures? See how model behaves differently?? 
+
+
+Run statistics on simulated models. simulations based on estimated models. statistic based on in-degree distribution. 
+If in model there was an in-degree popularity effect. what if we excluded the in-degree popularity effect? How would it effect the rest? If we remove it, we can see how much change happens. 
+
+Then, if effect excluded, but same model simulated, then would find that it actually is not so important?? 
+
+
+Change the micro-level mechanisms, look at importance of micro-level. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# For all Universities
+
+## Establish new test1 (using fcolnet) and df_ego1 (bind data rows)
+
+```{r}
+# Load data for all universities
+
+scholars$demographics[[12]]
+
+test1 = fcolnet(scholars, university = c('RU', 'UU', 'UvG', 'UvA', 'VU', 'Leiden', 'EUR', 'UvT', 'NA')) # this is where I can expand to all universities to then run 
+
+test2 = fcolnet()
+
+df_ego1 = bind_rows(test1$data)
+```
+
+
+### Wrangle Data
+
+```{r}
+wave1_all = test1$nets[1,,]
+wave2_all = test1$nets[2,,]
+wave3_all = test1$nets[3,,]
+
+nets_all = array(
+    data = c(wave1_all, wave2_all, wave3_all),
+    dim = c(dim(wave2_all), 2)
+)
+
+net_all = sienaDependent(nets_all)
+```
+
+
+## Isolate Gender variable (binary)
+
+```{r}
+# Example from recoding function
+#df_ego = df_ego |>
+#    mutate(
+#        funcs = case_when(
+#            functie.22 == "Full Professor" ~ 1,
+#            functie.24 == "Full Professor" ~ 1,
+#            functie.25 == "Full Professor" ~ 1,
+#            .default = 0
+#        )
+#    )
+
+# Recoding for gender
+df_ego1 = df_ego1 |>
+    mutate(
+        female = case_when(
+            gender == "female" ~ 1,
+            gender == "male" ~ 0,
+            .default = NA
+        )
+    )
+female1 = coCovar(df_ego1$female)
+```
+
+
+
+## New code added --> female = indep, + controls (review if want these***) 
+
+```{r}
+mydata1 = sienaDataCreate(net_all, female1)
+myeff1 = getEffects(mydata1)
+myeff1 = includeEffects(myeff1, isolateNet, inPop.c) # Need to check if this is right syntax (myeff1)
+myeff1 = includeEffects(myeff1, egoX, interaction1 = "female1") # how to include other universities into independent variables? 
+# myeff1 = includeEffects(myeff1, egoX, altX, diffX, interaction1 = "female1") 
+  # how to include other universities into independent variables?
+  # how to look at effect from one wave to the next? 
+
+myAlgorithm2 = sienaAlgorithmCreate(
+    projname = "soc_init2")
+
+ansM2 = siena07(
+    myAlgorithm2, 
+    data = mydata1, 
+    effects = myeff1,
+    returnDeps = TRUE
+)
+
+ansM2  
+```
+
+
+
+-----------------------------------
+New Analysis started.
+Date and time: 24/10/2025 04:19:46
+New results follow.
+-----------------------------------
+
+RSiena version 1.5.0 (06 Jul 25)
+
+
+**1**
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Random initialization of random number stream.
+Current random number seed is 651330.
+Effects object used: myeff1 
+Model Type:
+ Standard actor-oriented model 
+Estimation method: conditional moment estimation.
+Conditioning variable is the total number of observed changes ("distance") 
+in the network variable.
+Distance for simulations is  410 .
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  0. Rate parameter                           1.7947
+  1. eval:  outdegree (density)                            -1.6627
+  2. eval:  reciprocity                                     0.0000
+  3. eval:  indegree-popularity (centrd)                    0.0000
+  4. eval:  network-isolate                                 0.0000
+  5. eval:  female1 alter                                   0.0000
+  6. eval:  female1 ego                                     0.0000
+  7. eval:  female1 difference                              0.0000
+
+
+Values of target statistics are
+  1. Number of ties                                                     389.0000
+  2. Number of reciprocated ties                                         72.0000
+  3. Sum of squared indegrees (centrd)                                 1428.3886
+  4. Number of isolates                                                 195.0000
+  5. Sum indegrees x female1                                            -53.8102
+  6. Sum outdegrees x female1                                           -12.7417
+  7. Sum_ties diff female1                                              -40.0000
+These were calculated from the data.
+
+ 7 parameters, 7 statistics
+
+
+
+-----------------------------------
+New Analysis started.
+Date and time: 24/10/2025 04:55:27
+New results follow.
+-----------------------------------
+
+RSiena version 1.5.0 (06 Jul 25)
+
+
+**1**
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Random initialization of random number stream.
+Current random number seed is 387130.
+Effects object used: myeff1 
+Model Type:
+ Standard actor-oriented model 
+Estimation method: conditional moment estimation.
+Conditioning variable is the total number of observed changes ("distance") 
+in the network variable.
+Distance for simulations is  410 .
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  0. Rate parameter                           1.7947
+  1. eval:  outdegree (density)                            -1.6627
+  2. eval:  reciprocity                                     0.0000
+  3. eval:  indegree-popularity (centrd)                    0.0000
+  4. eval:  network-isolate                                 0.0000
+  5. eval:  female1 alter                                   0.0000
+  6. eval:  female1 ego                                     0.0000
+  7. eval:  female1 difference                              0.0000
+
+
+Values of target statistics are
+  1. Number of ties                                                     389.0000
+  2. Number of reciprocated ties                                         72.0000
+  3. Sum of squared indegrees (centrd)                                 1428.3886
+  4. Number of isolates                                                 195.0000
+  5. Sum indegrees x female1                                            -53.8102
+  6. Sum outdegrees x female1                                           -12.7417
+  7. Sum_ties diff female1                                              -40.0000
+These were calculated from the data.
+
+ 7 parameters, 7 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+**2**
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 2750 iterations.
+Parameter estimates based on 1750 iterations,
+basic rate parameter as well as 
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+  1.    7.4780   21.2245   0.3523 
+  2.   -2.4000    8.9362  -0.2686 
+  3. 2349.2657 5509.4491   0.4264 
+  4.   -3.5460   10.9492  -0.3239 
+  5.   -1.7235   27.0183  -0.0638 
+  6.   -0.3926   10.7217  -0.0366 
+  7.   -2.0960   26.7891  -0.0782 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  0.8379 .
+One or more of the t-statistics are rather large.
+
+
+
+**2**
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 2750 iteration steps.
+
+
+**3**
+Estimates and standard errors
+                             
+Rate parameters:
+ 0. Rate parameter                            3.6365  (   0.4799)
+
+Other parameters:
+ 1. eval:  outdegree (density)                                    -3.2592  (   0.1370)
+ 2. eval:  reciprocity                                             2.6424  (   0.2700)
+ 3. eval:  indegree-popularity (centrd)                            0.2524  (   0.0498)
+ 4. eval:  network-isolate                                         5.3605  (   0.6508)
+ 5. eval:  female1 alter                                          -1.4175  (  38.4264)
+ 6. eval:  female1 ego                                             1.4866  (  38.3994)
+ 7. eval:  female1 difference                                      1.2121  (  38.3718)
+
+
+**3**
+Covariance matrices
+                   
+Covariance matrix of estimates (correlations below diagonal):
+     0.019     -0.016     -0.005      0.065     -1.023      1.021      1.011
+    -0.424      0.073      0.006     -0.083      1.619     -1.608     -1.600
+    -0.780      0.422      0.002     -0.022      0.489     -0.486     -0.482
+     0.729     -0.475     -0.689      0.423     -6.691      6.666      6.613
+    -0.194      0.156      0.256     -0.268   1476.588  -1475.534  -1474.462
+     0.194     -0.155     -0.254      0.267     -1.000   1474.516   1473.437
+     0.192     -0.154     -0.252      0.265     -1.000      1.000   1472.395
+
+Derivative matrix of expected statistics X by parameters and
+covariance/correlation matrix of X can be found using
+summary(ans) within R, or by using the 'verbose' option in Siena07.
+
+
+
+
+
+```{r}
+effectsDocumentation(myeff1)
+
+print01Report(mydata1)
+```
+
+
+
+
+
+
+
+
+
+# GOODNESS OF FIT FOR ALL UNI'S
+
+```{r}
+GeodesicDistribution <- function(i, data, sims, period, groupName, varName, levls = c(1:5, Inf), cumulative = TRUE,
+    ...) {
+    x <- networkExtraction(i, data, sims, period, groupName, varName)
+    require(sna)
+    a <- sna::geodist(symmetrize(x))$gdist
+    if (cumulative) {
+        gdi <- sapply(levls, function(i) {
+            sum(a <= i)
+        })
+    } else {
+        gdi <- sapply(levls, function(i) {
+            sum(a == i)
+        })
+    }
+    names(gdi) <- as.character(levls)
+    gdi
+}
+
+# The following function is taken from the help page for sienaTest -- use "ansM2"
+
+testall1 <- function(ansM2) {
+    for (i in which(ansM2$test1)) {
+        sct <- score.Test(ansM2, i)
+        cat(ansM2$requestedEffects$effectName[i], "\n")
+        print(sct)
+    }
+    invisible(score.Test(ansM2))
+}
+```
+
+
+# First GOF model  
+
+```{r}
+gofi_all <- sienaGOF(ansM2, IndegreeDistribution, verbose = FALSE, join = TRUE, varName = "net_all")
+gofi_all
+plot(gofi_all)
+
+# variable name from example = net
+# x-axis = indegree 
+# y-axis = frequency (plotting the people with 0 in-degrees)
+
+```
+
+
+
+##Box Plot v Violin plot
+
+box plot: looking at degree of spread - for many simulations - based on parameters / estimation, we have simulated networks. for each simulated network, we do an in-degree count. for the median value of the simulated networks, is about 20 in this?? 
+Violin plot - represents where the majority of the data is.. 
+
+red line - red is the observed network. Simulated SHOULD match the observed networks - and matches, if the red points are within the plots, and ideally close to the median of each. 
+
+## Why do the numbers increase? 
+Cumulative in-degree? No. We have 12 nodes in observed network with 0 degrees. 17 more with one. Is counter intuitive?
+
+we underestimate number of isolates, and overestimate the number of actors with 3-4-5 ties, and over estimate people with FEW degrees... 
+
+Is cumulative because it is stacked throughout one plot. 
+
+
+
+
+## Testing with p-value: 
+Values are fixed - there are not randomness in targets. we have a random variable, so we test a set of randome variables against a set of fixed values, and combine it in one test (where we take into account if there is a covariance in all of this. if covariance in random variables). 
+
+If have 1 random variable and 1 fixed variable: T-test (one-sample t-test)
+This test is more complicated: Monte Carlo Mahalanobis distance test p-value (in this example, is:  0.542) 
+
+
+## can also do this for OUT DEGREE DISTRIBUTION
+### IMPORTANT TO DO TESTS ON DYAD CENSUS AND TRIAD CENSUS - DON'T GET FARTHER THAN DYADIC EFFECT OR TRIAD EFFECT, SO WANT TO MAKE SURE THAT MODEL AT LEAST CAN EXPLAIN DYAD AND TRIAD CONFIGURATIONS
+Triad configuration of
+
+This is MACRO LEVEL INVESTIGATION
+
+```{r}
+# TBD: outdegree distribution
+
+gofi1 <- sienaGOF(ansM1, OutdegreeDistribution, verbose = FALSE, join = TRUE, varname = "gender")
+# error:   You need to supply the parameter <<varName>>.
+
+# gofi1 <- sienaGOF(ansM1, OutdegreeDistribution, verbose = FALSE, join = TRUE, levls = c(0:10, 15, 20), varname = "net")
+
+```
+
+
+
+# RELATIVE INFLUENCE 
+
+```{r}
+# RI <- sienaRI(data = mydata, ans = ansM1)
+# RI <- sienaRI(data = mydata_example, ans = answer_ex)
+
+RSiena:::sienaRI(data = mydata1, ans = ansM2)
+# RSiena:::sienaRI(data = mydata_example, ans = answer_ex)
+
+RI2 <- RSiena:::sienaRI(data = mydata1, ans = ansM2)
+
+class(RI2)
+# siena RI
+
+#plot(RI, addPieChart = TRUE)
+#plot.sienaRI(RI, addPieChart = TRUE)
+RSiena:::plot.sienaRI(RI2, addPieChart = TRUE)
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+IF NEEDED LATER:
+
+# Now, try to loop in gender 
+## Make simple adj matrix for gender 
+```{r}
+
+
+```
+
+
+# Rsiena work 
+
+## Get packages: Jochem's twostep
+
+```{r}
+packages = c("RSiena", "devtools", "igraph")
+fpackage.check(packages)
+## devtools::install_github('JochemTolsma/RsienaTwoStep', build_vignettes=TRUE)
+packages = c("RsienaTwoStep")
+fpackage.check(packages)
+```
+
+
+## Step 1: Define data
+Independent variable: gender?
+
+We already know: net <- sienaDependent(nets) (dependent variable)
+  Dependent variable: ties = [net]
+
+
+```{r}
+
+```
+
+
+
+ 
+## Step 2. Look at effects
+```{r}
+effectsDocumentation(myeff)
+
+```
+
+
+## Step 3: Look at intial data
+
+-    good for deciding statistics to use. 
+
+```{r}
+print01Report(mydata)
+
+# gives initial description of data 
+# reading network variables , covariates, density measures/changes in networks, tie changes between subsequent observations... calculate how much networks changed over time. 
+# dont use balance calculation 
+```
+
+
+## Step 4: Add effects
+
+Example: 
+
+```{r}
+
+
+net1g <- graph_from_adjacency_matrix(ts_net1, mode = "directed")
+coords <- layout_(net1g, nicely())  #let us keep the layout
+par(mar = c(0.1, 0.1, 0.1, 0.1))
+{
+    plot.igraph(net1g, layout = coords)
+    graphics::box()
+}
+
+# for every actor, there are 10 options - each actor can break tie, keep tie/do nothing, or add new tie. If tie, can break or keep. If there is no tie, can remain 0 tie or form a tie. 
+
+
+# Now, select 'random' agent: 
+set.seed(24553253)
+ego <- ts_select(net = ts_net1)
+ego
+
+
+#### Network: ts_net1, ego = ego4 (ego 4 allowed to make ministeps). package then will list all of the different adjacency matrices. Shows all of the different next ministep options for ego 4. 
+
+
+#### 
+options <- ts_alternatives_ministep(net = ts_net1, ego = ego)
+options
+
+plots <- lapply(options, graph_from_adjacency_matrix, mode = "directed")
+par(mar = c(0, 0, 0, 0) + 0.1)
+par(mfrow = c(2, 2))
+
+fplot <- function(x) {
+    plot.igraph(x, layout = coords, margin = 0)
+    graphics::box()
+}
+
+
+ts_degree(net = options[[1]], ego = ego)
+sapply(options, ts_degree, ego = ego)
+
+```
+
+
+
+
+
+
+
+
+

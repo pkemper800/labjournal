@@ -6,20 +6,45 @@ output: html_document
 ---
 
 
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
 
-#Drafting Paper 
-
-
-
-#Homework assignments review
-
--- codereview 3 for Rsienna tutorial
-
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
 
 
-#Homework 
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+# Homework 
+-   Work on drafting paper, make plan for database
+-   Codereview 3 for Rsiena tutorial 
+
 ## Goals:
--   Make list of the 
+-   Make list of the professors - 
 -   Compile list of professors names and their respective departments and universities across the Netherlands
 
     -   Flag: Compile international academic experience/background of professors.
@@ -36,13 +61,50 @@ output: html_document
 
 To make this scalable, we will break this into many smaller parts.
 
--   
+
 
 # Review
 
+
+## Step 0: Load packages
+```{r}
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, file, "_", datename, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+```
+
+
+
 ### Collect set of Professors
 ```{r}
-install.packages("readxl")
+#install.packages("readxl")
 library(readxl)
 
 # My manual data set, including manual review of professor experience abroad
@@ -54,7 +116,7 @@ socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
 socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
 
 # big datafile with everything (*very important!*)
-scholars <- fload("C:/Github/labjournal/scholars_20240924.rda")
+scholars <- fload("C:/Github/labjournal/scholars_20240924.rda") #have to reload this
 
 
 # from all professors from all dutch universities - for reference, for now
@@ -66,6 +128,17 @@ socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
 
 
 ```{r}
+library(dplyr)
+library(readxl)
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+# scholars$demographics
 
 s = bind_rows(scholars$demographics) |>
   filter(
@@ -76,10 +149,10 @@ s = bind_rows(scholars$demographics) |>
 hold = c()
 for (authorid in s$au_id[1:2]){
   print(authorid)
-  #res = oa_fetch(
-  #  entity = "works", 
-  #  author.id=authorid
-  #)
+  res = oa_fetch(
+    entity = "works", 
+    author.id=authorid
+  )
   # # res = bind_rows(scholars$works) |> filter(id == authorid)
   hold[[authorid]] = res
 }
@@ -145,9 +218,9 @@ collaborators1 #check it again
 ```
 
 
-```{r}
 
 Get list of affiliated institutions for each coauthor of 1 professor
+
 ```{r}
 
 institutions <- NA
@@ -178,38 +251,46 @@ ru_id
 ## then make sure to reference correct authors from correct university
 author1 <- oa_fetch(entity = "author", search = "Jochem Tolsma", affiliations.institution.id = ru_id$id) #jochem info
 author1
+```
 
-author2 <- oa_fetch(entity = "author", search = "Maurice Gesthuizen", affiliations.institution.id = ru_id$id) #maurice
-author2
 
-author3 <- oa_fetch(entity = "author", search = "Michael Savelkoul", affiliations.institution.id = ru_id$id) #michael
-author3
+```{r}
+# HAD TO COMMENT OUT TO KNIT, BUT THIS CODE WORKED: 
+
+# author2 <- oa_fetch(entity = "author", search = "Maurice Gesthuizen", affiliations.institution.id = ru_id$id) #maurice
+#author2
+
+#author3 <- oa_fetch(entity = "author", search = "Michael Savelkoul", affiliations.institution.id = ru_id$id) #michael
+#author3
 
 ## mini list of authors
-mini_list <- rbind(author1, author2, author3)
-mini_list
+#mini_list <- rbind(author1, author2, author3)
+#mini_list
 
-just_names <- data_frame(mini_list$display_name)
-just_names
+#just_names <- data_frame(mini_list$display_name)
+#just_names
 
 
 # search just one name from the list 
 
-institutions2 <- data.frame()
-for (i in 1:nrow(mini_list)) {
-  name1_papers <- oa_fetch(entity = "works", author.id = mini_list[i,1])
-  # name1_papers <- oa_fetch(entity = "works", author.display_name = mini_list[i,2], affiliations.institution.id = ru_id$id)
-  name1_papers[1,]
-  for (j in 1:nrow(name1_papers)) {
-    print(j)
-    df2 <- as.data.frame(name1_papers[j,4][[1]])
-    # df2 <- df2[-c(which(df2$display_name==mini_list[i,2]))]
-    # institutions2 <- c(institutions2, df2$affiliations[[1]][[2]])
-  }
-}
+#institutions2 <- data.frame()
+#for (i in 1:nrow(mini_list)) {
+#  name1_papers <- oa_fetch(entity = "works", author.id = mini_list[i,1])
+#  # name1_papers <- oa_fetch(entity = "works", author.display_name = mini_list[i,2], affiliations.institution.id = ru_id$id)
+#  name1_papers[1,]
+#  for (j in 1:nrow(name1_papers)) {
+#    print(j)
+#    df2 <- as.data.frame(name1_papers[j,4][[1]])
+#    # df2 <- df2[-c(which(df2$display_name==mini_list[i,2]))]
+#    # institutions2 <- c(institutions2, df2$affiliations[[1]][[2]])
+#  }
+#}
 
-authorships.affiliations.institution_ids
+#authorships.affiliations.institution_ids
+```
 
+
+```{r}
 institutions <- NA
 for (i in 1:nrow(prof1_papers)) {
   print(i)
@@ -217,22 +298,27 @@ for (i in 1:nrow(prof1_papers)) {
   df <- df[-c(which(df$display_name=="Jochem Tolsma"))] #remove repeats of Jochem Tolsma (the professor we are looking at)
   institutions <- c(institutions, df$affiliations[[1]][[2]])
 }
- 
+```
+
+
+```{r}
+
+# HAD TO COMMENT OUT TO KNIT, BUT THIS CODE WORKED: 
 
 ## Make double loop 
-list1 <- data.frame()
-list2 <- data.frame()
+#list1 <- data.frame()
+#list2 <- data.frame()
 
-for (i in 1:nrow(just_names)) {
-  print(i)
-  list1 <- oa_fetch(entity = "works", author.id = just_names[i])
-  df1 <- c(df1, list1$display_name)
-  for (j in 1:nrow(list1)) {
-    print(j)
-    df2 <- as.data.frame(list1[i,4][[1]])
-    list2 <- c(list2, df2$display_name)
-  }
-}
+#for (i in 1:nrow(just_names)) {
+#  print(i)
+#  list1 <- oa_fetch(entity = "works", author.id = just_names[i])
+#  df1 <- c(df1, list1$display_name)
+#  for (j in 1:nrow(list1)) {
+#    print(j)
+#    df2 <- as.data.frame(list1[i,4][[1]])
+#    list2 <- c(list2, df2$display_name)
+#  }
+#}
 
 
 
@@ -269,14 +355,11 @@ collaborators1 #check it again
 
 
 # Load author IDs or names from Excel
-author_list <- read_excel("authors.xlsx", sheet = "Sheet1")
-head(author_list)
+
+#author_list <- read_excel("authors.xlsx", sheet = "Sheet1")
+#head(author_list)
 ```
 
-
-Now, try to do this with Excel 
-```{r}
-```
 
 ```{r}
 

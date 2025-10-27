@@ -4,9 +4,34 @@ author: "Paige Kemper"
 date: "2025-10-14"
 output: html_document
 ---
+
+Updates: 
+Pivot! Ethnicity tricky: Instead pull gender? 
+-  Research Question: How does gender diversity impact collaborations among political science and sociology professors at Dutch Universities? 
+Cross gender collaborations -> predict future cross gender collaborations? predict future cross faculty collaborations? 
+
+Sub Questions: 
+-   What is the gender diversity across different dutch universities (how close to 50-50 male to female is each faculty)?
+-   How does ego gender impact likelihood for greater gender-diversity in collaborations: Are women more likely to partner with men than men are likely to partner with women? 
+-   How does ego gender impact likelihood for intra-university collaborations (collaborations with a professor from a different university): Are women more likely to partner with professors from other universities? 
+-   Do previous cross-gender collaborations increase the likelihood of future cross gender collaborations? 
+-   Do previous intra-university collaboration increase the likelihood of future cross-university collaborations? 
+-   Does greater balance in gender diversity correlate with increased net-collaborations for universities? 
+
+
+
+
+
+
 Working draft for social network analysis dataset
 
 # Clean workspace, loaded libraries and packages
+## Clear data
+```{r}
+rm(list=ls()) #start clean
+```
+
+## Load libraries and packages
 ```{r}
 library(readxl)
 library(selenider)
@@ -21,7 +46,7 @@ library(openalexR)
 packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
 packages <- c("devtools", "igraph")
 
-fpackage.check(packages)
+# fpackage.check(packages)
 
 fpackage.check <- function(packages) {
     lapply(packages, FUN = function(x) {
@@ -53,9 +78,6 @@ fshowdf <- function(x, ...) {
         kableExtra::scroll_box(width = "100%", height = "300px")
 }
 
-
-
-
 ```
 
 ```{r}
@@ -71,16 +93,16 @@ fshowdf <- function(x, ...) {
 # big datafile with everything (*very important!*)
 scholars <- fload("C:/Github/labjournal/scholars_20240924.rda")
 
-
-install.packages("readxl")
-library(readxl)
+#PREVIOUS DATA USED:
+# install.packages("readxl")
+# library(readxl)
 # from all professors from all dutch universities - for reference, for now
-socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
-socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
+# socprofs2022 <- read_excel("C:/Github/labjournal/2022scholarid_jt.xlsx")
+# socprofs2024 <- read_excel("C:/Github/labjournal/2024scholarid_jt.xlsx")
 
 # My manual data set, including manual review of professor experience abroad
-ru_soc_profs <- read_excel("C:/Github/labjournal/ru_soc_profs.xlsx")
-ru_soc_profs
+# ru_soc_profs <- read_excel("C:/Github/labjournal/ru_soc_profs.xlsx")
+# ru_soc_profs
 
 #now have list of scholars for all dutch universities 
 ```
@@ -97,9 +119,14 @@ s = bind_rows(scholars$demographics) |>
   )
 ```
 
+
 ## For each Radboud professor in 's', webscrape from openalex their works. Make extra large list of datafiles for each professor ('hold'), and then a dataframe of all of the works ('res') (collaboration ties) 
 
 ```{r}
+# webscrape from openalex: easier with this:
+options(openalexR.mailto = "paige.kemper@ru.nl") 
+
+
 hold = c()
 for (authorid in s$au_id[1:nrow(s)]){
   print(authorid)
@@ -117,9 +144,12 @@ for (authorid in s$au_id[1:nrow(s)]){
 ## Now make dataframe
 Ego: each professor, in the form of their openalex ID
 Alters: each collaborator, in the form of their openalex ID
+
 Tie: Collaborations
+
 Alters Descriptive Information: Their affiliate institution (will check this - if is same, in NL, or international)
 Ego Descriptive Information: If the ego has international academic experience? If from the Netherlands - or not?
+
 ```{r}
 papers = hold
 
@@ -139,7 +169,12 @@ for (authorid in names(papers)){
 }
 
 
+# DILEMMA 1: 
+# how to pull alter-affiliation?? 
 co_authors[[authorid]]
+co_authors[[authorid$affiliations]] 
+
+
 co_authors[[authorid[1]]]
 co_authors[[authorid[1]]][[1,7]]
 print(co_authors[[authorid[1]]][[1,7]])
@@ -153,49 +188,64 @@ co_authors[[authorid]][["affiliations"]][[1]]
 
 
 
-Make list of co-authors for 1 professor (eg.Jochem)
-```{r}
-#check packages are installed
-library(selenider)
-library(rvest)
-library(tidyverse)
-library(netstat)
-library(pingr)
-library(jsonlite)
-library(stringr)
-library(openalexR)
-
-
-# Next, test calling 1 professor
-options(openalexR.mailto = "paige.kemper@ru.nl") 
-
-```
-
-
 ```{r}
 
 ```
 
 
-Now: try to do this for list of authors
-```{r}
 
+# Gender 
+```{r}
+# Make a dummy matrix: 
+library(igraph)
+set.seed(124376) #randomized start
+matrix1 <- matrix(sample(x=0:1, size = 25, replace = TRUE), nrow = 5, ncol = 5)
+
+symmatrix1 <- matrix1 + t(matrix1) #this will just add over where there are 1's, but it will be a bit redundant
+symmatrix1
+symmatrix1[symmatrix1 == 2] <- 1 #neutralize redundancies
+ # Replacement script -- IF/ELSE
+ ## symmatrix1 <- ifelse(symmatrix1==2,1,0) 
+diag(symmatrix1) <- 0
+symmatrix1
+
+# descriptive statistics
+rowSums(symmatrix1)
+mean(symmatrix1)
+
+
+symmatrix1G <- graph_from_adjacency_matrix(symmatrix1) 
+class(symmatrix1G)
+plot(symmatrix1G) #now we will map the triad relationships
+igraph::transitivity(symmatrix1G, type = "undirected")
+
+dyad_census(symmatrix1G)
 ```
 
-```{r}
-## make sure to reference correct university
+# Now try to make a dataframe with gender -- looking at the cross-gender collaborations, and, if  cross gender collaborations have happened previously, are they more likely to happen again? 
 
-# search just one name from the list 
+## make column: referencing if there were cross-gender collaborations in previous data, return 0 or 1 for each professor in wave 1. then, look at if there were cross-gender collaborations in wave 2.  
 
-```
+For all professors 
+  For all alters 
+    If alter is boy (and prof is girl)
+      then return a tie
 
-# Try playing with Rsiena 
+## Then, in Rsiena, look at: 
+sameX (expect (+): more likely to work with someone from the same gender)
+egoX (expect 0 effect)
+egoX*sameX (expect negative (-): if not working with opposite gender, not more likely to work with opposite gender again?)
+
+## 
 
 
-# Try playing with visualizations 
+
+
+
+
+# Playing with visualizations 
 
 ## Use with fcolnet
-
 ```{r}
 fcolnet <- function(data = scholars, university = "RU", discipline = "sociology", waves = list(c(2015,
     2018), c(2019, 2023)), type = c("first")) {
@@ -278,14 +328,12 @@ fcolnet <- function(data = scholars, university = "RU", discipline = "sociology"
 ```
 
 
-## pull data using fcolnet
-```{r}
-test <- fcolnet(data = scholars, 
-                university = c("RU", "UU", "UvA", "EUR", "Leiden", "VU", "UvT", "RUG"), 
-                discipline = c("sociology", "political science"), 
-                waves = list(c(2015, 2018), c(2019, 2023)), 
-                type = c("first"))
 
+## pull data using fcolnet: 
+
+### RU Data
+
+```{r}
 test_ru <- fcolnet(data = scholars, 
                 university = c("RU"), 
                 discipline = c("sociology", "political science"), 
@@ -294,7 +342,19 @@ test_ru <- fcolnet(data = scholars,
 ```
 
 
-## Just radboud (both depts) wave 1
+### All universities data
+
+```{r}
+test <- fcolnet(data = scholars, 
+                university = c("RU", "UU", "UvA", "EUR", "Leiden", "VU", "UvT", "RUG"), 
+                discipline = c("sociology", "political science"), 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
+                type = c("first"))
+```
+
+
+## Visualizing just radboud (both depts) wave 1
+
 ```{r}
 # make adjacency matrix with first wave of data
 test_wave1ru <- igraph::graph_from_adjacency_matrix(
@@ -318,7 +378,27 @@ sum(is.na(test_wave1ru)) #check it is complete -- if 0 missing values
 ```
 
 
-### colored version
+## Visualizing just radboud (both depts) wave 2
+
+```{r}
+test_wave2ru <- igraph::graph_from_adjacency_matrix(
+  test_ru$nets[2,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+#plot to see if it worked 
+plot(test_wave2ru,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+```
+
+
+### colored version of radboud wave 1 data
 ```{r}
 #first: fish out the data
 #only RU professors , only sociology department (test_wave1ru)
@@ -338,7 +418,8 @@ plot(test_wave1ru,
 
 
 
-## then all departments, directed
+## Then, visualizing all departments, directed
+
 ```{r}
 test_wave1 <- igraph::graph_from_adjacency_matrix(
   test$nets[1,,], #look at first wave of data. (thus I select the array of networks and take the first matrix)
@@ -357,12 +438,92 @@ plot(test_wave1,
 ```
 
 
-## Now, testing with data developed from database developed
-  NEEDS WORK 
+## Recap: 
+-   data <- comes from 'scholars'; split into subsections/elements. inspecting 'demographic' element. 
+-   sample <- looking at change in demographics between time 1 and time 2 in 2 different universities. 
+
+We have already made adjacency matrix -- here is entire code: 
 ```{r}
-test_coauthor <- fcolnet(data = co_authors, 
-                         university = c("Radboud University")
+# for reference from lab 4: 
+# GMAT: the adjacency matrix for g  -->  now that is 
+# g: the graph/plot  -->  now that is test_w1 and test_w2
+
+# g <- make_graph("Zachary")
+# plot(g)
+
+# gmat <- as_adjacency_matrix(g, type = "both", sparse = FALSE)
+# gmat
+
+# number of nodes
+# vcount(g)
+# number of edges
+# ecount(g) 
+
+
+# make adjacency matrix with first wave of data
+test_w1 <- igraph::graph_from_adjacency_matrix(
+  test$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+plot(test_w1,
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+
+# make adjacency matrix with second wave 
+test_w2 <- igraph::graph_from_adjacency_matrix(
+  test$nets[2,,], #now, I take the second wave
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL
+)
+
+# find ego characteristics. 
+# first fish out the data
+df <- test$data
+
+#same complicated structure as 'scholars' thus first make a dataframe from the list in which all info was saved. 
+df_ego <- do.call(rbind.data.frame, df$demographics)
+
+plot(test_w2,
+  vertex.color = ifelse(df_ego$discipline.24 == "sociology", "red", "blue"), #now, I can use actor attributes for plotting. 
+  vertex.label = NA,
+  edge.width = 0.2,
+  edge.arrow.size =0.2)
+
+
+plot(test_w1)
+plot(test_w2)
+```
+
+
+
+
+
+
+# Now, testing with data developed from database developed ??
+##  NEEDS WORK 
+  
+  test <- fcolnet(data = scholars, 
+                university = c("RU", "UU", "UvA", "EUR", "Leiden", "VU", "UvT", "RUG"), 
+                discipline = c("sociology", "political science"), 
+                waves = list(c(2015, 2018), c(2019, 2023)), 
                 type = c("first"))
+
+
+```{r}
+test_coauthor <- fcolnet(data = s, 
+                         university = c("RU"), 
+                         discipline = c("sociology", "political science"), 
+                         waves = list(c(2015, 2018), c(2019, 2023)), 
+                         type = c("first"))
+
 
 test <- fcolnet(data = co_authors, 
                 university = c("RU", "UU", "UvA", "EUR", "Leiden", "VU", "UvT", "RUG"), 
@@ -375,6 +536,158 @@ co_authors[[authorid]]
 
 ```
 
+
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+# Descriptive Statistics
+## NOW - LOOK AT DESCRIPTIVE STATISTICS FOR RU ONLY 
+
+```{r}
+
+#SIZE
+# number of nodes for RU professors
+vcount(test_wave1ru) #returns 101
+vcount(test_wave2ru) #returns 101
+
+#SIZE - for reference
+# number of nodes for all professors
+vcount(test_w1) #returns 674
+vcount(test_w2) #returns 674
+
+
+#EDGES
+# number of edges for RU professors
+ecount(test_wave1ru) #returns 47
+ecount(test_wave2ru) #returns 98
+
+
+#DEGREE
+# looking at clustering and spread
+igraph::degree(test_wave1ru)
+igraph::degree(test_wave2ru)
+
+hist(table(degree(test_wave1ru)), xlab='indegree', main= 'Histogram of indegree') 
+# every number is the degree level of each actor -- and see it is heavily skewed to the left
+# Wave 1: see frequency of 7 for indegre 0:10, frequency of 1 for indegree 10:20, 0 for indegree 20:60, frequency 1 for indegree 60:70
+
+hist(table(degree(test_wave2ru)), xlab='indegree', main= 'Histogram of indegree') # every number is the degree level of each actor -- and see it is heavily left skewed too  
+# Wave 2: see frequency of 8 for indegree 0:10, frequency of 2 for indegree 10:20, 0 for 20:30, 1 for 30:40
+
+
+
+#TRANSITIVITY -- all of these return "NAN" -- check?
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+## FLAG - ERROR WITH THIS - NOT ABLE TO REALLY USE/VIEW RESULTS
+igraph::transitivity(test_wave1ru, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+igraph::transitivity(test_wave2ru, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+
+igraph::transitivity(test_wave1ru, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+
+
+#BETWEENNESS
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+igraph::transitivity(test_wave1ru, type = c("localundirected"), isolates = c("NaN", "zero"))
+igraph::transitivity(test_wave2ru, type = c("localundirected"), isolates = c("NaN", "zero"))
+
+```
+
+
+
+## Next, moving from local to global transitivity 
+-   Look at triads for more global transitivity. 
+-   Note: Global = number of observed over possible - can identify all transitive triads and all possible triads 
+-   Reviewing dyads - then triads. Since it is undirected, it is less difficult to calculate. 
+-   Now, looking at triad census vs triad allegation
+
+```{r}
+# plot: igraph - XX <- make_graph(y) <- test$nets[1,,] ??
+# adj mat: XX <- as_adj_matrix((plot), type = "both", sparse = FALSE) -- adj mat = test_w1 =  test$nets[1,,]
+
+
+igraph::dyad.census(test_wave1ru) #with plot -- works 
+  # Returns: 6 mut, 35 asym, 5009 null 
+igraph::dyad.census(test_wave2ru) #with plot -- works
+  # Returns: 7 mut, 84 asym, 4959 null 
+
+
+igraph::triad.census(test_wave1ru) #with plot -- works
+  # Returns:  [1] 162709   3266    561     19     38     25     17     10      1      0      1      0      1      1      1      0
+
+igraph::triad.census(test_wave2ru) #with plot -- works
+  # Returns:  [1] 157965   7752    637     30    151     44     34      9     18      1      0      1      4      1      2      1
+```
+
+
+
+```{r}
+library(sna)
+
+# Wave 1
+sna::triad.census(test_ru$nets[1,,]) #with adj matrix of test_wave1ru -- triad.census of (test_w1) doesn't work. 
+unloadNamespace("sna")  #detach this package again to avoid interference with other igraph functions 
+  # Returns: [1,] 162709 3266 561   19   38   25   17   10    1    0   1    0    1    1   1   0
+  # Same as igraph triad census! 
+
+
+igraph::transitivity(test_wave1ru, type = "global") #with plot
+  # Returns: [1] 0.09836066
+
+sna::gtrans(test_ru$nets[1,,]) #triad census a different way, but this is with plot - need with adj mat:
+  # Returns: [1] 0.109375
+
+  # Prev Code: sna::gtrans(test$nets[1,,]) #with adj matrix
+
+
+triad_w1ru <- data.frame(sna::triad.census(test_ru$nets[1,,])) #save as df, #with adj matrix
+
+transitivity_w1 <- (3 * triad_w1$X300)/(triad_w1$X201 + 3 * triad_w1$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_w1
+
+
+
+
+
+# Wave 2
+sna::triad.census(test$nets[2,,])
+unloadNamespace("sna")  #I will detach this package again, otherwise it will interfere with all kind of functions from igraph, and my students will hate me for that.
+
+
+igraph::transitivity(test_w2, type = "global")
+sna::gtrans(test$nets[2,,]) #triad census a different way 
+
+triad_w2 <- data.frame(sna::triad.census(test$nets[2,,])) #save as df
+
+transitivity_w2 <- (3 * triad_w2$X300)/(triad_w2$X201 + 3 * triad_w2$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_w2
+
+```
+
+
+
+
+
+
+
+NEED TO INCLUDE TRIADS - TRANSITIVITY 
+OUTDEGREE AND RECIPROCITY ARE ALWAYS IN THERE, ALSO NEED OUTDEGREE ACTIVITY OR IN DEGREE POPULARITY. ALSO NEED SOMETHING FOR TRANSITIVITY - GWESP VARIABLE AND EFFECTS TO INCLUDE - MAKE SURE TO INCLUDE ONE OF THESE TOO.
+
+```{r}
+
+```
+
+# Try playing with Rsiena 
 
 ```{r}
 

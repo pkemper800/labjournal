@@ -5,6 +5,31 @@ date: "2025-09-16"
 output: html_document
 ---
 
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -134,22 +159,15 @@ Read Before Class:
 
     -   **Random Graph Comparison**: Network significance is assessed by comparing observed characteristics to random graphs with same size and density, with smallworldlyness defined as σ = (C/Cr)/(L/Lr) where σ \> 1 indicates small-world properties
 
-**Assignments**:
-
-1.  Chapter 8 (up to section 8.4)
-    1.  N/A (yet)
-2.  Chapter 1
-    1.  (Lab 1)
-3.  Chapter 2
-    1.   (Lab 2)
-4.  Chapter 4 (up to 4.3.2.5)
-5.  Chapter 6 (Look at Moran’s I.)
 
 
 
 # Class work
 
-From Class: starting with web scraping
+From Class: 
+
+## starting with web scraping
+
 ```{r}
 #lpol_staff <- rvest::read_html()
 #head(lpol_staff)
@@ -168,11 +186,11 @@ From Class: starting with web scraping
 # select for strings that start with file path for list
 
 
-
 ```
 
 
-logic of web scraping: find elements in the website that you are trying to 
+### logic of web scraping: find elements in the website that you are trying to 
+
 ```{r}
 #lpol_staff_names <- 
 #  read_html("link for staff leiden") %/%
@@ -189,7 +207,7 @@ logic of web scraping: find elements in the website that you are trying to
 ```
 
 
-Now: try RU website 
+## Now: try RU website 
 
 Note: site looks different depending on the size. We want to mimic a person, and browse the webpage as a human would. Want a free port. There are different packages you can use for more complicated/technical webscraping. 
 
@@ -213,7 +231,7 @@ Note: site looks different depending on the size. We want to mimic a person, and
 ``` 
 
 
-Then, try it with an even stronger package - Java!
+### Then, try it with an even stronger package - Java!
 
 ```{r}
 #open_url("")
@@ -233,8 +251,13 @@ Then, try it with an even stronger package - Java!
 ```
 
 
+## Test web scraper 
 
 **Next: Test Webscraper**
+Using packages developed by Jochem. 
+
+https://jochemtolsma.github.io/webscraping/ 
+
 
 ```{r}
 #check packages 
@@ -278,8 +301,10 @@ fpackage.check(packages)
 ```
 
 
+## Open Alex scraping 
 
 Note: You get more rights when you give your email: more commercial options (limited queries without email)
+
 ``` {r}
 #install.packages()
 #install.packages()
@@ -349,6 +374,9 @@ df <- oa_fetch(entity = "author", search = "Jochem Tolsma")
 fshowdf(df)
 
 ```
+
+
+
 NOTE: wrappers make life easier - construct right url, retrieves right json file!
 
 ```{r}

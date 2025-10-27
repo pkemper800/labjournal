@@ -1,0 +1,942 @@
+---
+title: "gof"
+author: "Paige Kemper"
+date: "2025-10-17"
+output: html_document
+---
+
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Goodness of Fit 
+
+ estimate Rsiena model, or estimate basic model from Rsiena package with something of 2  
+ behavioral data - could use s501 and s502
+ return depths of 2 - in siena07
+
+
+
+## Data - follow RSIENA procedure
+```{r}
+rm(list=ls()) #start clean
+```
+---
+
+## Using R Sienna example: Load packages
+
+```{r}
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+colorize <- function(x, color) {
+    sprintf("<span style='color: %s;'>%s</span>", color, x)
+}
+```
+
+
+
+```{r}
+packages = c("RSiena", "devtools", "igraph")
+fpackage.check(packages)
+# devtools::install_github('JochemTolsma/RsienaTwoStep', build_vignettes=TRUE)
+packages = c("RsienaTwoStep")
+fpackage.check(packages)
+```
+
+NEED DATA - use build in datasets from RSIENNA 
+?s501
+Is adjacency matrix for network type 1. Goal: Follow steps in 7.1 for different data:
+
+# Step 1. Define data
+Dependent variable: ties 
+
+
+```{r}
+s501 #network at timepoint 1
+s502 #network at timepoint 2
+```
+
+
+Inspect networks. Remove NAs, make sure diagonal. Need to see binary (not weighted)
+```{r}
+# come back to this 
+```
+
+
+Put networks in an array
+```{r}
+# mynet
+
+dim(s501) #says 50x50: 50 rows, 50 columns in data. 
+
+nets <- array (data = c(s501, s502), dim = c(dim(s501), 2)) #
+c(dim(s501),2)
+
+# dimentions of array are number of columns and number of rows 
+```
+could replace this with data set from last week 
+ 
+ 
+Define dependent - and independent - variable
+```{r}
+
+net <- sienaDependent(nets) #dependent variable 
+
+  # independent variable - s50a - we will take first way 
+
+#net$alcohol
+
+#s50a[,1]alcohol
+
+
+alcohol <- s50a[,1]#alcohol
+ # don't need wave 2 - just modeling at independent variable, influencing all ministeps between time 1 and time 2 
+alcohol 
+ 
+alcohol <- coCovar(alcohol)# at actor level - mean centered - is a time constant coVariate 
+```
+
+Now combine into dataset - if use Rsiena, need this. 
+```{r}
+mydata <- sienaDataCreate(net, alcohol)
+
+myeff <- getEffects(mydata) #have a look 
+myeff
+```
+Now can look at myeff - look at starting values - has density of two networks, reciprocity 
+
+
+Want much more statistics for model, though!! 
+
+# Step 2: 
+Can see all effects that could include in the dataset. Which is a lot. And this is a simple dataset. and yeah, its huge. Also can see that the type depends on weight function (evaluation (), endowment (), and creation ())
+
+Example. Jochem wants to make tie with Jos. Jochem's consideration to make a tie with Jos could be different than consideration to maintain a tie, could be different that decistions to break a tie. Can't estimate all three. Evalution: mechanisms the same for making as breaking, endowment = maintaining, creation = if there are none then what is the cost. 
+
+In this course: just use evaluation function. Assume mechanisms and functions to make/break ties are similar. include degree for evaluation. But what are all these effects? 
+-    should be able to calculate statistic for each effect for an ego in a network... Mathematical formula in chapter 12. 
+
+
+```{r}
+effectsDocumentation(myeff)
+```
+
+
+Make sure to understand out degree and reciprocity effects - statistics - will play around with this next week. Need to think of theory for which statistics are relevant. 
+-    Look at literature for statistics, think about it, play and see if effects exists 
+-    how work in reality? propose idea, write notation, see if effect exists in manual, etc. Lots of notation because everyone is looking for their own effects. 
+-    need to include more effects if what to. 
+
+```{r}
+
+```
+
+
+
+# Step 3: Look at intial data
+-    good for deciding statistics to use. 
+```{r}
+print01Report(mydata)
+
+# gives initial description of data 
+# reading network variables , covariates, density measures/changes in networks, tie changes between subsequent observations... calculate how much networks changed over time. 
+# dont use balance calculation 
+```
+
+# Step 4: Add effects
+
+```{r}
+myeff <- includeEffects(myeff, isolateNet, inPop, outAct)
+
+#outAct - outdegree related activity 
+```
+
+outAct
+- look at the number of times I have and square that: especially the people that have a lot of ties will send a lot of ties. 
+- evaluation function of tie1 0 ties, and tie1 4 ties - then at t2 people who have ties are more likely to send more ties 
+
+We know tie distributions are skewed, some people send a lot of ties and others dont. 
+
+inPop: in degree activity: people who reseive a lot of in-degrees send a lot of out-degrees 
+
+isolateNet: people without a lot of indegree nets. 
+
+
+
+Can see that starting values are 0 -- hypothesis testing 
+
+# Step 5: Estimation
+
+```{r}
+myAlgorithm <- sienaAlgorithmCreate(projname = "test")
+
+# define algorithm that says how I want to estimate my model. will use defaults. 
+
+ansM1 <- siena07(myAlgorithm, data = mydata, effects = myeff, returnDeps = TRUE)
+# then run it to see 
+
+ansM1
+
+```
+Now have first estimated Rsiena model! 
+
+
+- see:negative out degree 
+- 2.4 reciprocity: is important then in this model 
+- indegree populaty is popular but not significant... 
+
+if significant: more indegrees- more likely to send later. people with more out-degrees - more likely to send less (negative). isolate more likely to be alone. 
+
+
+Need to think of model that makes sense in this
+
+
+```{r}
+
+```
+
+# IGNORE ABOVE 
+
+
+
+REVIEWING RSIENA NOW
+-   negative degree - density is less than .5 
+-   interpretations 
+-   Mailing list for TOM
+
+-   Now: re-read chapter 2 and chapter 5 
+
+Afternoon: play with estimating our own models 
+Nice to do with our own data - collaboration networks. 
+Logic of RSIENA: took actor oriented approach - works if ties are directed. if undirected network, logic is different: the actor deciding on undirected tie is difficult. Advise: for now treat as undirected - and then evaluate tie. 
+undirected tie by reach consensus, forced into concensus, etc - reciprocity matters less now. 
+
+```{r}
+
+```
+
+# Now play with it 
+
+```{r}
+
+
+```
+
+
+```{r}
+```
+
+
+Now - referencing web scraping site 
+
+```{r}
+fcolnet <- function(data = scholars, university = "RU", discipline = "sociology", waves = list(c(2015,
+    2018), c(2019, 2023)), type = c("first")) {
+
+    # step 1
+    demographics <- do.call(rbind.data.frame, data$demographics)
+    demographics <- demographics %>%
+        mutate(Universiteit1.22 = replace(Universiteit1.22, is.na(Universiteit1.22), ""), Universiteit2.22 = replace(Universiteit2.22,
+            is.na(Universiteit2.22), ""), Universiteit1.24 = replace(Universiteit1.24, is.na(Universiteit1.24),
+            ""), Universiteit2.24 = replace(Universiteit2.24, is.na(Universiteit2.24), ""), discipline.22 = replace(discipline.22,
+            is.na(discipline.22), ""), discipline.24 = replace(discipline.24, is.na(discipline.24), ""))
+
+    sample <- which((demographics$Universiteit1.22 %in% university | demographics$Universiteit2.22 %in%
+        university | demographics$Universiteit1.24 %in% university | demographics$Universiteit2.24 %in%
+        university) & (demographics$discipline.22 %in% discipline | demographics$discipline.24 %in% discipline))
+
+    demographics_soc <- demographics[sample, ]
+    scholars_sel <- lapply(scholars, "[", sample)
+
+    # step 2
+    ids <- demographics_soc$au_id
+    nwaves <- length(waves)
+    nets <- array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works <- tibble(works_id = unlist(lapply(scholars_sel$work, function(l) l$id)), works_author = unlist(lapply(scholars_sel$work,
+        function(l) l$author), recursive = FALSE), works_year = unlist(lapply(scholars_sel$work, function(l) l$publication_year),
+        recursive = FALSE))
+
+    df_works <- df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == "first") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- df_works_w$works_author[i][[1]]$au_id[1]
+                alters <- df_works_w$works_author[i][[1]]$au_id[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "last") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- rev(df_works_w$works_author[i][[1]]$au_id)[1]
+                alters <- rev(df_works_w$works_author[i][[1]]$au_id)[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "all") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos <- df_works_w$works_author[i][[1]]$au_id
+                if (sum(ids %in% egos) > 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] <- 1
+                }
+            }
+        }
+    }
+    output <- list()
+    output$data <- scholars_sel
+    output$nets <- nets
+    return(output)
+}
+```
+
+
+Example in class from 10 October
+Siena dependent variable 
+
+```{r}
+# Step 1: load data
+library(RSiena)
+?sienaDependent #look for examples - script for how to run stuff 
+
+
+# then check waves available
+s501 #network at timepoint 1
+s502 #network at timepoint 2
+s503 #network at timepoint 
+
+
+mynet1 <- sienaDependent(array(c(s501, s502, s503), dim=c(50, 50, 3)))
+mybeh <- sienaDependent(s50a, type="behavior")
+
+ # look for smoking and drinking behaviors
+
+smoke <- s50s #time varying covariate. Time constant covar - varCovar
+smoke <- varCovar(s50s)
+
+mydata_example <- sienaDataCreate(mynet1, mybeh, smoke)
+
+
+
+# Step 2: look at data
+#print report on data reports
+
+print01Report(mydata_example)
+
+
+# Step 3: add effects 
+myeff_example <- getEffects(mydata_example)
+myeff_example
+
+
+
+myeff_example <- includeEffects(myeff_example, unequalX, name="mynet1", interaction1 = "smoke")
+myeff_example
+
+
+#make algorithm to then estimate it
+algo_ex <- sienaAlgorithmCreate(projname = "test_ex")
+answer_ex <- siena07(algo_ex, data=mydata_example, effects=myeff_example, returnDeps = TRUE)
+
+answer_ex
+
+
+#does it change if dependent X 
+myeff_example <- includeEffects(myeff_example, unequalX, name="mynet1", interaction1 = "mybeh") #name = network dependent variable, interaction 1 is covariate (smoking) - if have multiple netowrks, then could have unequalX with respect to X. We replaced smoke with my behavior, and rerun the siena model. This is an algorithm, can ask RSiena to reference previous result with 'prevans=ANS' after returnDepts = TRUE
+answer_ex <- siena07(algo_ex, data=mydata_example, effects=myeff_example, returnDeps = TRUE)
+
+answer_ex
+# looking at results, mybeh = drinking -- ego less likely to spend time with people who drink more or less than them. ego also less likely to spend time with people who smoke more or less, to a lesser extent. Can use unequalX for dependent variables and covariates. key difference in estimation procedure: 
+# we are also modeling behavioral results - behavior changing over time, simulated via ministep logic (one step up or down). The crucial difference: during the algorithm 
+#If count statistic for smoke, then between time point 1 and 2 we use value from timepoint 1. between 2-3, use time point 2. But within the variable, the ego level behavior is changing. is not using the value as observed at t1 - it is using the value as is currently simulated. 
+
+
+
+
+
+#could exclude variable to then include as covariate effect. 
+
+mybeh <- sienaDependent(s50a, type="behavior") #defined as dependent variable 
+drinking <- varCovar(s50a) #defined as covariate variable 
+
+#update data object: 
+mydata_example <- sienaDataCreate(mynet1, mybeh, drinking, smoke)
+
+
+#and effects object: 
+myeff_example <- includeEffects(myeff_example, unequalX, name="mynet1", interaction1 = "smoke")
+
+myeff_example <- includeEffects(myeff_example, unequalX, name="mynet1", interaction1 = "drinking")
+
+algo_ex2 <- sienaAlgorithmCreate(projname = "test_ex")
+
+answer_ex <- siena07(algo_ex2, data=mydata_example, effects=myeff_example, returnDeps = TRUE)
+answer_ex
+
+#then the network dynamics change 
+# interpretation of the rate constant - the average amount of ministeps each ego is making between the two observations
+
+#behavioral dynamics: 
+# the rate constant: the number of steps in the behavioral aspect 
+
+#statistic for linear shape - linear shape effect - the value of the *centered* behavioral variable (average in the total sample). 
+# if positive, try to increase behavior. effect is z1 (zed score), with the options of 1, 0, or -1. behavior increases because positively evaluates 1 more than 0, more than -1. At some point, though, behavior will stop increasing - that is z2 (squared!). so, parameter moderates itself with time?? 
+
+# these are the minimum effects to include, because it predicts mean value observe in dataset. 2 parameters - estimate mean behavior. based on model results, what is the mean value. 
+
+# behavioral variables in dataset - everything observed that changes. ex., position (functie), citations, interdisciplinarity score. Problem: is time window large enought to see change? and over time, behavioral variable is only changing - which then must be calculated as continuous depended variable. 
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+START OF GOODNESS OF FIT 
+
+
+```{r}
+# see here: ?'sienaGOF-auxiliary'
+
+# The geodesic distribution is not available from within RSiena, and therefore is copied from the
+# help page of sienaGOF-auxiliary:
+
+# GeodesicDistribution calculates the distribution of non-directed geodesic distances; see
+# ?sna::geodist The default for \code{levls} reflects the usual phenomenon that geodesic distances
+# larger than 5 do not differ appreciably with respect to interpretation.  Note that the levels of
+# the result are named; these names are used in the \code{plot} method.
+GeodesicDistribution <- function(i, data, sims, period, groupName, varName, levls = c(1:5, Inf), cumulative = TRUE,
+    ...) {
+    x <- networkExtraction(i, data, sims, period, groupName, varName)
+    require(sna)
+    a <- sna::geodist(symmetrize(x))$gdist
+    if (cumulative) {
+        gdi <- sapply(levls, function(i) {
+            sum(a <= i)
+        })
+    } else {
+        gdi <- sapply(levls, function(i) {
+            sum(a == i)
+        })
+    }
+    names(gdi) <- as.character(levls)
+    gdi
+}
+
+# The following function is taken from the help page for sienaTest
+
+testall <- function(ans) {
+    for (i in which(ans$test)) {
+        sct <- score.Test(ans, i)
+        cat(ans$requestedEffects$effectName[i], "\n")
+        print(sct)
+    }
+    invisible(score.Test(ans))
+}
+```
+
+
+# where class starts 
+
+```{r}
+gofi0 <- sienaGOF(answer_ex, IndegreeDistribution, verbose = FALSE, join = TRUE, varName = "mynet1")
+gofi0
+plot(gofi0)
+
+# variable name from example = mynet
+# x-axis = indegree 
+# y-axis = frequency (ploting the people with 0 in-degrees)
+
+
+```
+
+##Box Plot v Violin plot
+
+box plot: looking at degree of spread - for many simulations - based on parameters / estimation, we have simulated networks. for each simulated network, we do an in-degree count. for the median value of the simulated networks, is about 20 in this?? 
+Violin plot - represents where the majority of the data is.. 
+
+red line - red is the observed network. Simulated SHOULD match the observed networks - and matches, if the red points are within the plots, and ideally close to the median of each. 
+
+## Why do the numbers increase? 
+Cumulative in-degree? No. We have 12 nodes in observed network with 0 degrees. 17 more with one. Is counter intuitive?
+
+we underestimate number of isolates, and overestimate the number of actors with 3-4-5 ties, and over estimate people with FEW degrees... 
+
+Is cumulative because it is stacked throughout one plot. 
+
+
+
+
+## Testing with p-value: 
+Values are fixed - there are not randomness in targets. we have a random variable, so we test a set of randome variables against a set of fixed values, and combine it in one test (where we take into account if there is a covariance in all of this. if covariance in random variables). 
+
+If have 1 random variable and 1 fixed variable: T-test (one-sample t-test)
+This test is more complicated: Monte Carlo Mahalanobis distance test p-value (in this example, is:  0.542) 
+
+
+## can also do this for OUT DEGREE DISTRIBUTION
+### IMPORTANT TO DO TESTS ON DYAD CENSUS AND TRIAD CENSUS - DON'T GET FARTHER THAN DYADIC EFFECT OR TRIAD EFFECT, SO WANT TO MAKE SURE THAT MODEL AT LEAST CAN EXPLAIN DYAD AND TRIAD CONFIGURATIONS
+Triad configuration of
+
+This is MACRO LEVEL INVESTIGATION
+
+```{r}
+# TBD: outdegree distribution
+
+# gofi1 <- sienaGOF(answer_ex, OutdegreeDistribution, verbose = FALSE, join = TRUE, levls = c(0:10, 15, 20), varName = "nynet1")
+
+
+```
+
+
+# RELATIVE INFLUENCE 
+
+
+```{r}
+library(RSiena)
+library(RsienaTwoStep)
+library(tidyr)
+library(tidyverse)
+# RI <- sienaRI(data = mydata, ans = ansM1)
+
+# RI <- sienaRI(data = mydata_example, ans = answer_ex)
+
+# RSiena:::sienaRI(data = mydata_example, ans = answer_ex)
+
+# RI <- RSiena:::sienaRI(data = mydata_example, ans = answer_ex)
+
+RI <- RSiena:::sienaRI(data = mydata_example, ans = answer_ex)
+
+class(RI)
+# siena RI
+
+#plot(RI, addPieChart = TRUE)
+#plot.sienaRI(RI, addPieChart = TRUE)
+
+# HAD TO COMMENT THIS OUT TO KNIT, EVEN THOUGH CODE WORKS
+# RSiena:::plot.sienaRI(RI, addPieChart = TRUE)
+```
+
+
+
+
+
+
+
+With this plot, can look at the proportion of each effect on predicting - the more effects included, the longer the list. 
+
+Why does relative importance vary per actors? 
+-   could be varying node characterstics (though for this we only have one node characteristic)
+-   **TIME CHARACTERISTICS** - as an isolate, then node characteristic is not a parameter?
+-   
+This is a micro-level - this does not reflect parameter estimates, reciprocity could have large effect - and yet in each tiny-step, it could have a smaller effect on the decisions. 
+* when it is relevant, it might have a large effect, but it might not always be relevant to each individual. This is looking at whether it is actually relevant for many people* 
+
+* the other is macro level - 
+
+
+
+
+# One Final Goodness of Fit 
+What we can also do: tweak estimates, and simulate based on tweaked estimates. 
+
+Just the logic for now. 
+
+If we plug in our own values, would it meet different macro level dynamics?? 
+how to set effect to 0. would it be to different macro level structures? See how model behaves differently?? 
+
+
+Run statistics on simulated models. simulations based on estimated models. statistic based on in-degree distribution. 
+If in model there was an in-degree popularity effect. what if we excluded the in-degree popularity effect? How would it effect the rest? If we remove it, we can see how much change happens. 
+
+Then, if effect excluded, but same model simulated, then would find that it actually is not so important?? 
+
+
+Change the micro-level mechanisms, look at importance of micro-level. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# STEP 1: load data
+```{r}
+scholars <- fload("C:/Github/labjournal/scholars_20240924.rda")
+```
+
+# Webscraping script - fcolnet function
+# Publications II: nomination networks (2.3.1) construct adjacency network of scholars and publications of RU SOC
+
+```{r}
+library(dplyr)
+fcolnet <- function(data = scholars, university = "RU", discipline = "sociology", waves = list(c(2015,
+    2018), c(2019, 2023)), type = c("first")) {
+
+    # step 1
+    demographics <- do.call(rbind.data.frame, data$demographics)
+    demographics <- demographics %>%
+        mutate(Universiteit1.22 = replace(Universiteit1.22, is.na(Universiteit1.22), ""), Universiteit2.22 = replace(Universiteit2.22,
+            is.na(Universiteit2.22), ""), Universiteit1.24 = replace(Universiteit1.24, is.na(Universiteit1.24),
+            ""), Universiteit2.24 = replace(Universiteit2.24, is.na(Universiteit2.24), ""), discipline.22 = replace(discipline.22,
+            is.na(discipline.22), ""), discipline.24 = replace(discipline.24, is.na(discipline.24), ""))
+
+    sample <- which((demographics$Universiteit1.22 %in% university | demographics$Universiteit2.22 %in%
+        university | demographics$Universiteit1.24 %in% university | demographics$Universiteit2.24 %in%
+        university) & (demographics$discipline.22 %in% discipline | demographics$discipline.24 %in% discipline))
+
+    demographics_soc <- demographics[sample, ]
+    scholars_sel <- lapply(scholars, "[", sample)
+
+    # step 2
+    ids <- demographics_soc$au_id
+    nwaves <- length(waves)
+    nets <- array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works <- tibble(works_id = unlist(lapply(scholars_sel$work, function(l) l$id)), works_author = unlist(lapply(scholars_sel$work,
+        function(l) l$author), recursive = FALSE), works_year = unlist(lapply(scholars_sel$work, function(l) l$publication_year),
+        recursive = FALSE))
+
+    df_works <- df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == "first") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- df_works_w$works_author[i][[1]]$au_id[1]
+                alters <- df_works_w$works_author[i][[1]]$au_id[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "last") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego <- rev(df_works_w$works_author[i][[1]]$au_id)[1]
+                alters <- rev(df_works_w$works_author[i][[1]]$au_id)[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] <- 1
+                }
+            }
+        }
+    }
+
+    if (type == "all") {
+        for (j in 1:nwaves) {
+            df_works_w <- df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos <- df_works_w$works_author[i][[1]]$au_id
+                if (sum(ids %in% egos) > 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] <- 1
+                }
+            }
+        }
+    }
+    output <- list()
+    output$data <- scholars_sel
+    output$nets <- nets
+    return(output)
+}
+```
+
+## use function for test object - custom function from above (fcolnet)
+```{r}
+test <- fcolnet(data = scholars, #use function on our data object, use default objects now (but customize later)
+                university = "RU",
+                discipline = "sociology",
+                waves = list(c(2015, 2018), c(2019, 2023)),
+                type = c("first")) #directed network - type first
+
+wave1 <- test$nets[1,,] #first wave stored here
+wave2 <- test$nets[2,,] #second wave stored here
+
+dim(wave2) #check it works 
+
+sum(is.na(wave2)) #check it is complete -- if 0 missing values
+
+sum(wave2>0) #input for rsiena = the array / adjacency matrix. need to check the diagonal: should all be 0 - check if larger than 1, should be 0/1/2
+
+
+```
+
+
+Now put in Array
+
+```{r}
+nets <- array(data = c(wave1, wave2), dim = c(dim(wave1), 2))
+net <- sienaDependent(nets)
+
+
+df <- test$data
+df_ego <- do.call(rbind.data.frame, df$demographics) 
+
+
+# what kind 
+unique(c(df_ego$Functie.22, df_ego$Functie.24))
+
+
+#replace missing values with empty string
+df_ego$Functie.22[is.na(df_ego$Functie.22)] <- " "
+df_ego$Functie.24[is.na(df_ego$Functie.24)] <- " "
+
+# 
+df_ego$functie <- ifelse(df_ego$Functie.22=="Hoogleraar", 1, 0)
+df_ego$functie <- ifelse(df_ego$Functie.24=="Hoogleraar", 1, df_ego$functie)
+df_ego$functie <- ifelse(df_ego$Functie.22=="Bijzoner hoogleraar", 1, df_ego$functie)
+df_ego$functie <- ifelse(df_ego$Functie.24=="Bijzoner hoogleraar", 1, df_ego$functie)
+
+table(df_ego$functie, useNA="always") #use as constant - 
+
+# should see variable is correct
+
+functie <- coCovar(df_ego$functie)
+functie
+
+```
+
+
+next gender
+```{r}
+
+mydata <- sienaDataCreate(net, functie)
+
+```
+
+# STEP 2 EFFECTS 
+```{r}
+myeff <-getEffects(mydata)
+myeff
+
+myeff <- includeEffects(myeff, egoXaltX, interaction1 = "functie")
+
+
+#new statistic
+myeff <- includeEffects(myeff, diffXOutAct, interaction1 = "functie")
+
+#other new statistic
+myeff <- includeEffects(myeff, unequalX, interaction1 = "functie")
+myeff
+
+#alternative: 
+myeff <- includeEffects(myeff, egoX, interaction1 = "functie")
+
+#mathematical of egoX = V(i), tie = X(i)(j), want the sum of the ties --> X(i)(+) 
+# independent variable=ego, dependent variable = tie, covariate = functie, 
+
+
+
+#another alternative: 
+myeff <- includeEffects(myeff, altX, interaction1 = "functie" )# altX effect --- hypothesis: more likely to receive? model from ego perspectives, and ego sends ties -- therefore, formulation of tie different: should be more likely to send ties to professors 
+# altX = V(j) * Sum of Xij
+# altX = Alter * Sum of ties
+# Expect positive effect (opposite of ego X)
+
+
+
+
+```
+
+# STEP 3 LOOK AT INITIAL DATA AND GET DESCRIPTION
+```{r}
+ifelse(!dir.exists("results"), dir.create("results"), FALSE) #make directory to store results separately - less crowding for lab journal
+
+print01Report(mydata, modelname= "./results/soc_init")
+print01Report(mydata)
+
+# TO VIEW THIS - LOOK WITHIN FILE DIRECTORY - GITHUB - LAB JOURNAL - RESULTS :)
+
+
+```
+
+
+@ Data input.
+2 observations,
+50 actors,
+1 dependent network variables,
+0 dependent bipartite variables,
+0 dependent discrete behavior variables,
+0 dependent continuous behavior variables,
+1 constant actor covariates,
+0 exogenous changing actor covariates,
+0 constant dyadic covariates,
+0 exogenous changing dyadic covariates,
+0 no files with times of composition change.
+
+- 
+- 
+- 
+
+@ Change in networks
+Network density indicators:
+observation time              1      2
+density                    0.016  0.031
+average degree             0.780  1.520
+number of ties                39     76
+missing fraction           0.000  0.000
+
+What does the initial data mean? number of ties increasing rapidly --> 39 is high
+
+
+Tie changes between subsequent observations:
+ periods        0 =>  0   0 =>  1   1 =>  0   1 =>  1   Distance Jaccard   Missing
+  1 ==>   2      2354        57        20        19        77     0.198         0 (0%)
+
+Jaccard index low ** 
+Jaccard Index: counting all changes (1->1 / 0->1, 1->0, and 1->1 (not 0->0, because that is a very large number) : important measure of stability -- looking at difference between T1 and T2 -- want it somewhere between 0 and 1).
+
+
+# Step 4 Effects
+```{r}
+
+myeff <- includeEffects(myeff, isolateNet, inPop, outAct)
+
+
+myeff <- includeEffects(myeff, unequalX, egoX, alterX)
+
+```
+
+
+# Step 5 (assume happy with effects) - Estimation
+
+```{r}
+
+myAlgorithm <- sienaAlgorithmCreate(projname = "soc_init")
+ansM1 <- siena07(myAlgorithm, data = mydata, effects = myeff, returnDeps = TRUE)
+# if necessary estimate again!  ansM1 <- siena07(myAlgorithm, data = mydata, effects = myeff,
+# prevAns = ansM1, returnDeps=TRUE)
+ansM1
+
+```
+
+First author papers
+This makes sense - about 3 papers per year per author, that makes sense
+
+Density is negative: makes sense, sparse network 
+Reciprocity: have that, which makes sense (help eachother with papers)
+
+
+
+
+Given these statistics included in this model, this is able to replicate these statistics in T2 
+
+
+
+
+If we look at degree distribution or sensitivity, could be completely different. 
+```{r}
+
+```
+
+
+NOW : EGOX 
+Tweak model, try to interpret effects, include covariate effect 
+
+

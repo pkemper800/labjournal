@@ -61,7 +61,7 @@ Last compiled on `r format(Sys.time(), '%B, %Y')`
 
 **Date: `r colorize("5 September 2025", "navy")`**
 
-## \# Week 1 Assignments:
+# Week 1 Assignments:
 
 Review:
 
@@ -152,6 +152,7 @@ Research Question: To what extent are municipalities able to adopt and deploy re
 Sample Questions: - Descriptive Questions: What types of ties exist between municipalities that have adopted similar renewable energy policies (geographic proximity, political affiliation, economic partnerships)? - How do renewable energy adoption rates vary across different network positions for both municipalities and households? (does adoption ever win out over finances?) - Explanatory Questions: Do municipalities learn from their network neighbors' policy experiences, and does this learning improve policy effectiveness? - Looking at Multilevel Dynamics: Do municipalities with stronger internal household networks show different patterns of policy learning from external municipal networks? (do household-household ties influence strength of municipality-household ties?)
 
 ## **Appendix B**
+Part of homework to review :)!
 
 ## Variance and Covariance
 
@@ -186,9 +187,9 @@ Researcher - \# of collabarations within department \# of collaborations across 
 
 ## Questions for the group:
 
--   
+-   Is there a straight-forward way to track ethnic diversity as an ego-level characteristic within our dataset? 
 
--   
+-   Is this an interesting research question? Would be other descriptive research questions also be interesting here?  
 
 ### **Relevant Literature**
 
@@ -202,7 +203,7 @@ Santos, J.M., Horta, H. & Feng, S. Homophily and its effects on collaborations a
 
 ------------------------------------------------------------------------
 
-#Testing in class
+# Testing code in class
 
 test code
 

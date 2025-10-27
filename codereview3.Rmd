@@ -1,7 +1,40 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
+
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 
 Chapter 7 SNASS - R SIENNA - CODE FOR NETWORKS
@@ -528,19 +561,24 @@ fscolnet <- function(network, ccovar) {
 ```
 
 
-Data
+Twitter Data + Tutorial 
+
+Comment everything out bc even though code works, I no longer have the data saved on my laptop.. 
+
 ```{r}
-getwd()
+#getwd()
 
-load("twitter_20190919.RData")  #change to your working directory
-str(twitter_20190919, 1)
+#Commented out to knit
 
-keyf <- twitter_20190919[[1]]
-#keyf is dataframe on 147 Dutch MPs
-mydata <- twitter_20190919[[2]]
-# mydata is object ready to analyze in RSiena. Nodes are the same as in keyf and seats. Contains twitter data at three timepounts. Three layers: fnet (who follows whom), atmnet (who amentions whom) and rnter (who retweets whom). Also contains timevariant information on nodes.
-seats <- twitter_20190919[[3]]
-#seats is dataset which contains coordinates of seats in House of Parliament in Netherlands
+#load("twitter_20190919.RData")  #change to your working directory
+#str(twitter_20190919, 1)
+
+#keyf <- twitter_20190919[[1]]
+##keyf is dataframe on 147 Dutch MPs
+#mydata <- twitter_20190919[[2]]
+## mydata is object ready to analyze in RSiena. Nodes are the same as in keyf and seats. Contains twitter data at three timepounts. Three layers: fnet (who follows whom), atmnet (who amentions whom) and rnter (who retweets whom). Also contains timevariant information on nodes.
+#seats <- twitter_20190919[[3]]
+##seats is dataset which contains coordinates of seats in House of Parliament in Netherlands
 
 
 
@@ -550,148 +588,148 @@ seats <- twitter_20190919[[3]]
 
 Densities
 ```{r}
-# retrieve nominationdata from rsiena object
-fnet <- mydata$depvars$fnet
-atmnet <- mydata$depvars$atmnet
-rtnet <- mydata$depvars$rtnet
+## retrieve nominationdata from rsiena object
+#fnet <- mydata$depvars$fnet
+#atmnet <- mydata$depvars$atmnet
+#rtnet <- mydata$depvars$rtnet
 
-# retrieve node-attributes from rsiena object
-vrouw <- mydata$cCovars$vrouw
-partij <- mydata$cCovars$partij
-ethminz <- mydata$cCovars$ethminz
-lft <- mydata$cCovars$lft
+## retrieve node-attributes from rsiena object
+#vrouw <- mydata$cCovars$vrouw
+#partij <- mydata$cCovars$partij
+#ethminz <- mydata$cCovars$ethminz
+#lft <- mydata$cCovars$lft
 
-# de-mean-center node attributes
-ethminz <- ethminz + attributes(ethminz)$mean
-partij <- partij + attributes(partij)$mean
-vrouw <- vrouw + attributes(vrouw)$mean
-lft <- lft + attributes(lft)$mean
+## de-mean-center node attributes
+#ethminz <- ethminz + attributes(ethminz)$mean
+#partij <- partij + attributes(partij)$mean
+#vrouw <- vrouw + attributes(vrouw)$mean
+#lft <- lft + attributes(lft)$mean
 
-# construct matrices for similarity for each dimension (dyad characteristics)
-vrouwm <- fhomomat(vrouw)
-partijm <- fhomomat(partij)
-ethminzm <- fhomomat(ethminz)
+## construct matrices for similarity for each dimension (dyad characteristics)
+#vrouwm <- fhomomat(vrouw)
+#partijm <- fhomomat(partij)
+#ethminzm <- fhomomat(ethminz)
 
-# just for fun, make dyad characteristic indicating whether both nodes are ethnic minorities
-xmat <- matrix(ethminz, nrow = length(ethminz), ncol = length(ethminz))
-xmatt <- t(xmat)
-minoritym <- xmat == 1 & xmatt == 1
+## just for fun, make dyad characteristic indicating whether both nodes are ethnic minorities
+#xmat <- matrix(ethminz, nrow = length(ethminz), ncol = length(ethminz))
+#xmatt <- t(xmat)
+#minoritym <- xmat == 1 & xmatt == 1
 
-# for age max 5 year difference / for descriptives
-xmat <- matrix(lft, nrow = length(lft), ncol = length(lft))
-xmatt <- t(xmat)
-lftm <- (abs(xmat - xmatt) < 6)
+## for age max 5 year difference / for descriptives
+#xmat <- matrix(lft, nrow = length(lft), ncol = length(lft))
+#xmatt <- t(xmat)
+#lftm <- (abs(xmat - xmatt) < 6)
 
-# calculate all possible similar dyads, not the focus of this exercise.  fndyads2(fnet[,,1], vrouwm)
-# fndyads2(fnet[,,3], vrouwm) fndyads2(fnet[,,1], partijm) fndyads2(fnet[,,3], partijm)
+## calculate all possible similar dyads, not the focus of this exercise.  fndyads2(fnet[,,1], vrouwm)
+## fndyads2(fnet[,,3], vrouwm) fndyads2(fnet[,,1], partijm) fndyads2(fnet[,,3], partijm)
 # fndyads2(fnet[,,1], ethminzm) fndyads2(fnet[,,3], ethminzm)
 
-# make a big object to store all results
-desmat <- matrix(NA, nrow = 10, ncol = 9)
+## make a big object to store all results
+#desmat <- matrix(NA, nrow = 10, ncol = 9)
 
-# lets start using our functions
-desmat[1, 1] <- fdensity(fnet[, , 1])
-desmat[1, 2] <- fdensity(fnet[, , 2])
-desmat[1, 3] <- fdensity(fnet[, , 3])
-desmat[2, 1] <- fdensityintra(fnet[, , 1], vrouwm)
-desmat[2, 2] <- fdensityintra(fnet[, , 2], vrouwm)
-desmat[2, 3] <- fdensityintra(fnet[, , 3], vrouwm)
-desmat[3, 1] <- fdensityinter(fnet[, , 1], vrouwm)
-desmat[3, 2] <- fdensityinter(fnet[, , 2], vrouwm)
-desmat[3, 3] <- fdensityinter(fnet[, , 3], vrouwm)
-desmat[4, 1] <- fdensityintra(fnet[, , 1], partijm)
-desmat[4, 2] <- fdensityintra(fnet[, , 2], partijm)
-desmat[4, 3] <- fdensityintra(fnet[, , 3], partijm)
-desmat[5, 1] <- fdensityinter(fnet[, , 1], partijm)
-desmat[5, 2] <- fdensityinter(fnet[, , 2], partijm)
-desmat[5, 3] <- fdensityinter(fnet[, , 3], partijm)
-desmat[6, 1] <- fdensityintra(fnet[, , 1], ethminzm)
-desmat[6, 2] <- fdensityintra(fnet[, , 2], ethminzm)
-desmat[6, 3] <- fdensityintra(fnet[, , 3], ethminzm)
-desmat[7, 1] <- fdensityinter(fnet[, , 1], ethminzm)
-desmat[7, 2] <- fdensityinter(fnet[, , 2], ethminzm)
-desmat[7, 3] <- fdensityinter(fnet[, , 3], ethminzm)
-desmat[8, 1] <- fdensityinter(fnet[, , 1], minoritym)
-desmat[8, 2] <- fdensityinter(fnet[, , 2], minoritym)
-desmat[8, 3] <- fdensityinter(fnet[, , 3], minoritym)
-desmat[9, 1] <- fdensityintra(fnet[, , 1], lftm)
-desmat[9, 2] <- fdensityintra(fnet[, , 2], lftm)
-desmat[9, 3] <- fdensityintra(fnet[, , 3], lftm)
-desmat[10, 1] <- fdensityinter(fnet[, , 1], lftm)
-desmat[10, 2] <- fdensityinter(fnet[, , 2], lftm)
-desmat[10, 3] <- fdensityinter(fnet[, , 3], lftm)
+## lets start using our functions
+#desmat[1, 1] <- fdensity(fnet[, , 1])
+#desmat[1, 2] <- fdensity(fnet[, , 2])
+#desmat[1, 3] <- fdensity(fnet[, , 3])
+#desmat[2, 1] <- fdensityintra(fnet[, , 1], vrouwm)
+#desmat[2, 2] <- fdensityintra(fnet[, , 2], vrouwm)
+#desmat[2, 3] <- fdensityintra(fnet[, , 3], vrouwm)
+#desmat[3, 1] <- fdensityinter(fnet[, , 1], vrouwm)
+#desmat[3, 2] <- fdensityinter(fnet[, , 2], vrouwm)
+#desmat[3, 3] <- fdensityinter(fnet[, , 3], vrouwm)
+#desmat[4, 1] <- fdensityintra(fnet[, , 1], partijm)
+#desmat[4, 2] <- fdensityintra(fnet[, , 2], partijm)
+#desmat[4, 3] <- fdensityintra(fnet[, , 3], partijm)
+#desmat[5, 1] <- fdensityinter(fnet[, , 1], partijm)
+#desmat[5, 2] <- fdensityinter(fnet[, , 2], partijm)
+#desmat[5, 3] <- fdensityinter(fnet[, , 3], partijm)
+#desmat[6, 1] <- fdensityintra(fnet[, , 1], ethminzm)
+#desmat[6, 2] <- fdensityintra(fnet[, , 2], ethminzm)
+#desmat[6, 3] <- fdensityintra(fnet[, , 3], ethminzm)
+#desmat[7, 1] <- fdensityinter(fnet[, , 1], ethminzm)
+#desmat[7, 2] <- fdensityinter(fnet[, , 2], ethminzm)
+#desmat[7, 3] <- fdensityinter(fnet[, , 3], ethminzm)
+#desmat[8, 1] <- fdensityinter(fnet[, , 1], minoritym)
+#desmat[8, 2] <- fdensityinter(fnet[, , 2], minoritym)
+#desmat[8, 3] <- fdensityinter(fnet[, , 3], minoritym)
+#desmat[9, 1] <- fdensityintra(fnet[, , 1], lftm)
+#desmat[9, 2] <- fdensityintra(fnet[, , 2], lftm)
+#desmat[9, 3] <- fdensityintra(fnet[, , 3], lftm)
+#desmat[10, 1] <- fdensityinter(fnet[, , 1], lftm)
+#desmat[10, 2] <- fdensityinter(fnet[, , 2], lftm)
+#desmat[10, 3] <- fdensityinter(fnet[, , 3], lftm)
 
-desmat[1, 1 + 3] <- fdensity(atmnet[, , 1])
-desmat[1, 2 + 3] <- fdensity(atmnet[, , 2])
-desmat[1, 3 + 3] <- fdensity(atmnet[, , 3])
-desmat[2, 1 + 3] <- fdensityintra(atmnet[, , 1], vrouwm)
-desmat[2, 2 + 3] <- fdensityintra(atmnet[, , 2], vrouwm)
-desmat[2, 3 + 3] <- fdensityintra(atmnet[, , 3], vrouwm)
-desmat[3, 1 + 3] <- fdensityinter(atmnet[, , 1], vrouwm)
-desmat[3, 2 + 3] <- fdensityinter(atmnet[, , 2], vrouwm)
-desmat[3, 3 + 3] <- fdensityinter(atmnet[, , 3], vrouwm)
-desmat[4, 1 + 3] <- fdensityintra(atmnet[, , 1], partijm)
-desmat[4, 2 + 3] <- fdensityintra(atmnet[, , 2], partijm)
-desmat[4, 3 + 3] <- fdensityintra(atmnet[, , 3], partijm)
-desmat[5, 1 + 3] <- fdensityinter(atmnet[, , 1], partijm)
-desmat[5, 2 + 3] <- fdensityinter(atmnet[, , 2], partijm)
-desmat[5, 3 + 3] <- fdensityinter(atmnet[, , 3], partijm)
-desmat[6, 1 + 3] <- fdensityintra(atmnet[, , 1], ethminzm)
-desmat[6, 2 + 3] <- fdensityintra(atmnet[, , 2], ethminzm)
-desmat[6, 3 + 3] <- fdensityintra(atmnet[, , 3], ethminzm)
-desmat[7, 1 + 3] <- fdensityinter(atmnet[, , 1], ethminzm)
-desmat[7, 2 + 3] <- fdensityinter(atmnet[, , 2], ethminzm)
-desmat[7, 3 + 3] <- fdensityinter(atmnet[, , 3], ethminzm)
-desmat[8, 1 + 3] <- fdensityinter(atmnet[, , 1], minoritym)
-desmat[8, 2 + 3] <- fdensityinter(atmnet[, , 2], minoritym)
-desmat[8, 3 + 3] <- fdensityinter(atmnet[, , 3], minoritym)
-desmat[9, 1 + 3] <- fdensityintra(atmnet[, , 1], lftm)
-desmat[9, 2 + 3] <- fdensityintra(atmnet[, , 2], lftm)
-desmat[9, 3 + 3] <- fdensityintra(atmnet[, , 3], lftm)
-desmat[10, 1 + 3] <- fdensityinter(atmnet[, , 1], lftm)
-desmat[10, 2 + 3] <- fdensityinter(atmnet[, , 2], lftm)
-desmat[10, 3 + 3] <- fdensityinter(atmnet[, , 3], lftm)
+#desmat[1, 1 + 3] <- fdensity(atmnet[, , 1])
+#desmat[1, 2 + 3] <- fdensity(atmnet[, , 2])
+#desmat[1, 3 + 3] <- fdensity(atmnet[, , 3])
+#desmat[2, 1 + 3] <- fdensityintra(atmnet[, , 1], vrouwm)
+#desmat[2, 2 + 3] <- fdensityintra(atmnet[, , 2], vrouwm)
+#desmat[2, 3 + 3] <- fdensityintra(atmnet[, , 3], vrouwm)
+#desmat[3, 1 + 3] <- fdensityinter(atmnet[, , 1], vrouwm)
+#desmat[3, 2 + 3] <- fdensityinter(atmnet[, , 2], vrouwm)
+#desmat[3, 3 + 3] <- fdensityinter(atmnet[, , 3], vrouwm)
+#desmat[4, 1 + 3] <- fdensityintra(atmnet[, , 1], partijm)
+#desmat[4, 2 + 3] <- fdensityintra(atmnet[, , 2], partijm)
+#desmat[4, 3 + 3] <- fdensityintra(atmnet[, , 3], partijm)
+#desmat[5, 1 + 3] <- fdensityinter(atmnet[, , 1], partijm)
+#desmat[5, 2 + 3] <- fdensityinter(atmnet[, , 2], partijm)
+#desmat[5, 3 + 3] <- fdensityinter(atmnet[, , 3], partijm)
+#desmat[6, 1 + 3] <- fdensityintra(atmnet[, , 1], ethminzm)
+#desmat[6, 2 + 3] <- fdensityintra(atmnet[, , 2], ethminzm)
+#desmat[6, 3 + 3] <- fdensityintra(atmnet[, , 3], ethminzm)
+#desmat[7, 1 + 3] <- fdensityinter(atmnet[, , 1], ethminzm)
+#desmat[7, 2 + 3] <- fdensityinter(atmnet[, , 2], ethminzm)
+#desmat[7, 3 + 3] <- fdensityinter(atmnet[, , 3], ethminzm)
+#desmat[8, 1 + 3] <- fdensityinter(atmnet[, , 1], minoritym)
+#desmat[8, 2 + 3] <- fdensityinter(atmnet[, , 2], minoritym)
+#desmat[8, 3 + 3] <- fdensityinter(atmnet[, , 3], minoritym)
+#desmat[9, 1 + 3] <- fdensityintra(atmnet[, , 1], lftm)
+#desmat[9, 2 + 3] <- fdensityintra(atmnet[, , 2], lftm)
+#desmat[9, 3 + 3] <- fdensityintra(atmnet[, , 3], lftm)
+#desmat[10, 1 + 3] <- fdensityinter(atmnet[, , 1], lftm)
+#desmat[10, 2 + 3] <- fdensityinter(atmnet[, , 2], lftm)
+#desmat[10, 3 + 3] <- fdensityinter(atmnet[, , 3], lftm)
 
-desmat[1, 1 + 6] <- fdensity(rtnet[, , 1])
-desmat[1, 2 + 6] <- fdensity(rtnet[, , 2])
-desmat[1, 3 + 6] <- fdensity(rtnet[, , 3])
-desmat[2, 1 + 6] <- fdensityintra(rtnet[, , 1], vrouwm)
-desmat[2, 2 + 6] <- fdensityintra(rtnet[, , 2], vrouwm)
-desmat[2, 3 + 6] <- fdensityintra(rtnet[, , 3], vrouwm)
-desmat[3, 1 + 6] <- fdensityinter(rtnet[, , 1], vrouwm)
-desmat[3, 2 + 6] <- fdensityinter(rtnet[, , 2], vrouwm)
-desmat[3, 3 + 6] <- fdensityinter(rtnet[, , 3], vrouwm)
-desmat[4, 1 + 6] <- fdensityintra(rtnet[, , 1], partijm)
-desmat[4, 2 + 6] <- fdensityintra(rtnet[, , 2], partijm)
-desmat[4, 3 + 6] <- fdensityintra(rtnet[, , 3], partijm)
-desmat[5, 1 + 6] <- fdensityinter(rtnet[, , 1], partijm)
-desmat[5, 2 + 6] <- fdensityinter(rtnet[, , 2], partijm)
-desmat[5, 3 + 6] <- fdensityinter(rtnet[, , 3], partijm)
-desmat[6, 1 + 6] <- fdensityintra(rtnet[, , 1], ethminzm)
-desmat[6, 2 + 6] <- fdensityintra(rtnet[, , 2], ethminzm)
-desmat[6, 3 + 6] <- fdensityintra(rtnet[, , 3], ethminzm)
-desmat[7, 1 + 6] <- fdensityinter(rtnet[, , 1], ethminzm)
-desmat[7, 2 + 6] <- fdensityinter(rtnet[, , 2], ethminzm)
-desmat[7, 3 + 6] <- fdensityinter(rtnet[, , 3], ethminzm)
-desmat[8, 1 + 6] <- fdensityinter(rtnet[, , 1], minoritym)
-desmat[8, 2 + 6] <- fdensityinter(rtnet[, , 2], minoritym)
-desmat[8, 3 + 6] <- fdensityinter(rtnet[, , 3], minoritym)
-desmat[9, 1 + 6] <- fdensityintra(rtnet[, , 1], lftm)
-desmat[9, 2 + 6] <- fdensityintra(rtnet[, , 2], lftm)
-desmat[9, 3 + 6] <- fdensityintra(rtnet[, , 3], lftm)
-desmat[10, 1 + 6] <- fdensityinter(rtnet[, , 1], lftm)
-desmat[10, 2 + 6] <- fdensityinter(rtnet[, , 2], lftm)
-desmat[10, 3 + 6] <- fdensityinter(rtnet[, , 3], lftm)
+#desmat[1, 1 + 6] <- fdensity(rtnet[, , 1])
+#desmat[1, 2 + 6] <- fdensity(rtnet[, , 2])
+#desmat[1, 3 + 6] <- fdensity(rtnet[, , 3])
+#desmat[2, 1 + 6] <- fdensityintra(rtnet[, , 1], vrouwm)
+#desmat[2, 2 + 6] <- fdensityintra(rtnet[, , 2], vrouwm)
+#desmat[2, 3 + 6] <- fdensityintra(rtnet[, , 3], vrouwm)
+#desmat[3, 1 + 6] <- fdensityinter(rtnet[, , 1], vrouwm)
+#desmat[3, 2 + 6] <- fdensityinter(rtnet[, , 2], vrouwm)
+#desmat[3, 3 + 6] <- fdensityinter(rtnet[, , 3], vrouwm)
+#desmat[4, 1 + 6] <- fdensityintra(rtnet[, , 1], partijm)
+#desmat[4, 2 + 6] <- fdensityintra(rtnet[, , 2], partijm)
+#desmat[4, 3 + 6] <- fdensityintra(rtnet[, , 3], partijm)
+#desmat[5, 1 + 6] <- fdensityinter(rtnet[, , 1], partijm)
+#desmat[5, 2 + 6] <- fdensityinter(rtnet[, , 2], partijm)
+#desmat[5, 3 + 6] <- fdensityinter(rtnet[, , 3], partijm)
+#desmat[6, 1 + 6] <- fdensityintra(rtnet[, , 1], ethminzm)
+#desmat[6, 2 + 6] <- fdensityintra(rtnet[, , 2], ethminzm)
+#desmat[6, 3 + 6] <- fdensityintra(rtnet[, , 3], ethminzm)
+#desmat[7, 1 + 6] <- fdensityinter(rtnet[, , 1], ethminzm)
+#desmat[7, 2 + 6] <- fdensityinter(rtnet[, , 2], ethminzm)
+#desmat[7, 3 + 6] <- fdensityinter(rtnet[, , 3], ethminzm)
+#desmat[8, 1 + 6] <- fdensityinter(rtnet[, , 1], minoritym)
+#desmat[8, 2 + 6] <- fdensityinter(rtnet[, , 2], minoritym)
+#desmat[8, 3 + 6] <- fdensityinter(rtnet[, , 3], minoritym)
+#desmat[9, 1 + 6] <- fdensityintra(rtnet[, , 1], lftm)
+#desmat[9, 2 + 6] <- fdensityintra(rtnet[, , 2], lftm)
+#desmat[9, 3 + 6] <- fdensityintra(rtnet[, , 3], lftm)
+#desmat[10, 1 + 6] <- fdensityinter(rtnet[, , 1], lftm)
+#desmat[10, 2 + 6] <- fdensityinter(rtnet[, , 2], lftm)
+#desmat[10, 3 + 6] <- fdensityinter(rtnet[, , 3], lftm)
 
-colnames(desmat) <- c("friends w1", "friends w2", "friends w3", "atmentions w1", "atmentions w2", "atmentions w3", 
-    "retweets w1", "retweets w2", "retweets w3")
-rownames(desmat) <- c("total", "same sex", "different sex", "same party", "different party", "same ethnicity", 
-    "different ethnicity", "both minority", "same age (<6)", "different age (>5)")
-desmat
+#colnames(desmat) <- c("friends w1", "friends w2", "friends w3", "atmentions w1", "atmentions w2", "atmentions w3", 
+#    "retweets w1", "retweets w2", "retweets w3")
+#rownames(desmat) <- c("total", "same sex", "different sex", "same party", "different party", "same ethnicity", 
+#    "different ethnicity", "both minority", "same age (<6)", "different age (>5)")
+#desmat
 
 
 
-# we observe a lot of homophily. Mainly big difference in density between and whithin political parties. Homophily is not that strong across social dimensions.
+## we observe a lot of homophily. Mainly big difference in density between and whithin political parties. Homophily is not that strong across social dimensions.
 ```
 
 
@@ -700,87 +738,87 @@ coleman homophily
 # Because size of different subgroups vary and number of out-degrees differs between MPs, whitin party densities might be higher when MPs randomly select partner/alter. Segregation will partly be structully induced by differences in relative groups sizes and activity on twitter. Coleman's homophily index: takes relative group sizes and differences into account. 0 -> observed number of within-group ties is the same as would be expected under random choice. 1 -> maximum segregation. -1 -> MPs maximally avoid within group relations.
 
 
-colmat <- matrix(NA, nrow = 3, ncol = 9)
+#colmat <- matrix(NA, nrow = 3, ncol = 9)
 
-colmat[1, 1] <- fscolnet(fnet[, , 1], partij)
-colmat[1, 2] <- fscolnet(fnet[, , 2], partij)
-colmat[1, 3] <- fscolnet(fnet[, , 3], partij)
-colmat[1, 4] <- fscolnet(atmnet[, , 1], partij)
-colmat[1, 5] <- fscolnet(atmnet[, , 2], partij)
-colmat[1, 6] <- fscolnet(atmnet[, , 3], partij)
-colmat[1, 7] <- fscolnet(rtnet[, , 1], partij)
-colmat[1, 8] <- fscolnet(rtnet[, , 2], partij)
-colmat[1, 9] <- fscolnet(rtnet[, , 3], partij)
+#colmat[1, 1] <- fscolnet(fnet[, , 1], partij)
+#colmat[1, 2] <- fscolnet(fnet[, , 2], partij)
+#colmat[1, 3] <- fscolnet(fnet[, , 3], partij)
+#colmat[1, 4] <- fscolnet(atmnet[, , 1], partij)
+#colmat[1, 5] <- fscolnet(atmnet[, , 2], partij)
+#colmat[1, 6] <- fscolnet(atmnet[, , 3], partij)
+#colmat[1, 7] <- fscolnet(rtnet[, , 1], partij)
+#colmat[1, 8] <- fscolnet(rtnet[, , 2], partij)
+#colmat[1, 9] <- fscolnet(rtnet[, , 3], partij)
 
-colmat[2, 1] <- fscolnet(fnet[, , 1], vrouw)
-colmat[2, 2] <- fscolnet(fnet[, , 2], vrouw)
-colmat[2, 3] <- fscolnet(fnet[, , 3], vrouw)
-colmat[2, 4] <- fscolnet(atmnet[, , 1], vrouw)
-colmat[2, 5] <- fscolnet(atmnet[, , 2], vrouw)
-colmat[2, 6] <- fscolnet(atmnet[, , 3], vrouw)
-colmat[2, 7] <- fscolnet(rtnet[, , 1], vrouw)
-colmat[2, 8] <- fscolnet(rtnet[, , 2], vrouw)
-colmat[2, 9] <- fscolnet(rtnet[, , 3], vrouw)
+#colmat[2, 1] <- fscolnet(fnet[, , 1], vrouw)
+#colmat[2, 2] <- fscolnet(fnet[, , 2], vrouw)
+#colmat[2, 3] <- fscolnet(fnet[, , 3], vrouw)
+#colmat[2, 4] <- fscolnet(atmnet[, , 1], vrouw)
+#colmat[2, 5] <- fscolnet(atmnet[, , 2], vrouw)
+#colmat[2, 6] <- fscolnet(atmnet[, , 3], vrouw)
+#colmat[2, 7] <- fscolnet(rtnet[, , 1], vrouw)
+#colmat[2, 8] <- fscolnet(rtnet[, , 2], vrouw)
+#colmat[2, 9] <- fscolnet(rtnet[, , 3], vrouw)
 
-colmat[3, 1] <- fscolnet(fnet[, , 1], ethminz)
-colmat[3, 2] <- fscolnet(fnet[, , 2], ethminz)
-colmat[3, 3] <- fscolnet(fnet[, , 3], ethminz)
-colmat[3, 4] <- fscolnet(atmnet[, , 1], ethminz)
-colmat[3, 5] <- fscolnet(atmnet[, , 2], ethminz)
-colmat[3, 6] <- fscolnet(atmnet[, , 3], ethminz)
-colmat[3, 7] <- fscolnet(rtnet[, , 1], ethminz)
-colmat[3, 8] <- fscolnet(rtnet[, , 2], ethminz)
-colmat[3, 9] <- fscolnet(rtnet[, , 3], ethminz)
+#colmat[3, 1] <- fscolnet(fnet[, , 1], ethminz)
+#colmat[3, 2] <- fscolnet(fnet[, , 2], ethminz)
+#colmat[3, 3] <- fscolnet(fnet[, , 3], ethminz)
+#colmat[3, 4] <- fscolnet(atmnet[, , 1], ethminz)
+#colmat[3, 5] <- fscolnet(atmnet[, , 2], ethminz)
+#colmat[3, 6] <- fscolnet(atmnet[, , 3], ethminz)
+#colmat[3, 7] <- fscolnet(rtnet[, , 1], ethminz)
+#colmat[3, 8] <- fscolnet(rtnet[, , 2], ethminz)
+#colmat[3, 9] <- fscolnet(rtnet[, , 3], ethminz)
 
-colnames(colmat) <- c("friends w1", "friends w2", "friends w3", "atmentions w1", "atmentions w2", "atmentions w3", 
-    "retweets w1", "retweets w2", "retweets w3")
-rownames(colmat) <- c("party", "sex", "ethnicity")
-colmat
+#colnames(colmat) <- c("friends w1", "friends w2", "friends w3", "atmentions w1", "atmentions w2", "atmentions w3", 
+#    "retweets w1", "retweets w2", "retweets w3")
+#rownames(colmat) <- c("party", "sex", "ethnicity")
+#colmat
 ```
 
 
 RSienna
 ```{r}
-# defining myeff object
-library(RSiena)
-myeff <- getEffects(mydata)
-myeff
+## defining myeff object
+#library(RSiena)
+#myeff <- getEffects(mydata)
+#myeff
 
-myeff_m1 <- myeff
-myeff_m1 <- includeEffects(myeff_m1, sameX, interaction1 = "partij", name = "rtnet")
+#myeff_m1 <- myeff
+#myeff_m1 <- includeEffects(myeff_m1, sameX, interaction1 = "partij", name = "rtnet")
 
 
 
-# I used a seed so you will probably see the same results
-myalgorithm <- sienaAlgorithmCreate(projname = "test", seed = 345654)
+## I used a seed so you will probably see the same results
+#myalgorithm <- sienaAlgorithmCreate(projname = "test", seed = 345654)
 
 
 
 # to speed things up a bit, I am using more cores.
-ansM1 <- siena07(myalgorithm, data = mydata, effects = myeff_m1, useCluster = TRUE, nbrNodes = 4, initC = TRUE, 
-    batch = TRUE)
-ansM1b <- siena07(myalgorithm, data = mydata, prevAns = ansM1, effects = myeff_m1, useCluster = TRUE, 
-    nbrNodes = 4, initC = TRUE, batch = TRUE)
-ansM1c <- siena07(myalgorithm, data = mydata, prevAns = ansM1b, effects = myeff_m1, useCluster = TRUE, 
-    nbrNodes = 4, initC = TRUE, batch = TRUE)
+#ansM1 <- siena07(myalgorithm, data = mydata, effects = myeff_m1, useCluster = TRUE, nbrNodes = 4, initC = TRUE, 
+#    batch = TRUE)
+#ansM1b <- siena07(myalgorithm, data = mydata, prevAns = ansM1, effects = myeff_m1, useCluster = TRUE, 
+#    nbrNodes = 4, initC = TRUE, batch = TRUE)
+#ansM1c <- siena07(myalgorithm, data = mydata, prevAns = ansM1b, effects = myeff_m1, useCluster = TRUE, 
+#    nbrNodes = 4, initC = TRUE, batch = TRUE)
 
-save(ansM1, file = "ansM1a.RData")
-save(ansM1b, file = "ansM1b.RData")
-save(ansM1c, file = "ansM1c.RData")
-
-
-
-load("ansM1a.RData")
-load("ansM1b.RData")
-load("ansM1c.RData")
-ansM1
-
-ansM1b
-
-ansM1c
+#save(ansM1, file = "ansM1a.RData")
+#save(ansM1b, file = "ansM1b.RData")
+#save(ansM1c, file = "ansM1c.RData")
 
 
-#To what extent do we observe segregation along party affiliation in the retweet network among Dutch MPs?
+
+#load("ansM1a.RData")
+#load("ansM1b.RData")
+#load("ansM1c.RData")
+#ansM1
+
+#ansM1b
+
+#ansM1c
+
+
+##To what extent do we observe segregation along party affiliation in the retweet network among Dutch MPs?
 
 # Answer: the eval same partij is 1.8551. This means that we observe strong segregation along pary affiliation: people are more likely to have ties with people from the same party
 
@@ -789,19 +827,19 @@ ansM1c
 
 RQ 1
 ```{r}
-myeff_m2 <- myeff
-myeff_m2 <- includeEffects(myeff_m2, sameX, interaction1 = "partij", name = "rtnet")
+#myeff_m2 <- myeff
+#myeff_m2 <- includeEffects(myeff_m2, sameX, interaction1 = "partij", name = "rtnet")
 
 
-myeff_m2 <- myeff
-myeff_m2 <- includeEffects(myeff_m2, sameX, interaction1 = "vrouw", name = "rtnet")
+#myeff_m2 <- myeff
+#myeff_m2 <- includeEffects(myeff_m2, sameX, interaction1 = "vrouw", name = "rtnet")
 
 
-myeff_m2 <- myeff
-myeff_m2 <- includeEffects(myeff_m2, sameX, interaction1 = "lft", name = "rtnet")
+#myeff_m2 <- myeff
+#myeff_m2 <- includeEffects(myeff_m2, sameX, interaction1 = "lft", name = "rtnet")
 
-myeff_m2 <- myeff
-myeff_m2 <- includeEffects(myeff_m2, X, interaction1 = "afstand", name = "rtnet")
+#myeff_m2 <- myeff
+#myeff_m2 <- includeEffects(myeff_m2, X, interaction1 = "afstand", name = "rtnet")
 ```
 
 

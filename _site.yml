@@ -75,6 +75,14 @@ navbar:
         
       - text: "finalpaperdraft"
         href: finalpaperdraft.html
+    
+    - text: "Final Report"
+      menu: 
+      - text: "Final Paper"
+        href: finalpaper.html
+        
+      - text: "Data and Methods: Preparation, Descriptive Statistics, RSiena Models and Results"
+        href: finalpaperdraft.html
         
 
 

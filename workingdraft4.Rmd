@@ -1512,6 +1512,32 @@ testall1 <- function(ansM2) {
 ```
 
 
+```{r}
+#myeff3 = includeEffects(myeff3, egoX, interaction1 = "female")
+#myeff3 = includeEffects(myeff3, egoX, interaction1 = "female")
+#myeff3 = includeEffects(myeff3, egoX, interaction1 = "xgen_w1")
+
+#myeff3 = includeEffects(myeff3, sameX, interaction1 = "female")
+#myeff3 = includeEffects(myeff3, sameX, interaction1 = "xgen_w1")
+
+#myeff3 = includeInteraction(myeff, egoX, sameX, interaction1 = c("female", "xgen_w1"))
+
+
+
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "soc_init")
+
+ansM3 = siena07(
+    myAlgorithm, 
+    data = mydata3, 
+    effects = myeff3,
+    returnDeps = TRUE
+)
+
+ansM3
+```
+
 # First GOF model  
 
 ```{r}

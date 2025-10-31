@@ -15,10 +15,8 @@ navbar:
       - text: "Page 1"
         href: lab1.html
         
-        # here, other .Rmds can be added
       - text: "Page 2"
         href: lab2.html
-        
         
       - text: "Page 3"
         href: lab3.html
@@ -31,6 +29,7 @@ navbar:
         
       - text: "Page 6"
         href: lab6.html
+        
         
         
     - text: "codereview"
@@ -58,32 +57,26 @@ navbar:
         href: gof.html
   
   
-        
-    - text: "Research"
+  
+    - text: "Research Progress"
       menu:
-      - text: "Research Questions"
+      - text: "Preliminary Research Questions"
         href: researchquestions.html
         
-      - text: "Developing Database"
-        href: databasedraft.html
-        
-      - text: "Second draft"
-        href: databasedraft2.html
-        
-      - text: "Working Draft"
-        href: workingdraft.html
-        
-      - text: "finalpaperdraft"
-        href: finalpaperdraft.html
-    
+
     - text: "Final Report"
       menu: 
-      - text: "Final Paper"
+      - text: "Introdution and Theory"
         href: finalpaper.html
         
       - text: "Data and Methods: Preparation, Descriptive Statistics, RSiena Models and Results"
-        href: finalpaperdraft.html
+        href: datamethods.html
         
+      - text: "Discussion and Conclusion"
+        href: conclusion.html
+        
+      - text: "Next Steps"
+        href: supplementary.html
 
 
 

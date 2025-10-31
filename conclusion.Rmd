@@ -1,0 +1,59 @@
+---
+title: "finalpaperconclusion"
+author: "Paige Kemper"
+date: "2025-10-31"
+output: html_document
+---
+
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+_Code for SNA Final Paper Conclusion_
+
+# Conclusion and Discussion:
+
+## Summary:
+This study examined gender-based patterns in academic collaboration networks among political science and sociology professors at Radboud University in the Netherlands, using RSiena. By investigating how gender shapes collaboration patterns in academic publishing, this research contributes to our understanding of the mechanisms that may perpetuate gender inequality in academia, despite decades of diversity initiatives and near gender parity at the doctoral level.
+
+The analysis of collaboration networks across two time periods (2015-2018 and 2019-2023) reveals several important patterns. First, regarding overall collaboration rates, the descriptive analysis showed that cross-gender collaborations increased substantially from Wave 1 to Wave 2, with 31 edges in Wave 1 growing to 85 edges in Wave 2 among Radboud University professors. The proportion of professors participating in cross-gender collaborations also increased, with 19 female professors and 12 male professors engaging in cross-gender work by Wave 2, suggesting some shift toward greater integration across gender lines in academic networks.
+
+Furthermore, the RSiena models revealed more nuanced dynamics underlying these patterns of gender effects, indicating a positive effect that female has on collaborations, as well as a discipline effect, which indicated with political science affiliation had a negative effect on collaboration
+
+In conclusion, I find evidence to support gender differences in collaboration rates among political science and sociology professors in the Netherlands, with female professors participating in more collaborations and being being more likely to participate in collaborations. I find evidence for disciplinary differences in collaboration patterns. Therefore, this research fails to reject the null hypotheses that female does not have an impact on collaborations, and in fact provides evidence that both regardless of discipline, the 'female' characteristic has a positive effect. Further, we find evidence that controlling for discipline is important, as collaborations vary between departments. 
+
+
+
+## Theoretical Contributions:
+This research as a case study can contribute to our understanding of gender dynamics in academic collaboration networks. It provides empirical evidence for the operation of gendered mechanisms in academic network formation, extending feminist organizational theory (Acker, 1990, 2006) to the specific context of scholarly co-authorship networks. This study also advances our understanding of homophily by revealing its persistence in professional academic settings where meritocratic norms are explicitly valued. The positive effect for same-gender collaboration indicates that even in contexts where individuals presumably select collaborators based on intellectual compatibility and methodological expertise, similarity in demographic characteristics continues to influence tie formation. This suggests that homophily operates through multiple mechanisms. 
+
+
+## Limitations: 
+
+A major limitation to this research is the small sample size. By looking at Radboud University as a case study, the statistical significance and generalizability of the research remains limited. This research should be expanded to all dutch universities, and future analysis including all universities should also expand to controlling for university level differences. 
+
+Additionally, while there is a directional assumption of this social network, in reality the directionality does not matter in the framing of publication output used for merit. The professor that initiated the collaboration, for all intensive purposes, is not directly informative for answering these research questions. Future research that could further investigate the directionality of these collaborations, such as if women or men are more likely to initiate collaborations, would be a way to further develop this research. 
+
+Lastly, extending the research to look at the nature of the collaborations would further inform the effect of gender on collaborations, such as the effect of female on same-gender and cross-gender collaborations. Unfortunately my analysis does not cover the count of cross gender collaborations per professor, as it is not relevant to my research question, but I found it an interesting exercise and a potential point for departure as a recommendation for further research. I made a first effort as exploring this though, as is indicated in the "supplementary research" tab. 

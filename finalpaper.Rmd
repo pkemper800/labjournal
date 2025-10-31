@@ -5,29 +5,60 @@ date: "2025-10-30"
 output: html_document
 ---
 
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+_Code for SNA Final Paper Introduction_
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
 
-Academic publications play a pivotal role not only in knowledge generation for the public and sectoral development by progressing methodological precision and empirical findings, but in the individual career progression, collaborations, and preferences of professors as leading figures in their fields. Publications, typically referring to academic articles, books, or literature published by an official academic journal, can be written and published by individual professors as well as partners or groups of professors working together in collaboration. These publications are important to establishing credibility and paving the way for potential promotions in academia, and collaborations on publications can further support professors’ reputation and reinforce their credibility (Wuchty et al. 867 ). Importantly, individual characteristics and structural opportunities can shape collaboration patterns, with gender and gender representation in academic settings influencing publication patterns (McPherson et al. 415 ). 
+Academic publications play a pivotal role not only in knowledge generation for the public and sectoral development by progressing methodological precision and empirical findings, but in the individual career progression, collaborations, and preferences of professors as leading figures in their fields. Publications, typically referring to academic articles, books, or literature published by an official academic journal, can be written and published by individual professors as well as partners or groups of professors working together in collaboration. These publications are important to establishing credibility and paving the way for potential promotions in academia, and collaborations on publications can further support professors’ reputation and reinforce their credibility (Wuchty et al., 2007). Importantly, individual characteristics and structural opportunities can shape collaboration patterns, with gender and gender representation in academic settings influencing publication patterns (McPherson et al., 2001). 
 
-In academia, we see that women still experience differences in publications, full professorships, and representation in university leadership positions despite similar proportions of men and women attaining PhDs in the Netherlands (https://bashofstra.com/files/qss2024.pdf  ). While women enter academic publishing careers at equal rates to men, they leave sooner (Mulders, Hofstra & Tolsma (2024). Furthermore, despite near-even representation of gender (known as gender parity) at the doctoral level, with 48.1% of doctoral graduates across the European Union being women, women remain severely underrepresented in senior positions: Only 26.2% of full-professors are women, with widening publication gaps at higher career stages (https://op.europa.eu/en/publication-detail/-/publication/67d5a207-4da1-11ec-91ac-01aa75ed71a1/language-en). While there have been notable improvements in promoting gender equity in academia, women remain underrepresented in senior academic positions in the Netherlands, particularly in political science (LNVH, 2021 ). Conversely, sociology has achieved greater gender balance over recent years in the Netherlands (Landelijk  Netwerk Vrouwelijke Hoogleraren 12). 
+In academia, we see that women still experience differences in publications, full professorships, and representation in university leadership positions despite similar proportions of men and women attaining PhDs in the Netherlands (Mulders et al., 2024). While women enter academic publishing careers at equal rates to men, they leave sooner (Mulders et al., 2024). Furthermore, despite near-even representation of gender (known as gender parity) at the doctoral level, with 48.1% of doctoral graduates across the European Union being women, women remain severely underrepresented in senior positions: Only 26.2% of full-professors are women, with widening publication gaps at higher career stages (European Commission – She Figures, 2021). While there have been notable improvements in promoting gender equity in academia, women remain underrepresented in senior academic positions in the Netherlands, particularly in political science (LNVH, 2021; Beidas et al., 2022). Conversely, sociology has achieved greater gender balance over recent years in the Netherlands (Landelijk Netwerk Vrouwelijke Hoogleraren, 2021). 
 
-Academic collaboration networks play an important role in career advancement and the formation of intellectual communities within disciplines. These networks are shaped by both structural opportunities and social preferences (McPherson, Smith-Lovin, & Cook, 2001). Morevover, academic collaboration networks influence professors’ access to resources, research productivity, visibility within the field, and career mobility (Abramo et al. 1189 - Abramo, D'Angelo, & Di Costa, 2019). Furthermore, it is important to understand the intersection of collaboration patterns with gender dynamics in academia, as women remain underrepresented in many fields. This relational perspective can reveal structural patterns of inclusion and exclusion, and investigating academic collaboration networks in the Netherlands using social network analysis offers the opportunity to investigate collaboration patterns as underlying mechanisms that might explain this continued disparity.
+Academic collaboration networks play an important role in career advancement and the formation of intellectual communities within disciplines. These networks are shaped by both structural opportunities and social preferences (McPherson et al., 2001). Morevover, academic collaboration networks influence professors’ access to resources, research productivity, visibility within the field, and career mobility (Abramo et al., 2009). Furthermore, it is important to understand the intersection of collaboration patterns with gender dynamics in academia, as women remain underrepresented in many fields. This relational perspective can reveal structural patterns of inclusion and exclusion, and investigating academic collaboration networks in the Netherlands using social network analysis offers the opportunity to investigate collaboration patterns as underlying mechanisms that might explain this continued disparity.
 
 With inequalities persisting against women in academic careers, as women still face differences in publications, full professorships, and representation in university leadership, and publications influencing credibility and potential promotions for professors, it is important to understand how gender interacts with collaboration patterns in publications as a potential area to where inequalities arise. Furthermore, these academic publication networks are ideal models of social networks, with clear egos (or agents) as the professors/authors of articles, and ties as the collaborations (or published academic works). 
 
-Social network analysis is ideal for studying academic collaborations because it treats relationships—not just individuals—as the fundamental unit of analysis. Despite decades of diversity initiatives, gender and ethnic inequality persist in Dutch academia, and social network analysis offers the opportunity to investigate underlying mechanisms such as publication collaboration patterns, that might explain the continued inequality. Examining the difference in collaboration patterns between political science and sociology as disciplines with varying gender compositions is informative as a preliminary indication of how equal gender representation influences collaborations. Additionally, the relatively small and interconnected nature of Dutch academic networks is ideal for social network research, as the comprehensive network boundary specification is easier to define while the prestige remains relatively similar (Mulders et al. (2024) - Mulders et al. 489). 
+Social network analysis is ideal for studying academic collaborations because it treats relationships—not just individuals—as the fundamental unit of analysis. Despite decades of diversity initiatives, gender and ethnic inequality persist in Dutch academia, and social network analysis offers the opportunity to investigate underlying mechanisms such as publication collaboration patterns, that might explain the continued inequality. Examining the difference in collaboration patterns between political science and sociology as disciplines with varying gender compositions is informative as a preliminary indication of how equal gender representation influences collaborations. Additionally, the relatively small and interconnected nature of Dutch academic networks is ideal for social network research, as the comprehensive network boundary specification is easier to define while the prestige remains relatively similar (Mulders et al., 2024). 
 
-Further, social network analysis offers an ideal opportunity to investigate the patterns of tie formation – and particularly the tendency for similar agents to form ties, commonly referred to as homophily (CITE)– which is ideal when considering an ego-level characteristic like gender. While homophily is an established finding in social network research (McPherson et al., 2001, 416), its presence in academic collaboration remains underexplored. Moreover, gender homophily in co-authorship could reflect genuine preferences for working with same-gender colleagues, structural constraints that limit opportunities for cross-gender interaction, or the cumulative effects of historical gender imbalances in academic fields (Boschini & Sjögren, 2007).
+Further, social network analysis offers an ideal opportunity to investigate the patterns of tie formation – and particularly the tendency for similar agents to form ties, commonly referred to as homophily – which is ideal when considering an ego-level characteristic like gender. While homophily is an established finding in social network research (McPherson et al., 2001), its presence in academic collaboration remains underexplored. Moreover, gender homophily in co-authorship could reflect genuine preferences for working with same-gender colleagues, structural constraints that limit opportunities for cross-gender interaction, or the cumulative effects of historical gender imbalances in academic fields (Boschini & Sjögren, 2007).
 
 This research paper will investigate the gender-based patterns in academic collaborations (in the form of shared publications) for political science and sociology professors in the Netherlands. Using social network analysis and longitudinal statistical modeling, I investigate three interrelated questions: First, are there gender differences in overall collaboration rates? Second, what proportion of collaborations occur across gender lines versus within same-gender pairs? And third, does prior experience with cross-gender collaboration increase the likelihood of future cross-gender ties? 
 
 By examining these questions, this study contributes to understanding how academic collaboration networks may reproduce or challenge gender inequality in Dutch universities. The findings have implications for policies aimed at promoting gender equity in academic careers, as they can reveal whether interventions should target structural barriers to cross-gender collaboration, work to shift preferences and norms around collaboration partner selection, or address other mechanisms underlying observed patterns of gender segregation in scholarly networks.
 
+
+
 **Citations: **
+
 Abramo, Giovanni, Ciriaco Andrea D'Angelo, and Francesco Di Costa. "Research Collaboration and Productivity: Is There Correlation?" Higher Education, vol. 57, no. 2, 2009, pp. 155-71.
 
 Boschini, Anne, and Anna Sjögren. "Is Team Formation Gender Neutral? Evidence from Coauthorship Patterns." Journal of Labor Economics, vol. 25, no. 2, 2007, pp. 325-65.
@@ -48,14 +79,60 @@ Wuchty, Stefan, Benjamin F. Jones, and Brian Uzzi. "The Increasing Dominance of 
 
 # Theory 
 
+To look at gender patterns in academic collaboration, a grounding in feminist theoretical traditions is key in order to understand the ways gender operates as a fundamental organizing principle of social life, structuring access to resources, opportunities, and recognition (Acker, 2006). Feminist scholars have long documented how “gender-neutral” institutional practices, such as hiring, promotion, and evaluation criteria, systematically disadvantage women through what Joan Acker terms "gendered organizations" (Acker, 1990). In academic settings, these gendered dynamics may appear through different mechanisms, such as gender bias in evaluation (Moss-Racusin et al., 2012), differential service burdens that divert women from research (Guarino and Borden, 2017), and exclusion from informal networks where opportunities are communicated and collaborations initiated (van den Brink and Benschop, 2014).
+
+Women in male-dominated fields develop adaptive strategies to navigate hostile or unsupportive environments, which may include seeking same-gender collaborations for professional support and validation (Settles et al., 2006; Settles & Connor, 2014). Simultaneously, women may pursue cross-gender collaborations more actively than men as a strategy to access resources, enhance credibility, or integrate into mainstream scholarly networks. These competing pressures create complex patterns that simple homophily models may not capture.
+From a conflict theory perspective, academic collaboration networks can be understood as sites of resource competition where gender functions as a basis for inclusion and exclusion (Collins, 1971). According to this perspective, the dominant groups control access to valued resources. In the context of academia and careers as professors, men historically have been and presently remain the dominant group in many academic fields by proportion in leadership. Therefore, the control of access to valued resources including authorship opportunities, research funding, and institutional positions remains held by a male-dominant environment. Professors have the opportunity to collaborate selectively, with the potential for conscious or implicit biases to influence their collaboration patterns. The structural power imbalance that still favors men, combined with still have the opportunity to collaborate selectively, potentially favoring other men through the tendency for dominant groups to replicate themselves (Kanter, 1977). Women, conversely, must navigate these male-dominated structures strategically, potentially leading to different collaboration patterns.
+
+Additionally, women in academia, particularly in male-dominated fields, may simultaneously face unique and increased pressures around collaborations. Women may face heightened scrutiny and skepticism about their individual contributions, creating pressure to demonstrate competence through collaborative work, as an extension of research finding gender biases favoring male students (Moss-Racusin et al., 2012). Individual contributions or publications by female professors may be discounted, while collaborative work provides visible evidence of professional integration and peer validation. Women may actively pursue collaborations with male colleagues, particularly senior men, as a strategy to access resources, enhance legitimacy, and signal professional competence (Jadidi et al., 2017).
+Homophily has been one of the most robust findings in social network research, operating across multiple dimensions including race, age, education, religion, and gender (McPherson et al., 2001). The basic mechanism is straightforward: people generally find it easier to connect with others who share similarities with them. In academic settings, homophily in collaborations can present itself through professors sharing institutional affiliation, disciplinary specialty, methodological approach, and demographic characteristics (Bozeman and Corley, 2004). Importantly, the presence of homophily does not alone explain the reason for connections (ties, or collaborations in the academic context) to form. 
+
+Investigating the presence of gender homophily in collaboration patterns, considerate of individual preference as well as structural opportunity, is key to understanding the mechanisms that perpetuate unequal opportunities by gender, and how they may arise or be perpetuated. By using social network analysis to look at the ego-level characteristic of gender, with female as the independent variable of interest and shared academic publications (the ties in the social network, referenced as ‘collaborations’) as the dependent variable, there is the opportunity to look at the effect of gender on collaborations. Considering the large amount of data for assessing the social network of all dutch universities, though, this research will focus on one university, Radboud University, as a case study. 
+
+Therefore, my research question is as follows: 
+
+**How does gender effect collaborations among political science and sociology professors at Radboud Universities? **
+
+To guide my research and analysis, I further specify my research question by breaking it into two parts: 
+
+Research Question 1: What are the gender differences in overall collaboration rates?
+
+Research Question 2: How does gender effect potential for collaborations? And, is one gender more likely to collaborate than the other? 
+
+Hypothesis 2.1: In response to this research question, I hypothesize that women will be more likely to participate in collaborations, as it may be more important for their credibility and opportunity for promotion. 
+
+Hypothesis 2.2: Related to this, controlling for the effect of discipline, I hypothesize that the effect of female on professor collaborations will vary by department/discipline, such that women in political science are more likely than their male counter parts to collaborate. 
+
+Hypothesis 2.3: Further, building on my assumptions in my first two hypotheses, I hypothesize that female professors in sociology are even more likely to participate in cross-gender collaborations, as the effect of women being more likely to participate in cross-gender collaborations is amplified with the more even proportion of women in sociology, and potentially a more progressive department culture
 
 
-# Data and Methods
 
 
 
-# Results 
 
 
 
-# Discussion and Conclusion
+
+
+Citations: 
+Acker, J. (1990). Hierarchies, Jobs, Bodies: A Theory of Gendered Organizations. Gender and Society, 4(2), 139–158. http://www.jstor.org/stable/189609 
+
+Acker, J. (2006). Inequality Regimes Gender, Class, and Race in Organizations. Gender and Society, 20(4), 441–464. http://www.jstor.org/stable/27640904 
+
+Collins, R. (1971). A Conflict Theory of Sexual Stratification. Social Problems, 19(1), 3–21. https://doi.org/10.2307/799936 
+
+Bozeman, Barry & Corley, Elizabeth (2004). Scientists’ collaboration strategies: implications for scientific and technical human capital. Research Policy, 33(4), 599-616. https://doi.org/10.1016/j.respol.2004.01.008. 
+Guarino, C.M., Borden, V.M.H. Faculty Service Loads and Gender: Are Women Taking Care of the Academic Family?. Res High Educ 58, 672–694 (2017). https://doi.org/10.1007/s11162-017-9454-2 
+
+Jadidi, M., Karimi, F., Lietz, H., & Wagner, C. (2017). Gender Disparities in Science? Dropout, Productivity, Collaborations and Success of Male and Female Computer Scientists. Advances in Complex Systems, 21(3/4), Article 1750011. https://doi.org/10.1142/S0219525917500114 
+Kanter, R. M. (1977). Some Effects of Proportions on Group Life: Skewed Sex Ratios and Responses to Token Women. American Journal of Sociology, 82(5), 965–990. http://www.jstor.org/stable/2777808
+ 
+McPherson, M., Smith-Lovin, L., & Cook, J. M. (2001). Birds of a Feather: Homophily in Social Networks. Annual Review of Sociology, 27, 415–444. http://www.jstor.org/stable/2678628 
+Moss-Racusin, C. A., Dovidio, J. F., Brescoll, V. L., Graham, M. J., & Handelsman, J. (2012). Science faculty’s subtle gender biases favor male students. Proceedings of the National Academy of Sciences, 109(41), 16474-16479. https://doi.org/10.1073/pnas.1211286109
+
+Settles, I. H., Cortina, L. M., Malley, J., & Stewart, A. J. (2006). The Climate for Women in Academic Science: The Good, the Bad, and the Changeable. Psychology of Women Quarterly, 30(1), 47-58. https://doi.org/10.1111/j.1471-6402.2006.00261.x
+Settles, I.H., O’Connor, R.C. Incivility at Academic Conferences: Gender Differences and the Mediating Role of Climate. Sex Roles 71, 71–82 (2014). https://doi.org/10.1007/s11199-014-0355-y 
+van den Brink, M. and Benschop, Y. (2014), Gender in Academic Networking. Journal of Management Studies, 51: 460-492. https://doi.org/10.1111/joms.12060
+
+
+

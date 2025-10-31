@@ -239,9 +239,10 @@ fpackage.check(packages)
 
 
 
-# Getting Data for Radboud 
+# Radboud Data
 
-## Application: Create an adjacency matrix ('test') with the subset of professors from Radboud University, as well as a data frame with the ego-level characteristics I will be investigating. 
+## Getting Data for Radboud 
+Application: I will create an adjacency matrix ('test') with the subset of professors from Radboud University, as well as a data frame with the ego-level characteristics I will be investigating. 
 
 ### Load Data
 ```{r}
@@ -277,7 +278,9 @@ net = sienaDependent(nets)
 ```
 
 
-## Isolate Gender variable (binary)
+## Isolate Key Variables
+
+### Isolate Gender variable (binary)
 Make sure to include binary variable for gender, as gender is the independent variable that is analyzed in this research. With this, male = 0, and female = 1. Female is 1 because I hypothesize that women are more likely to collaborate. 
 
 It is important to acknowledge that gender is an ego-level characteristic. COME BACK TO THIS TO EXPLAIN. 
@@ -297,7 +300,7 @@ female = coCovar(df_ego$female) #CREATE GENDER CO VARIABLE
 ```
 
 
-## Isolate disicipline variable (binary, used for control)
+### Isolate disicipline variable (binary, used for control)
 I want to be able to control for the department, so I will create an additional binary variable denoting if the ego/professor is affiliated with sociology (0) or political science (1). This will serve as a constant covariate, looking at EgoX effect per discipline. Political science is 1 because literature found that political science departments at Dutch universities tend to have less balanced gender distribution than sociology, and I hypothesize that as a result, women will be more likely to participate in cross-gender collaborations, as it may be more important for their credibility and opportunity for promotion.  
 
 Ideally, I would also control for each university. 
@@ -325,30 +328,30 @@ polsci = coCovar(df_ego$polsci) #CREATE DISCIPLINE CO VAR
 
 ----
 
-# Preliminary Descriptives - Variables
+## Preliminary Descriptives - Variables
 
-## Distribution of Gender (Female = 1) Overall 
+### Distribution of Gender (Female = 1) Overall 
 ```{r}
 summary(df_ego$female)
 ```
 The distribution of gender appears relatively balanced, with a mean of 0.5091, indicating slightly more women as professors, though remaining very close to .50, it is reasonable to assume that gender is equally distributed among professors at Radboud. 
 
 
-## Distribution of Discipline (Political Science = 1)
+### Distribution of Discipline (Political Science = 1)
 ```{r}
 summary(df_ego$polsci)
 ```
 The distribution of discipline appears close to .5, with a mean of 0.4955, indicating slightly more sociology professors than political science professors. However, as the means remaining close to .50, it is reasonable to assume that discipline is also equally distributed among professors at Radboud. 
 
 
-## Distribution of Gender by Discipline 
+### Distribution of Gender by Discipline 
 ```{r}
 table(df_ego$gender, df_ego$discipline.24, useNA = "ifany")
 ```
 While there is near 50% proportion of men and women, and a near 50% proportion of political science and sociology professors, there is the chance that one discipline has imbalanced gender representation. Therefore, it is important to check. I do so by creating a simple table to check, as demonstrated. This shows that there are a few more female than male political science professors, though a near 50% proportion of men and women sociology professors. I then visualize this in the bar graph below. I used discipline counts from 2024 as the latest wave from the data I studied. 
 
 
-## Plot Distribution of Gender by Discipline
+### Plot Distribution of Gender by Discipline
 ```{r}
 library(ggplot2)
 
@@ -368,11 +371,11 @@ df_ego %>%
 
 
 
-# Network Descriptives - Radboud University
+## Network Descriptives 
 
-## Visualizing Networks - Radboud University Wave 1
+### Visualizing Networks - Radboud University Wave 1
 
-### Make adjacency matrix for first wave of RU data
+#### Make adjacency matrix for first wave of RU data
 ```{r}
 # make adjacency matrix with first wave of data
 test_wave1ru <- igraph::graph_from_adjacency_matrix(
@@ -388,7 +391,7 @@ test_wave1ru
 ```
 
 
-### RU Wave 1 - First plot of data (colored: women represented with red and men represented with blue)
+#### RU Wave 1 - First plot of data (colored: women represented with red and men represented with blue)
 ```{r}
 # changing V: Let’s make size proportional to betweenness score
 # V(test_wave1ru)$size = betweenness(test_wave1ru, normalized = T, directed = TRUE) * 100 + 20  #after some trial and error
@@ -411,9 +414,9 @@ sum(is.na(test_wave1ru)) #check it is complete -- if 0 missing values
 ```
 
 
-## Visualizing Networks - Radboud University Wave 2
+### Visualizing Networks - Radboud University Wave 2
 
-### Make adjacency matrix for second wave of RU data
+#### Make adjacency matrix for second wave of RU data
 ```{r}
 test_wave2ru <- igraph::graph_from_adjacency_matrix(
   test$nets[2,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
@@ -426,7 +429,7 @@ test_wave2ru <- igraph::graph_from_adjacency_matrix(
 ```
 
 
-### RU Wave 2 - First plot of data (colored: women represented with red and men represented with blue)
+#### RU Wave 2 - First plot of data (colored: women represented with red and men represented with blue)
 ```{r}
 #V(test_wave2ru)$size = betweenness(test_wave2ru, normalized = T, directed = TRUE) * 100 + 8  #after some trial and error
 
@@ -441,7 +444,8 @@ plot(test_wave2ru,
 
 
 
-## Degrees - Descriptive Statistics, Radboud Professors 
+## Descriptive Statistics 
+### Degrees - Radboud Professors 
 Next, it is important to look at measures of centrality. The number of degrees of connections is the simplest term for centrality. If there are differences in degree centrality, then we can illustrate nodes by differing size (for example) to accommodate for this. This is demonstrated in the wave 1 and wave 2 network visualizations of radboud political science and sociology professors collaboration networks, as the professors that participate in more collaborations (shared publications) have a larger node size.  
 
 With the descriptive statistics, we want to describe if this network is complete, the size of this network, what kind of relationships there are (whether or not it is directed), and the node type (as well as if the tie is weighted). We will also briefly look at local and global transitivity, looking at both the dyads and triads that form in this collaboration network for reference. Considering this is not a big part of the research questions though, we will not focus on this in the analysis. 
@@ -521,7 +525,7 @@ summary(degree_w1)
 
 
 
-### Degree Centrality
+### Degree Centrality Wave 2
 ```{r}
 #degree centrality w2 
 degree_w2 <- degree(test_wave2ru)
@@ -646,7 +650,7 @@ We find that transitivity of wave 1 is 0.1578947 (from igraph. From the SNA pack
 
 
 
-**NOTE TO COME BACK TO**: 
+**NOTE TO COME BACK TO**: (use this to describe network)
 NEED TO INCLUDE TRIADS - TRANSITIVITY 
 OUTDEGREE AND RECIPROCITY ARE ALWAYS IN THERE, ALSO NEED OUTDEGREE ACTIVITY OR IN DEGREE POPULARITY. ALSO NEED SOMETHING FOR TRANSITIVITY - GWESP VARIABLE AND EFFECTS TO INCLUDE - MAKE SURE TO INCLUDE ONE OF THESE TOO.
 
@@ -663,7 +667,7 @@ Reflection: While there is a directional assumption of this social network, in r
 
 
 
-# Supplementary Data Manipulation for Cross Gender Collaborations
+## Supplementary Data Manipulation for Cross Gender Collaborations
 
 Next, I would like to create a column added to the Radboud University dataframe (df_ego) that will track if each professor has participated in a cross-gender collaboration in wave 1 and in wave 2. To do so, I first will count the total collaborations in the Radboud professors social network. 
 
@@ -671,7 +675,7 @@ Looking at mydata, I want to investigate the effect of female (male=0, female=1)
 
 Next, I will create a function to count the number of collaborations in wave 1 and wave 2 that happened with at least one male and one female. This will then support answering RESEARCH QUESTION 1, as it directly will answer the proportion of collaborations that happen with same gender professors at Radboud. When expanding this function to all universities, I will also be able to tell how it varies by university. 
 
-## Count total collaborations
+### Count total collaborations
 ```{r}
 # Total number of collaboration ties in each wave
 total_ties_w1 <- sum(test$nets[1,,]) # 31 total ties in Wave 1, same as edges
@@ -688,7 +692,7 @@ sum(df_ego$collab_total_w2) # 85
 This confirms the count of total collaborations as 31 for wave 1, and 85 for wave 2, the same total as indicated with "edges" in the descriptive statistics. I retrieve the count in a different way though, as I build on this function when I next count the number of cross-gender collaborations out of the total collaborations. 
 
 
-## Count cross gender ties in W1 and W2 
+### Count cross gender ties in W1 and W2 
 To answer RESEARCH QUESTION 2.1, "What proportion of collaborations happen across gender?", I create a function that will count the number of cross gender collaborations. 
 
 
@@ -786,9 +790,10 @@ This table demonstrates the findings that 21 of the 31 collaborations in Wave 1 
 
 
 
-# Create column to count the cross gender collaborations per professor
+## Counting the cross gender collaborations per professor
+Create column to count if each professor has participated in a collaboration with at least one male and one female.
 
-## Create function to count if ego has collaborated with another gender professor, and apply to waves 1 and 2 
+#### Create function to count if ego has collaborated with another gender professor, and apply to waves 1 and 2 
 ```{r}
 # Make function to check if an ego has cross-gender collaborations
 has_cross_gender_collab <- function(wave_net, ego_idx, ego_gender, all_genders) {
@@ -842,7 +847,10 @@ df_ego$xgen_w2 <- sapply(1:nrow(df_ego), function(i) {
 ```
 
 
-## Results: Summary of the number of male and female professors who did and didn't participate in cross-gender collaborations
+
+**Next** 
+Results: Summary of the number of male and female professors who did and didn't participate in cross-gender collaborations
+
 
 ### Total proportion of professors participating in cross-gender collaborations
 ```{r}
@@ -911,7 +919,7 @@ I find that 19 female professors participate in cross-gender collaborations and 
 These are preliminary findings though, and could be effected by discipline. As a result, we must account/control for discipline to better understand if differences in collaborations, and particularly cross-gender collaborations, vary per discipline. 
 
 ### Wave 1 Gender/Discipline/Cross-gender collaborations table 
-### TIDY UP TABLE SYNTAX
+### TIDY TABLE SYNTAX
 ```{r}
 xgen_by_gender_discipline <- df_ego %>%
   filter(!is.na(female) & !is.na(xgen_w1) & !is.na(discipline.24)) %>%
@@ -1050,10 +1058,9 @@ Unfortunately my analysis does not cover this, as it is not relevant to my resea
 
 
 
+## RSiena Analysis - Radboud Profs
 
-# RSiena Analysis - Radboud Profs
-
-## Looking at Degree and Reciprocity from Ministeps -- NOTE TO SELF: DELETE OR COME BACK TO
+### Looking at Degree and Reciprocity from Ministeps -- NOTE TO SELF: DELETE OR COME BACK TO
 ```{r}
 # I HONESTLY HAVE NO IDEA - FROM CODEREVIEW3
 
@@ -1087,7 +1094,7 @@ simnet2
 ```
 
 
-## Reminder of dependent and independent variables
+### Reminder of dependent and independent variables
 ```{r}
 # DEPENDENT VARIABLE
 # net = dependent variable (the ties are the dependent variable)
@@ -1099,7 +1106,7 @@ simnet2
 ```
 
 
-## RESEARCH QUESTIONS: 
+### For reference: RESEARCH QUESTIONS: 
 
 ### Rsiena Analysis: RQ 1
 **Research Question 1** (Descriptive): What proportion of collaborations happen with professors that have different genders? 
@@ -1133,7 +1140,8 @@ How to answer: Look at egoX effect, including the interaction with "female" and 
 To answer my second research question, I will use an rsiena model looking at the egoX effect, and the interaction with "female", controlling for academic discipline. The rsiena model will simulate collaborations and compare the expected results of the impact of 'female' with the actual data in order to gauge the effect 'female' has on the potential for collaborations. 
 
 
-## Rsiena results: Radboud University
+## Rsiena results
+For Radboud University in particular.
 INPUT FROM FILE: finalpaper_ru
 
 We will be looking at female (independent variable) effect on collaborations, including controls for discipline. I created several rsiena models in order to compare and see how much of an effect the different statistics, variables, controls have on the overall estimated model.
@@ -1201,6 +1209,8 @@ ansM2 = siena07(
     returnDeps = TRUE
 )
 ansM2
+
+#prevAns function - rsiena manual, add code to algorithm. siena 07 model. 
 
 ```
 Estimates, standard errors and convergence t-ratios
@@ -1286,7 +1296,10 @@ Total of 2669 iteration steps.
 mydata4 = sienaDataCreate(net, female, xgen_w1) 
 myeff4 = getEffects(mydata4)
 myeff4 = includeEffects(myeff4, isolateNet, inPop.c)
+```
 
+
+```{r, eval=FALSE}
 myeff4 = includeEffects(myeff4, egoX, sameX, interaction1 = "female")
 myeff4 = includeEffects(myeff4, egoX, interaction1 = "xgen_w1")
 
@@ -1303,6 +1316,15 @@ ansM4 = siena07(
 )
 
 ansM4
+
+fsave(ansM4)
+```
+
+
+```{r}
+ansM4_load <- fload('data/processed/ansM4_20251031.rda')
+
+ansM4_load
 ```
 Estimates, standard errors and convergence t-ratios
 
@@ -1396,7 +1418,7 @@ xgen_varying = varCovar(cbind(df_ego$xgen_w1, df_ego$xgen_w2))
 
 
 ### ansM6 - Looking at (net, female): isolateNet, inPop.c, and egoX and sameX of "female", Compare with polsci and varCovar "xgen_varying" of both xgen timeframes (difference from w1 to w2)
-` ``{r}
+```{r}
 mydata6 = sienaDataCreate(net, female) 
 myeff6 = getEffects(mydata6)
 myeff6 = includeEffects(myeff6, isolateNet, inPop.c)
@@ -1448,6 +1470,10 @@ myeff7 = includeEffects(myeff7, egoX, sameX, interaction1 = "female")
 myeff7 = includeEffects(myeff7, egoX, interaction1 = "polsci") #do I need to include polsci in mydata7? 
 myeff7 = includeEffects(myeff7, egoX, interaction1 = "xgen_w2") # took a really long time? 
 myeff7 = includeInteraction(myeff7, egoX, egoX, interaction1 = c("female", "xgen_w2"))
+
+
+myeff7 = includeInteraction(myeff7, egoX, sameX, interaction1 = c("female", "female"))
+
 
 
 myAlgorithm = sienaAlgorithmCreate(
@@ -1614,11 +1640,11 @@ Out of all of these effects introduced to estimate the effect of gender on colla
 
 
 
-# GOODNESS OF FIT 
+## GOODNESS OF FIT 
 
 With this, we will look at how myeff (which accounts for female as the independent variable) in algorithm actually distributes in indegree and outdegree goodness of fit. 
 
-## Create function
+### Create function
 ```{r}
 # Note: The geodesic distribution is not available from within RSiena, and therefore is copied from the help page of sienaGOF-auxiliary. GeodesicDistribution calculates the distribution of non-directed geodesic distances; 
 
@@ -1642,9 +1668,9 @@ GeodesicDistribution <- function(i, data, sims, period, groupName, varName, levl
 ```
 
 
-## GOF for ansM1
+### GOF for ansM1
 
-### Indegree:
+#### Indegree:
 ```{r}
 # The following function is taken from the help page for sienaTest -- use "ansM1"
 
@@ -1667,7 +1693,7 @@ plot(gofi0)
 
 ```
 
-### Outdegree: 
+#### Outdegree: 
 ```{r}
 # outdegree distribution
 gofi1 <- sienaGOF(ansM1, OutdegreeDistribution, verbose = FALSE, join = TRUE, varName = "net")
@@ -1675,10 +1701,10 @@ plot(gofi1)
 ```
 
 
-## GOF for ansM7
+### GOF for ansM7
 
-### Indegree:
-` ``{r}
+#### Indegree:
+```{r}
 gofi_ansM7 <- sienaGOF(ansM7, IndegreeDistribution, verbose = FALSE, join = TRUE, varName = "net")
 
 plot(gofi_ansM7)
@@ -1688,8 +1714,8 @@ In this macro-level investigation, we look at the degree of spread over the nume
 In testing with the p-value, we test a set of variables against a set of fixed values, combining it into one test that takes into account if there is covariance in the variables. Traditionally that could be done with a t-test, however as this includes a more complicated set of variables, we used the Monte Carlo Mahaloanobis distance test p-value. This renders: 
 
 
-### Outdegree: 
-` ``{r}
+#### Outdegree: 
+```{r}
 gofi_ansM7_2 <- sienaGOF(ansM7, OutdegreeDistribution, verbose = FALSE, join = TRUE, varName = "net")
 
 plot(gofi_ansM7_2)
@@ -1701,11 +1727,13 @@ We also will look at the goodness of fit of outdegree distribution. As observed 
 FACTOR IN GWESP TO MODERATE EFFECT: RETURN TO THIS?
 
 
+TriadCensus
 
 
-# RELATIVE INFLUENCE 
 
-## Relative Influence Analysis - RU profs 
+## RELATIVE INFLUENCE 
+
+Relative Influence Analysis - RU profs 
 
 ### Relative influence with ansM1
 ```{r}
@@ -2452,7 +2480,7 @@ myeff_all = includeEffects(myeff_all, egoX, interaction1 = "female_all") # Indep
 #    returnDeps = TRUE
 #)
 
-#ansM1_all
+ansM1_all
 
 ```
 

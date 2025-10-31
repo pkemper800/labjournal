@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Paige Kemper" />
+
+<meta name="date" content="2025-10-31" />
+
+<title>finalpaperconclusion</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+<link rel="stylesheet" href="tweaks.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    My journal
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="lab1.html">Page 1</a>
+    </li>
+    <li>
+      <a href="lab2.html">Page 2</a>
+    </li>
+    <li>
+      <a href="lab3.html">Page 3</a>
+    </li>
+    <li>
+      <a href="lab4.html">Page 4</a>
+    </li>
+    <li>
+      <a href="lab5.html">Page 5</a>
+    </li>
+    <li>
+      <a href="lab6.html">Page 6</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    codereview
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="codereview.html">codereview</a>
+    </li>
+    <li>
+      <a href="codereview2.html">codereview2</a>
+    </li>
+    <li>
+      <a href="codereview3.html">codereview3</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    rsiena
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="rsiena.html">rsiena</a>
+    </li>
+    <li>
+      <a href="rsiena2.html">rsiena2</a>
+    </li>
+    <li>
+      <a href="gof.html">gof</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Research Progress
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="researchquestions.html">Preliminary Research Questions</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Final Report
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="finalpaper.html">Introdution and Theory</a>
+    </li>
+    <li>
+      <a href="datamethods.html">Data and Methods: Preparation, Descriptive Statistics, RSiena Models and Results</a>
+    </li>
+    <li>
+      <a href="conclusion.html">Discussion and Conclusion</a>
+    </li>
+    <li>
+      <a href="supplementary.html">Next Steps</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/pkemper800/labjournal">
+    <span class="fab fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">finalpaperconclusion</h1>
+<h4 class="author">Paige Kemper</h4>
+<h4 class="date">2025-10-31</h4>
+
+</div>
+
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<p>Last compiled on October, 2025</p>
+<p><br></p>
+<p><em>Code for SNA Final Paper Conclusion</em></p>
+<div id="conclusion-and-discussion" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Conclusion and
+Discussion:</h1>
+<div id="summary" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Summary:</h2>
+<p>This study examined gender-based patterns in academic collaboration
+networks among political science and sociology professors at Radboud
+University in the Netherlands, using RSiena. By investigating how gender
+shapes collaboration patterns in academic publishing, this research
+contributes to our understanding of the mechanisms that may perpetuate
+gender inequality in academia, despite decades of diversity initiatives
+and near gender parity at the doctoral level.</p>
+<p>The analysis of collaboration networks across two time periods
+(2015-2018 and 2019-2023) reveals several important patterns. First,
+regarding overall collaboration rates, the descriptive analysis showed
+that cross-gender collaborations increased substantially from Wave 1 to
+Wave 2, with 31 edges in Wave 1 growing to 85 edges in Wave 2 among
+Radboud University professors. The proportion of professors
+participating in cross-gender collaborations also increased, with 19
+female professors and 12 male professors engaging in cross-gender work
+by Wave 2, suggesting some shift toward greater integration across
+gender lines in academic networks.</p>
+<p>Furthermore, the RSiena models revealed more nuanced dynamics
+underlying these patterns of gender effects, indicating a positive
+effect that female has on collaborations, as well as a discipline
+effect, which indicated with political science affiliation had a
+negative effect on collaboration</p>
+<p>In conclusion, I find evidence to support gender differences in
+collaboration rates among political science and sociology professors in
+the Netherlands, with female professors participating in more
+collaborations and being being more likely to participate in
+collaborations. I find evidence for disciplinary differences in
+collaboration patterns. Therefore, this research fails to reject the
+null hypotheses that female does not have an impact on collaborations,
+and in fact provides evidence that both regardless of discipline, the
+‘female’ characteristic has a positive effect. Further, we find evidence
+that controlling for discipline is important, as collaborations vary
+between departments.</p>
+</div>
+<div id="theoretical-contributions" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Theoretical
+Contributions:</h2>
+<p>This research as a case study can contribute to our understanding of
+gender dynamics in academic collaboration networks. It provides
+empirical evidence for the operation of gendered mechanisms in academic
+network formation, extending feminist organizational theory (Acker,
+1990, 2006) to the specific context of scholarly co-authorship networks.
+This study also advances our understanding of homophily by revealing its
+persistence in professional academic settings where meritocratic norms
+are explicitly valued. The positive effect for same-gender collaboration
+indicates that even in contexts where individuals presumably select
+collaborators based on intellectual compatibility and methodological
+expertise, similarity in demographic characteristics continues to
+influence tie formation. This suggests that homophily operates through
+multiple mechanisms.</p>
+</div>
+<div id="limitations" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Limitations:</h2>
+<p>A major limitation to this research is the small sample size. By
+looking at Radboud University as a case study, the statistical
+significance and generalizability of the research remains limited. This
+research should be expanded to all dutch universities, and future
+analysis including all universities should also expand to controlling
+for university level differences.</p>
+<p>Additionally, while there is a directional assumption of this social
+network, in reality the directionality does not matter in the framing of
+publication output used for merit. The professor that initiated the
+collaboration, for all intensive purposes, is not directly informative
+for answering these research questions. Future research that could
+further investigate the directionality of these collaborations, such as
+if women or men are more likely to initiate collaborations, would be a
+way to further develop this research.</p>
+<p>Lastly, extending the research to look at the nature of the
+collaborations would further inform the effect of gender on
+collaborations, such as the effect of female on same-gender and
+cross-gender collaborations. Unfortunately my analysis does not cover
+the count of cross gender collaborations per professor, as it is not
+relevant to my research question, but I found it an interesting exercise
+and a potential point for departure as a recommendation for further
+research. I made a first effort as exploring this though, as is
+indicated in the “supplementary research” tab.</p>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogImZpbmFscGFwZXJjb25jbHVzaW9uIg0KYXV0aG9yOiAiUGFpZ2UgS2VtcGVyIg0KZGF0ZTogIjIwMjUtMTAtMzEiDQpvdXRwdXQ6IGh0bWxfZG9jdW1lbnQNCi0tLQ0KDQoNCmBgYHtyLCBnbG9iYWxzZXR0aW5ncywgZWNobz1GQUxTRSwgd2FybmluZz1GQUxTRSwgcmVzdWx0cz0naGlkZSd9DQpsaWJyYXJ5KGtuaXRyKQ0KDQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpvcHRzX2NodW5rJHNldCh0aWR5Lm9wdHM9bGlzdCh3aWR0aC5jdXRvZmY9MTAwKSx0aWR5PVRSVUUsIHdhcm5pbmcgPSBGQUxTRSwgbWVzc2FnZSA9IEZBTFNFLGNvbW1lbnQgPSAiIz4iLCBjYWNoZT1UUlVFLCBjbGFzcy5zb3VyY2U9YygidGVzdCIpLCBjbGFzcy5vdXRwdXQ9YygidGVzdDIiKSkNCm9wdGlvbnMod2lkdGggPSAxMDApDQpyZ2w6OnNldHVwS25pdHIoKQ0KDQoNCmNvbG9yaXplIDwtIGZ1bmN0aW9uKHgsIGNvbG9yKSB7c3ByaW50ZigiPHNwYW4gc3R5bGU9J2NvbG9yOiAlczsnPiVzPC9zcGFuPiIsIGNvbG9yLCB4KSB9DQoNCg0KYGBgDQoNCmBgYHtyIGtsaXBweSwgZWNobz1GQUxTRSwgaW5jbHVkZT1UUlVFfQ0Ka2xpcHB5OjprbGlwcHkocG9zaXRpb24gPSBjKCd0b3AnLCAncmlnaHQnKSkNCiNrbGlwcHk6OmtsaXBweShjb2xvciA9ICdkYXJrcmVkJykNCiNrbGlwcHk6OmtsaXBweSh0b29sdGlwX21lc3NhZ2UgPSAnQ2xpY2sgdG8gY29weScsIHRvb2x0aXBfc3VjY2VzcyA9ICdEb25lJykNCmBgYA0KDQpMYXN0IGNvbXBpbGVkIG9uIGByIGZvcm1hdChTeXMudGltZSgpLCAnJUIsICVZJylgDQoNCjxicj4NCg0KDQpfQ29kZSBmb3IgU05BIEZpbmFsIFBhcGVyIENvbmNsdXNpb25fDQoNCiMgQ29uY2x1c2lvbiBhbmQgRGlzY3Vzc2lvbjoNCg0KIyMgU3VtbWFyeToNClRoaXMgc3R1ZHkgZXhhbWluZWQgZ2VuZGVyLWJhc2VkIHBhdHRlcm5zIGluIGFjYWRlbWljIGNvbGxhYm9yYXRpb24gbmV0d29ya3MgYW1vbmcgcG9saXRpY2FsIHNjaWVuY2UgYW5kIHNvY2lvbG9neSBwcm9mZXNzb3JzIGF0IFJhZGJvdWQgVW5pdmVyc2l0eSBpbiB0aGUgTmV0aGVybGFuZHMsIHVzaW5nIFJTaWVuYS4gQnkgaW52ZXN0aWdhdGluZyBob3cgZ2VuZGVyIHNoYXBlcyBjb2xsYWJvcmF0aW9uIHBhdHRlcm5zIGluIGFjYWRlbWljIHB1Ymxpc2hpbmcsIHRoaXMgcmVzZWFyY2ggY29udHJpYnV0ZXMgdG8gb3VyIHVuZGVyc3RhbmRpbmcgb2YgdGhlIG1lY2hhbmlzbXMgdGhhdCBtYXkgcGVycGV0dWF0ZSBnZW5kZXIgaW5lcXVhbGl0eSBpbiBhY2FkZW1pYSwgZGVzcGl0ZSBkZWNhZGVzIG9mIGRpdmVyc2l0eSBpbml0aWF0aXZlcyBhbmQgbmVhciBnZW5kZXIgcGFyaXR5IGF0IHRoZSBkb2N0b3JhbCBsZXZlbC4NCg0KVGhlIGFuYWx5c2lzIG9mIGNvbGxhYm9yYXRpb24gbmV0d29ya3MgYWNyb3NzIHR3byB0aW1lIHBlcmlvZHMgKDIwMTUtMjAxOCBhbmQgMjAxOS0yMDIzKSByZXZlYWxzIHNldmVyYWwgaW1wb3J0YW50IHBhdHRlcm5zLiBGaXJzdCwgcmVnYXJkaW5nIG92ZXJhbGwgY29sbGFib3JhdGlvbiByYXRlcywgdGhlIGRlc2NyaXB0aXZlIGFuYWx5c2lzIHNob3dlZCB0aGF0IGNyb3NzLWdlbmRlciBjb2xsYWJvcmF0aW9ucyBpbmNyZWFzZWQgc3Vic3RhbnRpYWxseSBmcm9tIFdhdmUgMSB0byBXYXZlIDIsIHdpdGggMzEgZWRnZXMgaW4gV2F2ZSAxIGdyb3dpbmcgdG8gODUgZWRnZXMgaW4gV2F2ZSAyIGFtb25nIFJhZGJvdWQgVW5pdmVyc2l0eSBwcm9mZXNzb3JzLiBUaGUgcHJvcG9ydGlvbiBvZiBwcm9mZXNzb3JzIHBhcnRpY2lwYXRpbmcgaW4gY3Jvc3MtZ2VuZGVyIGNvbGxhYm9yYXRpb25zIGFsc28gaW5jcmVhc2VkLCB3aXRoIDE5IGZlbWFsZSBwcm9mZXNzb3JzIGFuZCAxMiBtYWxlIHByb2Zlc3NvcnMgZW5nYWdpbmcgaW4gY3Jvc3MtZ2VuZGVyIHdvcmsgYnkgV2F2ZSAyLCBzdWdnZXN0aW5nIHNvbWUgc2hpZnQgdG93YXJkIGdyZWF0ZXIgaW50ZWdyYXRpb24gYWNyb3NzIGdlbmRlciBsaW5lcyBpbiBhY2FkZW1pYyBuZXR3b3Jrcy4NCg0KRnVydGhlcm1vcmUsIHRoZSBSU2llbmEgbW9kZWxzIHJldmVhbGVkIG1vcmUgbnVhbmNlZCBkeW5hbWljcyB1bmRlcmx5aW5nIHRoZXNlIHBhdHRlcm5zIG9mIGdlbmRlciBlZmZlY3RzLCBpbmRpY2F0aW5nIGEgcG9zaXRpdmUgZWZmZWN0IHRoYXQgZmVtYWxlIGhhcyBvbiBjb2xsYWJvcmF0aW9ucywgYXMgd2VsbCBhcyBhIGRpc2NpcGxpbmUgZWZmZWN0LCB3aGljaCBpbmRpY2F0ZWQgd2l0aCBwb2xpdGljYWwgc2NpZW5jZSBhZmZpbGlhdGlvbiBoYWQgYSBuZWdhdGl2ZSBlZmZlY3Qgb24gY29sbGFib3JhdGlvbg0KDQpJbiBjb25jbHVzaW9uLCBJIGZpbmQgZXZpZGVuY2UgdG8gc3VwcG9ydCBnZW5kZXIgZGlmZmVyZW5jZXMgaW4gY29sbGFib3JhdGlvbiByYXRlcyBhbW9uZyBwb2xpdGljYWwgc2NpZW5jZSBhbmQgc29jaW9sb2d5IHByb2Zlc3NvcnMgaW4gdGhlIE5ldGhlcmxhbmRzLCB3aXRoIGZlbWFsZSBwcm9mZXNzb3JzIHBhcnRpY2lwYXRpbmcgaW4gbW9yZSBjb2xsYWJvcmF0aW9ucyBhbmQgYmVpbmcgYmVpbmcgbW9yZSBsaWtlbHkgdG8gcGFydGljaXBhdGUgaW4gY29sbGFib3JhdGlvbnMuIEkgZmluZCBldmlkZW5jZSBmb3IgZGlzY2lwbGluYXJ5IGRpZmZlcmVuY2VzIGluIGNvbGxhYm9yYXRpb24gcGF0dGVybnMuIFRoZXJlZm9yZSwgdGhpcyByZXNlYXJjaCBmYWlscyB0byByZWplY3QgdGhlIG51bGwgaHlwb3RoZXNlcyB0aGF0IGZlbWFsZSBkb2VzIG5vdCBoYXZlIGFuIGltcGFjdCBvbiBjb2xsYWJvcmF0aW9ucywgYW5kIGluIGZhY3QgcHJvdmlkZXMgZXZpZGVuY2UgdGhhdCBib3RoIHJlZ2FyZGxlc3Mgb2YgZGlzY2lwbGluZSwgdGhlICdmZW1hbGUnIGNoYXJhY3RlcmlzdGljIGhhcyBhIHBvc2l0aXZlIGVmZmVjdC4gRnVydGhlciwgd2UgZmluZCBldmlkZW5jZSB0aGF0IGNvbnRyb2xsaW5nIGZvciBkaXNjaXBsaW5lIGlzIGltcG9ydGFudCwgYXMgY29sbGFib3JhdGlvbnMgdmFyeSBiZXR3ZWVuIGRlcGFydG1lbnRzLiANCg0KDQoNCiMjIFRoZW9yZXRpY2FsIENvbnRyaWJ1dGlvbnM6DQpUaGlzIHJlc2VhcmNoIGFzIGEgY2FzZSBzdHVkeSBjYW4gY29udHJpYnV0ZSB0byBvdXIgdW5kZXJzdGFuZGluZyBvZiBnZW5kZXIgZHluYW1pY3MgaW4gYWNhZGVtaWMgY29sbGFib3JhdGlvbiBuZXR3b3Jrcy4gSXQgcHJvdmlkZXMgZW1waXJpY2FsIGV2aWRlbmNlIGZvciB0aGUgb3BlcmF0aW9uIG9mIGdlbmRlcmVkIG1lY2hhbmlzbXMgaW4gYWNhZGVtaWMgbmV0d29yayBmb3JtYXRpb24sIGV4dGVuZGluZyBmZW1pbmlzdCBvcmdhbml6YXRpb25hbCB0aGVvcnkgKEFja2VyLCAxOTkwLCAyMDA2KSB0byB0aGUgc3BlY2lmaWMgY29udGV4dCBvZiBzY2hvbGFybHkgY28tYXV0aG9yc2hpcCBuZXR3b3Jrcy4gVGhpcyBzdHVkeSBhbHNvIGFkdmFuY2VzIG91ciB1bmRlcnN0YW5kaW5nIG9mIGhvbW9waGlseSBieSByZXZlYWxpbmcgaXRzIHBlcnNpc3RlbmNlIGluIHByb2Zlc3Npb25hbCBhY2FkZW1pYyBzZXR0aW5ncyB3aGVyZSBtZXJpdG9jcmF0aWMgbm9ybXMgYXJlIGV4cGxpY2l0bHkgdmFsdWVkLiBUaGUgcG9zaXRpdmUgZWZmZWN0IGZvciBzYW1lLWdlbmRlciBjb2xsYWJvcmF0aW9uIGluZGljYXRlcyB0aGF0IGV2ZW4gaW4gY29udGV4dHMgd2hlcmUgaW5kaXZpZHVhbHMgcHJlc3VtYWJseSBzZWxlY3QgY29sbGFib3JhdG9ycyBiYXNlZCBvbiBpbnRlbGxlY3R1YWwgY29tcGF0aWJpbGl0eSBhbmQgbWV0aG9kb2xvZ2ljYWwgZXhwZXJ0aXNlLCBzaW1pbGFyaXR5IGluIGRlbW9ncmFwaGljIGNoYXJhY3RlcmlzdGljcyBjb250aW51ZXMgdG8gaW5mbHVlbmNlIHRpZSBmb3JtYXRpb24uIFRoaXMgc3VnZ2VzdHMgdGhhdCBob21vcGhpbHkgb3BlcmF0ZXMgdGhyb3VnaCBtdWx0aXBsZSBtZWNoYW5pc21zLiANCg0KDQojIyBMaW1pdGF0aW9uczogDQoNCkEgbWFqb3IgbGltaXRhdGlvbiB0byB0aGlzIHJlc2VhcmNoIGlzIHRoZSBzbWFsbCBzYW1wbGUgc2l6ZS4gQnkgbG9va2luZyBhdCBSYWRib3VkIFVuaXZlcnNpdHkgYXMgYSBjYXNlIHN0dWR5LCB0aGUgc3RhdGlzdGljYWwgc2lnbmlmaWNhbmNlIGFuZCBnZW5lcmFsaXphYmlsaXR5IG9mIHRoZSByZXNlYXJjaCByZW1haW5zIGxpbWl0ZWQuIFRoaXMgcmVzZWFyY2ggc2hvdWxkIGJlIGV4cGFuZGVkIHRvIGFsbCBkdXRjaCB1bml2ZXJzaXRpZXMsIGFuZCBmdXR1cmUgYW5hbHlzaXMgaW5jbHVkaW5nIGFsbCB1bml2ZXJzaXRpZXMgc2hvdWxkIGFsc28gZXhwYW5kIHRvIGNvbnRyb2xsaW5nIGZvciB1bml2ZXJzaXR5IGxldmVsIGRpZmZlcmVuY2VzLiANCg0KQWRkaXRpb25hbGx5LCB3aGlsZSB0aGVyZSBpcyBhIGRpcmVjdGlvbmFsIGFzc3VtcHRpb24gb2YgdGhpcyBzb2NpYWwgbmV0d29yaywgaW4gcmVhbGl0eSB0aGUgZGlyZWN0aW9uYWxpdHkgZG9lcyBub3QgbWF0dGVyIGluIHRoZSBmcmFtaW5nIG9mIHB1YmxpY2F0aW9uIG91dHB1dCB1c2VkIGZvciBtZXJpdC4gVGhlIHByb2Zlc3NvciB0aGF0IGluaXRpYXRlZCB0aGUgY29sbGFib3JhdGlvbiwgZm9yIGFsbCBpbnRlbnNpdmUgcHVycG9zZXMsIGlzIG5vdCBkaXJlY3RseSBpbmZvcm1hdGl2ZSBmb3IgYW5zd2VyaW5nIHRoZXNlIHJlc2VhcmNoIHF1ZXN0aW9ucy4gRnV0dXJlIHJlc2VhcmNoIHRoYXQgY291bGQgZnVydGhlciBpbnZlc3RpZ2F0ZSB0aGUgZGlyZWN0aW9uYWxpdHkgb2YgdGhlc2UgY29sbGFib3JhdGlvbnMsIHN1Y2ggYXMgaWYgd29tZW4gb3IgbWVuIGFyZSBtb3JlIGxpa2VseSB0byBpbml0aWF0ZSBjb2xsYWJvcmF0aW9ucywgd291bGQgYmUgYSB3YXkgdG8gZnVydGhlciBkZXZlbG9wIHRoaXMgcmVzZWFyY2guIA0KDQpMYXN0bHksIGV4dGVuZGluZyB0aGUgcmVzZWFyY2ggdG8gbG9vayBhdCB0aGUgbmF0dXJlIG9mIHRoZSBjb2xsYWJvcmF0aW9ucyB3b3VsZCBmdXJ0aGVyIGluZm9ybSB0aGUgZWZmZWN0IG9mIGdlbmRlciBvbiBjb2xsYWJvcmF0aW9ucywgc3VjaCBhcyB0aGUgZWZmZWN0IG9mIGZlbWFsZSBvbiBzYW1lLWdlbmRlciBhbmQgY3Jvc3MtZ2VuZGVyIGNvbGxhYm9yYXRpb25zLiBVbmZvcnR1bmF0ZWx5IG15IGFuYWx5c2lzIGRvZXMgbm90IGNvdmVyIHRoZSBjb3VudCBvZiBjcm9zcyBnZW5kZXIgY29sbGFib3JhdGlvbnMgcGVyIHByb2Zlc3NvciwgYXMgaXQgaXMgbm90IHJlbGV2YW50IHRvIG15IHJlc2VhcmNoIHF1ZXN0aW9uLCBidXQgSSBmb3VuZCBpdCBhbiBpbnRlcmVzdGluZyBleGVyY2lzZSBhbmQgYSBwb3RlbnRpYWwgcG9pbnQgZm9yIGRlcGFydHVyZSBhcyBhIHJlY29tbWVuZGF0aW9uIGZvciBmdXJ0aGVyIHJlc2VhcmNoLiBJIG1hZGUgYSBmaXJzdCBlZmZvcnQgYXMgZXhwbG9yaW5nIHRoaXMgdGhvdWdoLCBhcyBpcyBpbmRpY2F0ZWQgaW4gdGhlICJzdXBwbGVtZW50YXJ5IHJlc2VhcmNoIiB0YWIuIA0K</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("conclusion.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

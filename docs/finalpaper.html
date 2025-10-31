@@ -39,6 +39,10 @@
 <script src="site_libs/navigation-1.1/sourceembed.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
 <link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -404,7 +408,7 @@ div.tocify {
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Research
+    Research Progress
      
     <span class="caret"></span>
   </a>
@@ -414,12 +418,6 @@ div.tocify {
     </li>
     <li>
       <a href="databasedraft.html">Developing Database</a>
-    </li>
-    <li>
-      <a href="databasedraft2.html">Second draft</a>
-    </li>
-    <li>
-      <a href="workingdraft.html">Working Draft</a>
     </li>
     <li>
       <a href="finalpaperdraft.html">finalpaperdraft</a>
@@ -433,11 +431,15 @@ div.tocify {
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Final Paper</li>
     <li>
-      <a href="finalpaperdraft.Rmd">Data and Methods: Preparation, Descriptive Statistics, RSiena Models and Results</a>
+      <a href="finalpaper.html">Introdution and Theory</a>
     </li>
-    <li class="dropdown-header">Conclusion and Discussion</li>
+    <li>
+      <a href="datamethods.html">Data and Methods: Preparation, Descriptive Statistics, RSiena Models and Results</a>
+    </li>
+    <li>
+      <a href="conclusion.html">Discussion and Conclusion</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -474,6 +476,13 @@ div.tocify {
 </div>
 
 
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<p>Last compiled on October, 2025</p>
+<p><br></p>
+<p><em>Code for SNA Final Paper Introduction</em></p>
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>Academic publications play a pivotal role not only in knowledge
@@ -487,46 +496,42 @@ as well as partners or groups of professors working together in
 collaboration. These publications are important to establishing
 credibility and paving the way for potential promotions in academia, and
 collaborations on publications can further support professors’
-reputation and reinforce their credibility (Wuchty et al. 867 ).
+reputation and reinforce their credibility (Wuchty et al., 2007).
 Importantly, individual characteristics and structural opportunities can
 shape collaboration patterns, with gender and gender representation in
-academic settings influencing publication patterns (McPherson et al. 415
-).</p>
+academic settings influencing publication patterns (McPherson et al.,
+2001).</p>
 <p>In academia, we see that women still experience differences in
 publications, full professorships, and representation in university
 leadership positions despite similar proportions of men and women
-attaining PhDs in the Netherlands (<a
-href="https://bashofstra.com/files/qss2024.pdf"
-class="uri">https://bashofstra.com/files/qss2024.pdf</a> ). While women
+attaining PhDs in the Netherlands (Mulders et al., 2024). While women
 enter academic publishing careers at equal rates to men, they leave
-sooner (Mulders, Hofstra &amp; Tolsma (2024). Furthermore, despite
-near-even representation of gender (known as gender parity) at the
-doctoral level, with 48.1% of doctoral graduates across the European
-Union being women, women remain severely underrepresented in senior
-positions: Only 26.2% of full-professors are women, with widening
-publication gaps at higher career stages (<a
-href="https://op.europa.eu/en/publication-detail/-/publication/67d5a207-4da1-11ec-91ac-01aa75ed71a1/language-en"
-class="uri">https://op.europa.eu/en/publication-detail/-/publication/67d5a207-4da1-11ec-91ac-01aa75ed71a1/language-en</a>).
-While there have been notable improvements in promoting gender equity in
-academia, women remain underrepresented in senior academic positions in
-the Netherlands, particularly in political science (LNVH, 2021 ).
-Conversely, sociology has achieved greater gender balance over recent
-years in the Netherlands (Landelijk Netwerk Vrouwelijke Hoogleraren
-12).</p>
+sooner (Mulders et al., 2024). Furthermore, despite near-even
+representation of gender (known as gender parity) at the doctoral level,
+with 48.1% of doctoral graduates across the European Union being women,
+women remain severely underrepresented in senior positions: Only 26.2%
+of full-professors are women, with widening publication gaps at higher
+career stages (European Commission – She Figures, 2021). While there
+have been notable improvements in promoting gender equity in academia,
+women remain underrepresented in senior academic positions in the
+Netherlands, particularly in political science (LNVH, 2021; Beidas et
+al., 2022). Conversely, sociology has achieved greater gender balance
+over recent years in the Netherlands (Landelijk Netwerk Vrouwelijke
+Hoogleraren, 2021).</p>
 <p>Academic collaboration networks play an important role in career
 advancement and the formation of intellectual communities within
 disciplines. These networks are shaped by both structural opportunities
-and social preferences (McPherson, Smith-Lovin, &amp; Cook, 2001).
-Morevover, academic collaboration networks influence professors’ access
-to resources, research productivity, visibility within the field, and
-career mobility (Abramo et al. 1189 - Abramo, D’Angelo, &amp; Di Costa,
-2019). Furthermore, it is important to understand the intersection of
-collaboration patterns with gender dynamics in academia, as women remain
-underrepresented in many fields. This relational perspective can reveal
-structural patterns of inclusion and exclusion, and investigating
-academic collaboration networks in the Netherlands using social network
-analysis offers the opportunity to investigate collaboration patterns as
-underlying mechanisms that might explain this continued disparity.</p>
+and social preferences (McPherson et al., 2001). Morevover, academic
+collaboration networks influence professors’ access to resources,
+research productivity, visibility within the field, and career mobility
+(Abramo et al., 2009). Furthermore, it is important to understand the
+intersection of collaboration patterns with gender dynamics in academia,
+as women remain underrepresented in many fields. This relational
+perspective can reveal structural patterns of inclusion and exclusion,
+and investigating academic collaboration networks in the Netherlands
+using social network analysis offers the opportunity to investigate
+collaboration patterns as underlying mechanisms that might explain this
+continued disparity.</p>
 <p>With inequalities persisting against women in academic careers, as
 women still face differences in publications, full professorships, and
 representation in university leadership, and publications influencing
@@ -550,15 +555,15 @@ gender representation influences collaborations. Additionally, the
 relatively small and interconnected nature of Dutch academic networks is
 ideal for social network research, as the comprehensive network boundary
 specification is easier to define while the prestige remains relatively
-similar (Mulders et al. (2024) - Mulders et al. 489).</p>
+similar (Mulders et al., 2024).</p>
 <p>Further, social network analysis offers an ideal opportunity to
 investigate the patterns of tie formation – and particularly the
 tendency for similar agents to form ties, commonly referred to as
-homophily (CITE)– which is ideal when considering an ego-level
-characteristic like gender. While homophily is an established finding in
-social network research (McPherson et al., 2001, 416), its presence in
-academic collaboration remains underexplored. Moreover, gender homophily
-in co-authorship could reflect genuine preferences for working with
+homophily – which is ideal when considering an ego-level characteristic
+like gender. While homophily is an established finding in social network
+research (McPherson et al., 2001), its presence in academic
+collaboration remains underexplored. Moreover, gender homophily in
+co-authorship could reflect genuine preferences for working with
 same-gender colleagues, structural constraints that limit opportunities
 for cross-gender interaction, or the cumulative effects of historical
 gender imbalances in academic fields (Boschini &amp; Sjögren, 2007).</p>
@@ -579,10 +584,10 @@ can reveal whether interventions should target structural barriers to
 cross-gender collaboration, work to shift preferences and norms around
 collaboration partner selection, or address other mechanisms underlying
 observed patterns of gender segregation in scholarly networks.</p>
-<p><strong>Citations: </strong> Abramo, Giovanni, Ciriaco Andrea
-D’Angelo, and Francesco Di Costa. “Research Collaboration and
-Productivity: Is There Correlation?” Higher Education, vol. 57, no. 2,
-2009, pp. 155-71.</p>
+<p><strong>Citations: </strong></p>
+<p>Abramo, Giovanni, Ciriaco Andrea D’Angelo, and Francesco Di Costa.
+“Research Collaboration and Productivity: Is There Correlation?” Higher
+Education, vol. 57, no. 2, 2009, pp. 155-71.</p>
 <p>Boschini, Anne, and Anna Sjögren. “Is Team Formation Gender Neutral?
 Evidence from Coauthorship Patterns.” Journal of Labor Economics,
 vol. 25, no. 2, 2007, pp. 325-65.</p>
@@ -606,19 +611,159 @@ Dominance of Teams in Production of Knowledge.” Science, vol. 316, no.
 </div>
 <div id="theory" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Theory</h1>
-</div>
-<div id="data-and-methods" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Data and Methods</h1>
-</div>
-<div id="results" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Results</h1>
-</div>
-<div id="discussion-and-conclusion" class="section level1" number="5">
-<h1><span class="header-section-number">5</span> Discussion and
-Conclusion</h1>
+<p>To look at gender patterns in academic collaboration, a grounding in
+feminist theoretical traditions is key in order to understand the ways
+gender operates as a fundamental organizing principle of social life,
+structuring access to resources, opportunities, and recognition (Acker,
+2006). Feminist scholars have long documented how “gender-neutral”
+institutional practices, such as hiring, promotion, and evaluation
+criteria, systematically disadvantage women through what Joan Acker
+terms “gendered organizations” (Acker, 1990). In academic settings,
+these gendered dynamics may appear through different mechanisms, such as
+gender bias in evaluation (Moss-Racusin et al., 2012), differential
+service burdens that divert women from research (Guarino and Borden,
+2017), and exclusion from informal networks where opportunities are
+communicated and collaborations initiated (van den Brink and Benschop,
+2014).</p>
+<p>Women in male-dominated fields develop adaptive strategies to
+navigate hostile or unsupportive environments, which may include seeking
+same-gender collaborations for professional support and validation
+(Settles et al., 2006; Settles &amp; Connor, 2014). Simultaneously,
+women may pursue cross-gender collaborations more actively than men as a
+strategy to access resources, enhance credibility, or integrate into
+mainstream scholarly networks. These competing pressures create complex
+patterns that simple homophily models may not capture. From a conflict
+theory perspective, academic collaboration networks can be understood as
+sites of resource competition where gender functions as a basis for
+inclusion and exclusion (Collins, 1971). According to this perspective,
+the dominant groups control access to valued resources. In the context
+of academia and careers as professors, men historically have been and
+presently remain the dominant group in many academic fields by
+proportion in leadership. Therefore, the control of access to valued
+resources including authorship opportunities, research funding, and
+institutional positions remains held by a male-dominant environment.
+Professors have the opportunity to collaborate selectively, with the
+potential for conscious or implicit biases to influence their
+collaboration patterns. The structural power imbalance that still favors
+men, combined with still have the opportunity to collaborate
+selectively, potentially favoring other men through the tendency for
+dominant groups to replicate themselves (Kanter, 1977). Women,
+conversely, must navigate these male-dominated structures strategically,
+potentially leading to different collaboration patterns.</p>
+<p>Additionally, women in academia, particularly in male-dominated
+fields, may simultaneously face unique and increased pressures around
+collaborations. Women may face heightened scrutiny and skepticism about
+their individual contributions, creating pressure to demonstrate
+competence through collaborative work, as an extension of research
+finding gender biases favoring male students (Moss-Racusin et al.,
+2012). Individual contributions or publications by female professors may
+be discounted, while collaborative work provides visible evidence of
+professional integration and peer validation. Women may actively pursue
+collaborations with male colleagues, particularly senior men, as a
+strategy to access resources, enhance legitimacy, and signal
+professional competence (Jadidi et al., 2017). Homophily has been one of
+the most robust findings in social network research, operating across
+multiple dimensions including race, age, education, religion, and gender
+(McPherson et al., 2001). The basic mechanism is straightforward: people
+generally find it easier to connect with others who share similarities
+with them. In academic settings, homophily in collaborations can present
+itself through professors sharing institutional affiliation,
+disciplinary specialty, methodological approach, and demographic
+characteristics (Bozeman and Corley, 2004). Importantly, the presence of
+homophily does not alone explain the reason for connections (ties, or
+collaborations in the academic context) to form.</p>
+<p>Investigating the presence of gender homophily in collaboration
+patterns, considerate of individual preference as well as structural
+opportunity, is key to understanding the mechanisms that perpetuate
+unequal opportunities by gender, and how they may arise or be
+perpetuated. By using social network analysis to look at the ego-level
+characteristic of gender, with female as the independent variable of
+interest and shared academic publications (the ties in the social
+network, referenced as ‘collaborations’) as the dependent variable,
+there is the opportunity to look at the effect of gender on
+collaborations. Considering the large amount of data for assessing the
+social network of all dutch universities, though, this research will
+focus on one university, Radboud University, as a case study.</p>
+<p>Therefore, my research question is as follows:</p>
+<p><strong>How does gender effect collaborations among political science
+and sociology professors at Radboud Universities? </strong></p>
+<p>To guide my research and analysis, I further specify my research
+question by breaking it into two parts:</p>
+<p>Research Question 1: What are the gender differences in overall
+collaboration rates?</p>
+<p>Research Question 2: How does gender effect potential for
+collaborations? And, is one gender more likely to collaborate than the
+other?</p>
+<p>Hypothesis 2.1: In response to this research question, I hypothesize
+that women will be more likely to participate in collaborations, as it
+may be more important for their credibility and opportunity for
+promotion.</p>
+<p>Hypothesis 2.2: Related to this, controlling for the effect of
+discipline, I hypothesize that the effect of female on professor
+collaborations will vary by department/discipline, such that women in
+political science are more likely than their male counter parts to
+collaborate.</p>
+<p>Hypothesis 2.3: Further, building on my assumptions in my first two
+hypotheses, I hypothesize that female professors in sociology are even
+more likely to participate in cross-gender collaborations, as the effect
+of women being more likely to participate in cross-gender collaborations
+is amplified with the more even proportion of women in sociology, and
+potentially a more progressive department culture</p>
+<p>Citations: Acker, J. (1990). Hierarchies, Jobs, Bodies: A Theory of
+Gendered Organizations. Gender and Society, 4(2), 139–158. <a
+href="http://www.jstor.org/stable/189609"
+class="uri">http://www.jstor.org/stable/189609</a></p>
+<p>Acker, J. (2006). Inequality Regimes Gender, Class, and Race in
+Organizations. Gender and Society, 20(4), 441–464. <a
+href="http://www.jstor.org/stable/27640904"
+class="uri">http://www.jstor.org/stable/27640904</a></p>
+<p>Collins, R. (1971). A Conflict Theory of Sexual Stratification.
+Social Problems, 19(1), 3–21. <a href="https://doi.org/10.2307/799936"
+class="uri">https://doi.org/10.2307/799936</a></p>
+<p>Bozeman, Barry &amp; Corley, Elizabeth (2004). Scientists’
+collaboration strategies: implications for scientific and technical
+human capital. Research Policy, 33(4), 599-616. <a
+href="https://doi.org/10.1016/j.respol.2004.01.008"
+class="uri">https://doi.org/10.1016/j.respol.2004.01.008</a>. Guarino,
+C.M., Borden, V.M.H. Faculty Service Loads and Gender: Are Women Taking
+Care of the Academic Family?. Res High Educ 58, 672–694 (2017). <a
+href="https://doi.org/10.1007/s11162-017-9454-2"
+class="uri">https://doi.org/10.1007/s11162-017-9454-2</a></p>
+<p>Jadidi, M., Karimi, F., Lietz, H., &amp; Wagner, C. (2017). Gender
+Disparities in Science? Dropout, Productivity, Collaborations and
+Success of Male and Female Computer Scientists. Advances in Complex
+Systems, 21(3/4), Article 1750011. <a
+href="https://doi.org/10.1142/S0219525917500114"
+class="uri">https://doi.org/10.1142/S0219525917500114</a> Kanter, R. M.
+(1977). Some Effects of Proportions on Group Life: Skewed Sex Ratios and
+Responses to Token Women. American Journal of Sociology, 82(5), 965–990.
+<a href="http://www.jstor.org/stable/2777808"
+class="uri">http://www.jstor.org/stable/2777808</a></p>
+<p>McPherson, M., Smith-Lovin, L., &amp; Cook, J. M. (2001). Birds of a
+Feather: Homophily in Social Networks. Annual Review of Sociology, 27,
+415–444. <a href="http://www.jstor.org/stable/2678628"
+class="uri">http://www.jstor.org/stable/2678628</a> Moss-Racusin, C. A.,
+Dovidio, J. F., Brescoll, V. L., Graham, M. J., &amp; Handelsman, J.
+(2012). Science faculty’s subtle gender biases favor male students.
+Proceedings of the National Academy of Sciences, 109(41), 16474-16479.
+<a href="https://doi.org/10.1073/pnas.1211286109"
+class="uri">https://doi.org/10.1073/pnas.1211286109</a></p>
+<p>Settles, I. H., Cortina, L. M., Malley, J., &amp; Stewart, A. J.
+(2006). The Climate for Women in Academic Science: The Good, the Bad,
+and the Changeable. Psychology of Women Quarterly, 30(1), 47-58. <a
+href="https://doi.org/10.1111/j.1471-6402.2006.00261.x"
+class="uri">https://doi.org/10.1111/j.1471-6402.2006.00261.x</a>
+Settles, I.H., O’Connor, R.C. Incivility at Academic Conferences: Gender
+Differences and the Mediating Role of Climate. Sex Roles 71, 71–82
+(2014). <a href="https://doi.org/10.1007/s11199-014-0355-y"
+class="uri">https://doi.org/10.1007/s11199-014-0355-y</a> van den Brink,
+M. and Benschop, Y. (2014), Gender in Academic Networking. Journal of
+Management Studies, 51: 460-492. <a
+href="https://doi.org/10.1111/joms.12060"
+class="uri">https://doi.org/10.1111/joms.12060</a></p>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlNOQSBGaW5hbCBQYXBlciINCmF1dGhvcjogIlBhaWdlIEtlbXBlciINCmRhdGU6ICIyMDI1LTEwLTMwIg0Kb3V0cHV0OiBodG1sX2RvY3VtZW50DQotLS0NCg0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpgYGANCg0KIyBJbnRyb2R1Y3Rpb24NCg0KQWNhZGVtaWMgcHVibGljYXRpb25zIHBsYXkgYSBwaXZvdGFsIHJvbGUgbm90IG9ubHkgaW4ga25vd2xlZGdlIGdlbmVyYXRpb24gZm9yIHRoZSBwdWJsaWMgYW5kIHNlY3RvcmFsIGRldmVsb3BtZW50IGJ5IHByb2dyZXNzaW5nIG1ldGhvZG9sb2dpY2FsIHByZWNpc2lvbiBhbmQgZW1waXJpY2FsIGZpbmRpbmdzLCBidXQgaW4gdGhlIGluZGl2aWR1YWwgY2FyZWVyIHByb2dyZXNzaW9uLCBjb2xsYWJvcmF0aW9ucywgYW5kIHByZWZlcmVuY2VzIG9mIHByb2Zlc3NvcnMgYXMgbGVhZGluZyBmaWd1cmVzIGluIHRoZWlyIGZpZWxkcy4gUHVibGljYXRpb25zLCB0eXBpY2FsbHkgcmVmZXJyaW5nIHRvIGFjYWRlbWljIGFydGljbGVzLCBib29rcywgb3IgbGl0ZXJhdHVyZSBwdWJsaXNoZWQgYnkgYW4gb2ZmaWNpYWwgYWNhZGVtaWMgam91cm5hbCwgY2FuIGJlIHdyaXR0ZW4gYW5kIHB1Ymxpc2hlZCBieSBpbmRpdmlkdWFsIHByb2Zlc3NvcnMgYXMgd2VsbCBhcyBwYXJ0bmVycyBvciBncm91cHMgb2YgcHJvZmVzc29ycyB3b3JraW5nIHRvZ2V0aGVyIGluIGNvbGxhYm9yYXRpb24uIFRoZXNlIHB1YmxpY2F0aW9ucyBhcmUgaW1wb3J0YW50IHRvIGVzdGFibGlzaGluZyBjcmVkaWJpbGl0eSBhbmQgcGF2aW5nIHRoZSB3YXkgZm9yIHBvdGVudGlhbCBwcm9tb3Rpb25zIGluIGFjYWRlbWlhLCBhbmQgY29sbGFib3JhdGlvbnMgb24gcHVibGljYXRpb25zIGNhbiBmdXJ0aGVyIHN1cHBvcnQgcHJvZmVzc29yc+KAmSByZXB1dGF0aW9uIGFuZCByZWluZm9yY2UgdGhlaXIgY3JlZGliaWxpdHkgKFd1Y2h0eSBldCBhbC4gODY3ICkuIEltcG9ydGFudGx5LCBpbmRpdmlkdWFsIGNoYXJhY3RlcmlzdGljcyBhbmQgc3RydWN0dXJhbCBvcHBvcnR1bml0aWVzIGNhbiBzaGFwZSBjb2xsYWJvcmF0aW9uIHBhdHRlcm5zLCB3aXRoIGdlbmRlciBhbmQgZ2VuZGVyIHJlcHJlc2VudGF0aW9uIGluIGFjYWRlbWljIHNldHRpbmdzIGluZmx1ZW5jaW5nIHB1YmxpY2F0aW9uIHBhdHRlcm5zIChNY1BoZXJzb24gZXQgYWwuIDQxNSApLiANCg0KSW4gYWNhZGVtaWEsIHdlIHNlZSB0aGF0IHdvbWVuIHN0aWxsIGV4cGVyaWVuY2UgZGlmZmVyZW5jZXMgaW4gcHVibGljYXRpb25zLCBmdWxsIHByb2Zlc3NvcnNoaXBzLCBhbmQgcmVwcmVzZW50YXRpb24gaW4gdW5pdmVyc2l0eSBsZWFkZXJzaGlwIHBvc2l0aW9ucyBkZXNwaXRlIHNpbWlsYXIgcHJvcG9ydGlvbnMgb2YgbWVuIGFuZCB3b21lbiBhdHRhaW5pbmcgUGhEcyBpbiB0aGUgTmV0aGVybGFuZHMgKGh0dHBzOi8vYmFzaG9mc3RyYS5jb20vZmlsZXMvcXNzMjAyNC5wZGYgICkuIFdoaWxlIHdvbWVuIGVudGVyIGFjYWRlbWljIHB1Ymxpc2hpbmcgY2FyZWVycyBhdCBlcXVhbCByYXRlcyB0byBtZW4sIHRoZXkgbGVhdmUgc29vbmVyIChNdWxkZXJzLCBIb2ZzdHJhICYgVG9sc21hICgyMDI0KS4gRnVydGhlcm1vcmUsIGRlc3BpdGUgbmVhci1ldmVuIHJlcHJlc2VudGF0aW9uIG9mIGdlbmRlciAoa25vd24gYXMgZ2VuZGVyIHBhcml0eSkgYXQgdGhlIGRvY3RvcmFsIGxldmVsLCB3aXRoIDQ4LjElIG9mIGRvY3RvcmFsIGdyYWR1YXRlcyBhY3Jvc3MgdGhlIEV1cm9wZWFuIFVuaW9uIGJlaW5nIHdvbWVuLCB3b21lbiByZW1haW4gc2V2ZXJlbHkgdW5kZXJyZXByZXNlbnRlZCBpbiBzZW5pb3IgcG9zaXRpb25zOiBPbmx5IDI2LjIlIG9mIGZ1bGwtcHJvZmVzc29ycyBhcmUgd29tZW4sIHdpdGggd2lkZW5pbmcgcHVibGljYXRpb24gZ2FwcyBhdCBoaWdoZXIgY2FyZWVyIHN0YWdlcyAoaHR0cHM6Ly9vcC5ldXJvcGEuZXUvZW4vcHVibGljYXRpb24tZGV0YWlsLy0vcHVibGljYXRpb24vNjdkNWEyMDctNGRhMS0xMWVjLTkxYWMtMDFhYTc1ZWQ3MWExL2xhbmd1YWdlLWVuKS4gV2hpbGUgdGhlcmUgaGF2ZSBiZWVuIG5vdGFibGUgaW1wcm92ZW1lbnRzIGluIHByb21vdGluZyBnZW5kZXIgZXF1aXR5IGluIGFjYWRlbWlhLCB3b21lbiByZW1haW4gdW5kZXJyZXByZXNlbnRlZCBpbiBzZW5pb3IgYWNhZGVtaWMgcG9zaXRpb25zIGluIHRoZSBOZXRoZXJsYW5kcywgcGFydGljdWxhcmx5IGluIHBvbGl0aWNhbCBzY2llbmNlIChMTlZILCAyMDIxICkuIENvbnZlcnNlbHksIHNvY2lvbG9neSBoYXMgYWNoaWV2ZWQgZ3JlYXRlciBnZW5kZXIgYmFsYW5jZSBvdmVyIHJlY2VudCB5ZWFycyBpbiB0aGUgTmV0aGVybGFuZHMgKExhbmRlbGlqayAgTmV0d2VyayBWcm91d2VsaWprZSBIb29nbGVyYXJlbiAxMikuIA0KDQpBY2FkZW1pYyBjb2xsYWJvcmF0aW9uIG5ldHdvcmtzIHBsYXkgYW4gaW1wb3J0YW50IHJvbGUgaW4gY2FyZWVyIGFkdmFuY2VtZW50IGFuZCB0aGUgZm9ybWF0aW9uIG9mIGludGVsbGVjdHVhbCBjb21tdW5pdGllcyB3aXRoaW4gZGlzY2lwbGluZXMuIFRoZXNlIG5ldHdvcmtzIGFyZSBzaGFwZWQgYnkgYm90aCBzdHJ1Y3R1cmFsIG9wcG9ydHVuaXRpZXMgYW5kIHNvY2lhbCBwcmVmZXJlbmNlcyAoTWNQaGVyc29uLCBTbWl0aC1Mb3ZpbiwgJiBDb29rLCAyMDAxKS4gTW9yZXZvdmVyLCBhY2FkZW1pYyBjb2xsYWJvcmF0aW9uIG5ldHdvcmtzIGluZmx1ZW5jZSBwcm9mZXNzb3Jz4oCZIGFjY2VzcyB0byByZXNvdXJjZXMsIHJlc2VhcmNoIHByb2R1Y3Rpdml0eSwgdmlzaWJpbGl0eSB3aXRoaW4gdGhlIGZpZWxkLCBhbmQgY2FyZWVyIG1vYmlsaXR5IChBYnJhbW8gZXQgYWwuIDExODkgLSBBYnJhbW8sIEQnQW5nZWxvLCAmIERpIENvc3RhLCAyMDE5KS4gRnVydGhlcm1vcmUsIGl0IGlzIGltcG9ydGFudCB0byB1bmRlcnN0YW5kIHRoZSBpbnRlcnNlY3Rpb24gb2YgY29sbGFib3JhdGlvbiBwYXR0ZXJucyB3aXRoIGdlbmRlciBkeW5hbWljcyBpbiBhY2FkZW1pYSwgYXMgd29tZW4gcmVtYWluIHVuZGVycmVwcmVzZW50ZWQgaW4gbWFueSBmaWVsZHMuIFRoaXMgcmVsYXRpb25hbCBwZXJzcGVjdGl2ZSBjYW4gcmV2ZWFsIHN0cnVjdHVyYWwgcGF0dGVybnMgb2YgaW5jbHVzaW9uIGFuZCBleGNsdXNpb24sIGFuZCBpbnZlc3RpZ2F0aW5nIGFjYWRlbWljIGNvbGxhYm9yYXRpb24gbmV0d29ya3MgaW4gdGhlIE5ldGhlcmxhbmRzIHVzaW5nIHNvY2lhbCBuZXR3b3JrIGFuYWx5c2lzIG9mZmVycyB0aGUgb3Bwb3J0dW5pdHkgdG8gaW52ZXN0aWdhdGUgY29sbGFib3JhdGlvbiBwYXR0ZXJucyBhcyB1bmRlcmx5aW5nIG1lY2hhbmlzbXMgdGhhdCBtaWdodCBleHBsYWluIHRoaXMgY29udGludWVkIGRpc3Bhcml0eS4NCg0KV2l0aCBpbmVxdWFsaXRpZXMgcGVyc2lzdGluZyBhZ2FpbnN0IHdvbWVuIGluIGFjYWRlbWljIGNhcmVlcnMsIGFzIHdvbWVuIHN0aWxsIGZhY2UgZGlmZmVyZW5jZXMgaW4gcHVibGljYXRpb25zLCBmdWxsIHByb2Zlc3NvcnNoaXBzLCBhbmQgcmVwcmVzZW50YXRpb24gaW4gdW5pdmVyc2l0eSBsZWFkZXJzaGlwLCBhbmQgcHVibGljYXRpb25zIGluZmx1ZW5jaW5nIGNyZWRpYmlsaXR5IGFuZCBwb3RlbnRpYWwgcHJvbW90aW9ucyBmb3IgcHJvZmVzc29ycywgaXQgaXMgaW1wb3J0YW50IHRvIHVuZGVyc3RhbmQgaG93IGdlbmRlciBpbnRlcmFjdHMgd2l0aCBjb2xsYWJvcmF0aW9uIHBhdHRlcm5zIGluIHB1YmxpY2F0aW9ucyBhcyBhIHBvdGVudGlhbCBhcmVhIHRvIHdoZXJlIGluZXF1YWxpdGllcyBhcmlzZS4gRnVydGhlcm1vcmUsIHRoZXNlIGFjYWRlbWljIHB1YmxpY2F0aW9uIG5ldHdvcmtzIGFyZSBpZGVhbCBtb2RlbHMgb2Ygc29jaWFsIG5ldHdvcmtzLCB3aXRoIGNsZWFyIGVnb3MgKG9yIGFnZW50cykgYXMgdGhlIHByb2Zlc3NvcnMvYXV0aG9ycyBvZiBhcnRpY2xlcywgYW5kIHRpZXMgYXMgdGhlIGNvbGxhYm9yYXRpb25zIChvciBwdWJsaXNoZWQgYWNhZGVtaWMgd29ya3MpLiANCg0KU29jaWFsIG5ldHdvcmsgYW5hbHlzaXMgaXMgaWRlYWwgZm9yIHN0dWR5aW5nIGFjYWRlbWljIGNvbGxhYm9yYXRpb25zIGJlY2F1c2UgaXQgdHJlYXRzIHJlbGF0aW9uc2hpcHPigJRub3QganVzdCBpbmRpdmlkdWFsc+KAlGFzIHRoZSBmdW5kYW1lbnRhbCB1bml0IG9mIGFuYWx5c2lzLiBEZXNwaXRlIGRlY2FkZXMgb2YgZGl2ZXJzaXR5IGluaXRpYXRpdmVzLCBnZW5kZXIgYW5kIGV0aG5pYyBpbmVxdWFsaXR5IHBlcnNpc3QgaW4gRHV0Y2ggYWNhZGVtaWEsIGFuZCBzb2NpYWwgbmV0d29yayBhbmFseXNpcyBvZmZlcnMgdGhlIG9wcG9ydHVuaXR5IHRvIGludmVzdGlnYXRlIHVuZGVybHlpbmcgbWVjaGFuaXNtcyBzdWNoIGFzIHB1YmxpY2F0aW9uIGNvbGxhYm9yYXRpb24gcGF0dGVybnMsIHRoYXQgbWlnaHQgZXhwbGFpbiB0aGUgY29udGludWVkIGluZXF1YWxpdHkuIEV4YW1pbmluZyB0aGUgZGlmZmVyZW5jZSBpbiBjb2xsYWJvcmF0aW9uIHBhdHRlcm5zIGJldHdlZW4gcG9saXRpY2FsIHNjaWVuY2UgYW5kIHNvY2lvbG9neSBhcyBkaXNjaXBsaW5lcyB3aXRoIHZhcnlpbmcgZ2VuZGVyIGNvbXBvc2l0aW9ucyBpcyBpbmZvcm1hdGl2ZSBhcyBhIHByZWxpbWluYXJ5IGluZGljYXRpb24gb2YgaG93IGVxdWFsIGdlbmRlciByZXByZXNlbnRhdGlvbiBpbmZsdWVuY2VzIGNvbGxhYm9yYXRpb25zLiBBZGRpdGlvbmFsbHksIHRoZSByZWxhdGl2ZWx5IHNtYWxsIGFuZCBpbnRlcmNvbm5lY3RlZCBuYXR1cmUgb2YgRHV0Y2ggYWNhZGVtaWMgbmV0d29ya3MgaXMgaWRlYWwgZm9yIHNvY2lhbCBuZXR3b3JrIHJlc2VhcmNoLCBhcyB0aGUgY29tcHJlaGVuc2l2ZSBuZXR3b3JrIGJvdW5kYXJ5IHNwZWNpZmljYXRpb24gaXMgZWFzaWVyIHRvIGRlZmluZSB3aGlsZSB0aGUgcHJlc3RpZ2UgcmVtYWlucyByZWxhdGl2ZWx5IHNpbWlsYXIgKE11bGRlcnMgZXQgYWwuICgyMDI0KSAtIE11bGRlcnMgZXQgYWwuIDQ4OSkuIA0KDQpGdXJ0aGVyLCBzb2NpYWwgbmV0d29yayBhbmFseXNpcyBvZmZlcnMgYW4gaWRlYWwgb3Bwb3J0dW5pdHkgdG8gaW52ZXN0aWdhdGUgdGhlIHBhdHRlcm5zIG9mIHRpZSBmb3JtYXRpb24g4oCTIGFuZCBwYXJ0aWN1bGFybHkgdGhlIHRlbmRlbmN5IGZvciBzaW1pbGFyIGFnZW50cyB0byBmb3JtIHRpZXMsIGNvbW1vbmx5IHJlZmVycmVkIHRvIGFzIGhvbW9waGlseSAoQ0lURSnigJMgd2hpY2ggaXMgaWRlYWwgd2hlbiBjb25zaWRlcmluZyBhbiBlZ28tbGV2ZWwgY2hhcmFjdGVyaXN0aWMgbGlrZSBnZW5kZXIuIFdoaWxlIGhvbW9waGlseSBpcyBhbiBlc3RhYmxpc2hlZCBmaW5kaW5nIGluIHNvY2lhbCBuZXR3b3JrIHJlc2VhcmNoIChNY1BoZXJzb24gZXQgYWwuLCAyMDAxLCA0MTYpLCBpdHMgcHJlc2VuY2UgaW4gYWNhZGVtaWMgY29sbGFib3JhdGlvbiByZW1haW5zIHVuZGVyZXhwbG9yZWQuIE1vcmVvdmVyLCBnZW5kZXIgaG9tb3BoaWx5IGluIGNvLWF1dGhvcnNoaXAgY291bGQgcmVmbGVjdCBnZW51aW5lIHByZWZlcmVuY2VzIGZvciB3b3JraW5nIHdpdGggc2FtZS1nZW5kZXIgY29sbGVhZ3Vlcywgc3RydWN0dXJhbCBjb25zdHJhaW50cyB0aGF0IGxpbWl0IG9wcG9ydHVuaXRpZXMgZm9yIGNyb3NzLWdlbmRlciBpbnRlcmFjdGlvbiwgb3IgdGhlIGN1bXVsYXRpdmUgZWZmZWN0cyBvZiBoaXN0b3JpY2FsIGdlbmRlciBpbWJhbGFuY2VzIGluIGFjYWRlbWljIGZpZWxkcyAoQm9zY2hpbmkgJiBTasO2Z3JlbiwgMjAwNykuDQoNClRoaXMgcmVzZWFyY2ggcGFwZXIgd2lsbCBpbnZlc3RpZ2F0ZSB0aGUgZ2VuZGVyLWJhc2VkIHBhdHRlcm5zIGluIGFjYWRlbWljIGNvbGxhYm9yYXRpb25zIChpbiB0aGUgZm9ybSBvZiBzaGFyZWQgcHVibGljYXRpb25zKSBmb3IgcG9saXRpY2FsIHNjaWVuY2UgYW5kIHNvY2lvbG9neSBwcm9mZXNzb3JzIGluIHRoZSBOZXRoZXJsYW5kcy4gVXNpbmcgc29jaWFsIG5ldHdvcmsgYW5hbHlzaXMgYW5kIGxvbmdpdHVkaW5hbCBzdGF0aXN0aWNhbCBtb2RlbGluZywgSSBpbnZlc3RpZ2F0ZSB0aHJlZSBpbnRlcnJlbGF0ZWQgcXVlc3Rpb25zOiBGaXJzdCwgYXJlIHRoZXJlIGdlbmRlciBkaWZmZXJlbmNlcyBpbiBvdmVyYWxsIGNvbGxhYm9yYXRpb24gcmF0ZXM/IFNlY29uZCwgd2hhdCBwcm9wb3J0aW9uIG9mIGNvbGxhYm9yYXRpb25zIG9jY3VyIGFjcm9zcyBnZW5kZXIgbGluZXMgdmVyc3VzIHdpdGhpbiBzYW1lLWdlbmRlciBwYWlycz8gQW5kIHRoaXJkLCBkb2VzIHByaW9yIGV4cGVyaWVuY2Ugd2l0aCBjcm9zcy1nZW5kZXIgY29sbGFib3JhdGlvbiBpbmNyZWFzZSB0aGUgbGlrZWxpaG9vZCBvZiBmdXR1cmUgY3Jvc3MtZ2VuZGVyIHRpZXM/IA0KDQpCeSBleGFtaW5pbmcgdGhlc2UgcXVlc3Rpb25zLCB0aGlzIHN0dWR5IGNvbnRyaWJ1dGVzIHRvIHVuZGVyc3RhbmRpbmcgaG93IGFjYWRlbWljIGNvbGxhYm9yYXRpb24gbmV0d29ya3MgbWF5IHJlcHJvZHVjZSBvciBjaGFsbGVuZ2UgZ2VuZGVyIGluZXF1YWxpdHkgaW4gRHV0Y2ggdW5pdmVyc2l0aWVzLiBUaGUgZmluZGluZ3MgaGF2ZSBpbXBsaWNhdGlvbnMgZm9yIHBvbGljaWVzIGFpbWVkIGF0IHByb21vdGluZyBnZW5kZXIgZXF1aXR5IGluIGFjYWRlbWljIGNhcmVlcnMsIGFzIHRoZXkgY2FuIHJldmVhbCB3aGV0aGVyIGludGVydmVudGlvbnMgc2hvdWxkIHRhcmdldCBzdHJ1Y3R1cmFsIGJhcnJpZXJzIHRvIGNyb3NzLWdlbmRlciBjb2xsYWJvcmF0aW9uLCB3b3JrIHRvIHNoaWZ0IHByZWZlcmVuY2VzIGFuZCBub3JtcyBhcm91bmQgY29sbGFib3JhdGlvbiBwYXJ0bmVyIHNlbGVjdGlvbiwgb3IgYWRkcmVzcyBvdGhlciBtZWNoYW5pc21zIHVuZGVybHlpbmcgb2JzZXJ2ZWQgcGF0dGVybnMgb2YgZ2VuZGVyIHNlZ3JlZ2F0aW9uIGluIHNjaG9sYXJseSBuZXR3b3Jrcy4NCg0KKipDaXRhdGlvbnM6ICoqDQpBYnJhbW8sIEdpb3Zhbm5pLCBDaXJpYWNvIEFuZHJlYSBEJ0FuZ2VsbywgYW5kIEZyYW5jZXNjbyBEaSBDb3N0YS4gIlJlc2VhcmNoIENvbGxhYm9yYXRpb24gYW5kIFByb2R1Y3Rpdml0eTogSXMgVGhlcmUgQ29ycmVsYXRpb24/IiBIaWdoZXIgRWR1Y2F0aW9uLCB2b2wuIDU3LCBuby4gMiwgMjAwOSwgcHAuIDE1NS03MS4NCg0KQm9zY2hpbmksIEFubmUsIGFuZCBBbm5hIFNqw7ZncmVuLiAiSXMgVGVhbSBGb3JtYXRpb24gR2VuZGVyIE5ldXRyYWw/IEV2aWRlbmNlIGZyb20gQ29hdXRob3JzaGlwIFBhdHRlcm5zLiIgSm91cm5hbCBvZiBMYWJvciBFY29ub21pY3MsIHZvbC4gMjUsIG5vLiAyLCAyMDA3LCBwcC4gMzI1LTY1Lg0KDQpFdXJvcGVhbiBDb21taXNzaW9uLiBEaXJlY3RvcmF0ZS1HZW5lcmFsIGZvciBSZXNlYXJjaCBhbmQgSW5ub3ZhdGlvbi4gU2hlIEZpZ3VyZXMgMjAyMTogR2VuZGVyIGluIFJlc2VhcmNoIGFuZCBJbm5vdmF0aW9u4oCUU3RhdGlzdGljcyBhbmQgSW5kaWNhdG9ycy4gUHVibGljYXRpb25zIE9mZmljZSBvZiB0aGUgRXVyb3BlYW4gVW5pb24sIDIwMjEuDQoNCkxhbmRlbGlqayBOZXR3ZXJrIFZyb3V3ZWxpamtlIEhvb2dsZXJhcmVuLiBXb21lbiBQcm9mZXNzb3JzIE1vbml0b3IgMjAyMS4gTE5WSCwgMjAyMS4NCg0KTWNQaGVyc29uLCBNaWxsZXIsIEx5bm4gU21pdGgtTG92aW4sIGFuZCBKYW1lcyBNLiBDb29rLiAiQmlyZHMgb2YgYSBGZWF0aGVyOiBIb21vcGhpbHkgaW4gU29jaWFsIE5ldHdvcmtzLiIgQW5udWFsIFJldmlldyBvZiBTb2Npb2xvZ3ksIHZvbC4gMjcsIDIwMDEsIHBwLiA0MTUtNDQuDQoNCk11bGRlcnMsIEFubmUgTWFhaWtlLCBCYXMgSG9mc3RyYSwgYW5kIEpvY2hlbSBUb2xzbWEuICJBIE1hdHRlciBvZiBUaW1lPyBHZW5kZXIgYW5kIEV0aG5pYyBJbmVxdWFsaXR5IGluIHRoZSBBY2FkZW1pYyBQdWJsaXNoaW5nIENhcmVlcnMgb2YgRHV0Y2ggUGguRC5zLiIgUXVhbnRpdGF0aXZlIFNjaWVuY2UgU3R1ZGllcywgdm9sLiA1LCBuby4gMywgMjAyNCwgcHAuIDQ4Ny01MTUuDQoNCldhc3Nlcm1hbiwgU3RhbmxleSwgYW5kIEthdGhlcmluZSBGYXVzdC4gU29jaWFsIE5ldHdvcmsgQW5hbHlzaXM6IE1ldGhvZHMgYW5kIEFwcGxpY2F0aW9ucy4gQ2FtYnJpZGdlIFVuaXZlcnNpdHkgUHJlc3MsIDE5OTQuDQoNCld1Y2h0eSwgU3RlZmFuLCBCZW5qYW1pbiBGLiBKb25lcywgYW5kIEJyaWFuIFV6emkuICJUaGUgSW5jcmVhc2luZyBEb21pbmFuY2Ugb2YgVGVhbXMgaW4gUHJvZHVjdGlvbiBvZiBLbm93bGVkZ2UuIiBTY2llbmNlLCB2b2wuIDMxNiwgbm8uIDU4MjcsIDIwMDcsIHBwLiAxMDM2LTM5Lg0KDQoNCg0KIyBUaGVvcnkgDQoNCg0KDQojIERhdGEgYW5kIE1ldGhvZHMNCg0KDQoNCiMgUmVzdWx0cyANCg0KDQoNCiMgRGlzY3Vzc2lvbiBhbmQgQ29uY2x1c2lvbg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlNOQSBGaW5hbCBQYXBlciINCmF1dGhvcjogIlBhaWdlIEtlbXBlciINCmRhdGU6ICIyMDI1LTEwLTMwIg0Kb3V0cHV0OiBodG1sX2RvY3VtZW50DQotLS0NCg0KDQpgYGB7ciwgZ2xvYmFsc2V0dGluZ3MsIGVjaG89RkFMU0UsIHdhcm5pbmc9RkFMU0UsIHJlc3VsdHM9J2hpZGUnfQ0KbGlicmFyeShrbml0cikNCg0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0Kb3B0c19jaHVuayRzZXQodGlkeS5vcHRzPWxpc3Qod2lkdGguY3V0b2ZmPTEwMCksdGlkeT1UUlVFLCB3YXJuaW5nID0gRkFMU0UsIG1lc3NhZ2UgPSBGQUxTRSxjb21tZW50ID0gIiM+IiwgY2FjaGU9VFJVRSwgY2xhc3Muc291cmNlPWMoInRlc3QiKSwgY2xhc3Mub3V0cHV0PWMoInRlc3QyIikpDQpvcHRpb25zKHdpZHRoID0gMTAwKQ0KcmdsOjpzZXR1cEtuaXRyKCkNCg0KDQpjb2xvcml6ZSA8LSBmdW5jdGlvbih4LCBjb2xvcikge3NwcmludGYoIjxzcGFuIHN0eWxlPSdjb2xvcjogJXM7Jz4lczwvc3Bhbj4iLCBjb2xvciwgeCkgfQ0KDQoNCmBgYA0KDQpgYGB7ciBrbGlwcHksIGVjaG89RkFMU0UsIGluY2x1ZGU9VFJVRX0NCmtsaXBweTo6a2xpcHB5KHBvc2l0aW9uID0gYygndG9wJywgJ3JpZ2h0JykpDQoja2xpcHB5OjprbGlwcHkoY29sb3IgPSAnZGFya3JlZCcpDQoja2xpcHB5OjprbGlwcHkodG9vbHRpcF9tZXNzYWdlID0gJ0NsaWNrIHRvIGNvcHknLCB0b29sdGlwX3N1Y2Nlc3MgPSAnRG9uZScpDQpgYGANCg0KTGFzdCBjb21waWxlZCBvbiBgciBmb3JtYXQoU3lzLnRpbWUoKSwgJyVCLCAlWScpYA0KDQo8YnI+DQoNCg0KX0NvZGUgZm9yIFNOQSBGaW5hbCBQYXBlciBJbnRyb2R1Y3Rpb25fDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCiMgSW50cm9kdWN0aW9uDQoNCkFjYWRlbWljIHB1YmxpY2F0aW9ucyBwbGF5IGEgcGl2b3RhbCByb2xlIG5vdCBvbmx5IGluIGtub3dsZWRnZSBnZW5lcmF0aW9uIGZvciB0aGUgcHVibGljIGFuZCBzZWN0b3JhbCBkZXZlbG9wbWVudCBieSBwcm9ncmVzc2luZyBtZXRob2RvbG9naWNhbCBwcmVjaXNpb24gYW5kIGVtcGlyaWNhbCBmaW5kaW5ncywgYnV0IGluIHRoZSBpbmRpdmlkdWFsIGNhcmVlciBwcm9ncmVzc2lvbiwgY29sbGFib3JhdGlvbnMsIGFuZCBwcmVmZXJlbmNlcyBvZiBwcm9mZXNzb3JzIGFzIGxlYWRpbmcgZmlndXJlcyBpbiB0aGVpciBmaWVsZHMuIFB1YmxpY2F0aW9ucywgdHlwaWNhbGx5IHJlZmVycmluZyB0byBhY2FkZW1pYyBhcnRpY2xlcywgYm9va3MsIG9yIGxpdGVyYXR1cmUgcHVibGlzaGVkIGJ5IGFuIG9mZmljaWFsIGFjYWRlbWljIGpvdXJuYWwsIGNhbiBiZSB3cml0dGVuIGFuZCBwdWJsaXNoZWQgYnkgaW5kaXZpZHVhbCBwcm9mZXNzb3JzIGFzIHdlbGwgYXMgcGFydG5lcnMgb3IgZ3JvdXBzIG9mIHByb2Zlc3NvcnMgd29ya2luZyB0b2dldGhlciBpbiBjb2xsYWJvcmF0aW9uLiBUaGVzZSBwdWJsaWNhdGlvbnMgYXJlIGltcG9ydGFudCB0byBlc3RhYmxpc2hpbmcgY3JlZGliaWxpdHkgYW5kIHBhdmluZyB0aGUgd2F5IGZvciBwb3RlbnRpYWwgcHJvbW90aW9ucyBpbiBhY2FkZW1pYSwgYW5kIGNvbGxhYm9yYXRpb25zIG9uIHB1YmxpY2F0aW9ucyBjYW4gZnVydGhlciBzdXBwb3J0IHByb2Zlc3NvcnPigJkgcmVwdXRhdGlvbiBhbmQgcmVpbmZvcmNlIHRoZWlyIGNyZWRpYmlsaXR5IChXdWNodHkgZXQgYWwuLCAyMDA3KS4gSW1wb3J0YW50bHksIGluZGl2aWR1YWwgY2hhcmFjdGVyaXN0aWNzIGFuZCBzdHJ1Y3R1cmFsIG9wcG9ydHVuaXRpZXMgY2FuIHNoYXBlIGNvbGxhYm9yYXRpb24gcGF0dGVybnMsIHdpdGggZ2VuZGVyIGFuZCBnZW5kZXIgcmVwcmVzZW50YXRpb24gaW4gYWNhZGVtaWMgc2V0dGluZ3MgaW5mbHVlbmNpbmcgcHVibGljYXRpb24gcGF0dGVybnMgKE1jUGhlcnNvbiBldCBhbC4sIDIwMDEpLiANCg0KSW4gYWNhZGVtaWEsIHdlIHNlZSB0aGF0IHdvbWVuIHN0aWxsIGV4cGVyaWVuY2UgZGlmZmVyZW5jZXMgaW4gcHVibGljYXRpb25zLCBmdWxsIHByb2Zlc3NvcnNoaXBzLCBhbmQgcmVwcmVzZW50YXRpb24gaW4gdW5pdmVyc2l0eSBsZWFkZXJzaGlwIHBvc2l0aW9ucyBkZXNwaXRlIHNpbWlsYXIgcHJvcG9ydGlvbnMgb2YgbWVuIGFuZCB3b21lbiBhdHRhaW5pbmcgUGhEcyBpbiB0aGUgTmV0aGVybGFuZHMgKE11bGRlcnMgZXQgYWwuLCAyMDI0KS4gV2hpbGUgd29tZW4gZW50ZXIgYWNhZGVtaWMgcHVibGlzaGluZyBjYXJlZXJzIGF0IGVxdWFsIHJhdGVzIHRvIG1lbiwgdGhleSBsZWF2ZSBzb29uZXIgKE11bGRlcnMgZXQgYWwuLCAyMDI0KS4gRnVydGhlcm1vcmUsIGRlc3BpdGUgbmVhci1ldmVuIHJlcHJlc2VudGF0aW9uIG9mIGdlbmRlciAoa25vd24gYXMgZ2VuZGVyIHBhcml0eSkgYXQgdGhlIGRvY3RvcmFsIGxldmVsLCB3aXRoIDQ4LjElIG9mIGRvY3RvcmFsIGdyYWR1YXRlcyBhY3Jvc3MgdGhlIEV1cm9wZWFuIFVuaW9uIGJlaW5nIHdvbWVuLCB3b21lbiByZW1haW4gc2V2ZXJlbHkgdW5kZXJyZXByZXNlbnRlZCBpbiBzZW5pb3IgcG9zaXRpb25zOiBPbmx5IDI2LjIlIG9mIGZ1bGwtcHJvZmVzc29ycyBhcmUgd29tZW4sIHdpdGggd2lkZW5pbmcgcHVibGljYXRpb24gZ2FwcyBhdCBoaWdoZXIgY2FyZWVyIHN0YWdlcyAoRXVyb3BlYW4gQ29tbWlzc2lvbiDigJMgU2hlIEZpZ3VyZXMsIDIwMjEpLiBXaGlsZSB0aGVyZSBoYXZlIGJlZW4gbm90YWJsZSBpbXByb3ZlbWVudHMgaW4gcHJvbW90aW5nIGdlbmRlciBlcXVpdHkgaW4gYWNhZGVtaWEsIHdvbWVuIHJlbWFpbiB1bmRlcnJlcHJlc2VudGVkIGluIHNlbmlvciBhY2FkZW1pYyBwb3NpdGlvbnMgaW4gdGhlIE5ldGhlcmxhbmRzLCBwYXJ0aWN1bGFybHkgaW4gcG9saXRpY2FsIHNjaWVuY2UgKExOVkgsIDIwMjE7IEJlaWRhcyBldCBhbC4sIDIwMjIpLiBDb252ZXJzZWx5LCBzb2Npb2xvZ3kgaGFzIGFjaGlldmVkIGdyZWF0ZXIgZ2VuZGVyIGJhbGFuY2Ugb3ZlciByZWNlbnQgeWVhcnMgaW4gdGhlIE5ldGhlcmxhbmRzIChMYW5kZWxpamsgTmV0d2VyayBWcm91d2VsaWprZSBIb29nbGVyYXJlbiwgMjAyMSkuIA0KDQpBY2FkZW1pYyBjb2xsYWJvcmF0aW9uIG5ldHdvcmtzIHBsYXkgYW4gaW1wb3J0YW50IHJvbGUgaW4gY2FyZWVyIGFkdmFuY2VtZW50IGFuZCB0aGUgZm9ybWF0aW9uIG9mIGludGVsbGVjdHVhbCBjb21tdW5pdGllcyB3aXRoaW4gZGlzY2lwbGluZXMuIFRoZXNlIG5ldHdvcmtzIGFyZSBzaGFwZWQgYnkgYm90aCBzdHJ1Y3R1cmFsIG9wcG9ydHVuaXRpZXMgYW5kIHNvY2lhbCBwcmVmZXJlbmNlcyAoTWNQaGVyc29uIGV0IGFsLiwgMjAwMSkuIE1vcmV2b3ZlciwgYWNhZGVtaWMgY29sbGFib3JhdGlvbiBuZXR3b3JrcyBpbmZsdWVuY2UgcHJvZmVzc29yc+KAmSBhY2Nlc3MgdG8gcmVzb3VyY2VzLCByZXNlYXJjaCBwcm9kdWN0aXZpdHksIHZpc2liaWxpdHkgd2l0aGluIHRoZSBmaWVsZCwgYW5kIGNhcmVlciBtb2JpbGl0eSAoQWJyYW1vIGV0IGFsLiwgMjAwOSkuIEZ1cnRoZXJtb3JlLCBpdCBpcyBpbXBvcnRhbnQgdG8gdW5kZXJzdGFuZCB0aGUgaW50ZXJzZWN0aW9uIG9mIGNvbGxhYm9yYXRpb24gcGF0dGVybnMgd2l0aCBnZW5kZXIgZHluYW1pY3MgaW4gYWNhZGVtaWEsIGFzIHdvbWVuIHJlbWFpbiB1bmRlcnJlcHJlc2VudGVkIGluIG1hbnkgZmllbGRzLiBUaGlzIHJlbGF0aW9uYWwgcGVyc3BlY3RpdmUgY2FuIHJldmVhbCBzdHJ1Y3R1cmFsIHBhdHRlcm5zIG9mIGluY2x1c2lvbiBhbmQgZXhjbHVzaW9uLCBhbmQgaW52ZXN0aWdhdGluZyBhY2FkZW1pYyBjb2xsYWJvcmF0aW9uIG5ldHdvcmtzIGluIHRoZSBOZXRoZXJsYW5kcyB1c2luZyBzb2NpYWwgbmV0d29yayBhbmFseXNpcyBvZmZlcnMgdGhlIG9wcG9ydHVuaXR5IHRvIGludmVzdGlnYXRlIGNvbGxhYm9yYXRpb24gcGF0dGVybnMgYXMgdW5kZXJseWluZyBtZWNoYW5pc21zIHRoYXQgbWlnaHQgZXhwbGFpbiB0aGlzIGNvbnRpbnVlZCBkaXNwYXJpdHkuDQoNCldpdGggaW5lcXVhbGl0aWVzIHBlcnNpc3RpbmcgYWdhaW5zdCB3b21lbiBpbiBhY2FkZW1pYyBjYXJlZXJzLCBhcyB3b21lbiBzdGlsbCBmYWNlIGRpZmZlcmVuY2VzIGluIHB1YmxpY2F0aW9ucywgZnVsbCBwcm9mZXNzb3JzaGlwcywgYW5kIHJlcHJlc2VudGF0aW9uIGluIHVuaXZlcnNpdHkgbGVhZGVyc2hpcCwgYW5kIHB1YmxpY2F0aW9ucyBpbmZsdWVuY2luZyBjcmVkaWJpbGl0eSBhbmQgcG90ZW50aWFsIHByb21vdGlvbnMgZm9yIHByb2Zlc3NvcnMsIGl0IGlzIGltcG9ydGFudCB0byB1bmRlcnN0YW5kIGhvdyBnZW5kZXIgaW50ZXJhY3RzIHdpdGggY29sbGFib3JhdGlvbiBwYXR0ZXJucyBpbiBwdWJsaWNhdGlvbnMgYXMgYSBwb3RlbnRpYWwgYXJlYSB0byB3aGVyZSBpbmVxdWFsaXRpZXMgYXJpc2UuIEZ1cnRoZXJtb3JlLCB0aGVzZSBhY2FkZW1pYyBwdWJsaWNhdGlvbiBuZXR3b3JrcyBhcmUgaWRlYWwgbW9kZWxzIG9mIHNvY2lhbCBuZXR3b3Jrcywgd2l0aCBjbGVhciBlZ29zIChvciBhZ2VudHMpIGFzIHRoZSBwcm9mZXNzb3JzL2F1dGhvcnMgb2YgYXJ0aWNsZXMsIGFuZCB0aWVzIGFzIHRoZSBjb2xsYWJvcmF0aW9ucyAob3IgcHVibGlzaGVkIGFjYWRlbWljIHdvcmtzKS4gDQoNClNvY2lhbCBuZXR3b3JrIGFuYWx5c2lzIGlzIGlkZWFsIGZvciBzdHVkeWluZyBhY2FkZW1pYyBjb2xsYWJvcmF0aW9ucyBiZWNhdXNlIGl0IHRyZWF0cyByZWxhdGlvbnNoaXBz4oCUbm90IGp1c3QgaW5kaXZpZHVhbHPigJRhcyB0aGUgZnVuZGFtZW50YWwgdW5pdCBvZiBhbmFseXNpcy4gRGVzcGl0ZSBkZWNhZGVzIG9mIGRpdmVyc2l0eSBpbml0aWF0aXZlcywgZ2VuZGVyIGFuZCBldGhuaWMgaW5lcXVhbGl0eSBwZXJzaXN0IGluIER1dGNoIGFjYWRlbWlhLCBhbmQgc29jaWFsIG5ldHdvcmsgYW5hbHlzaXMgb2ZmZXJzIHRoZSBvcHBvcnR1bml0eSB0byBpbnZlc3RpZ2F0ZSB1bmRlcmx5aW5nIG1lY2hhbmlzbXMgc3VjaCBhcyBwdWJsaWNhdGlvbiBjb2xsYWJvcmF0aW9uIHBhdHRlcm5zLCB0aGF0IG1pZ2h0IGV4cGxhaW4gdGhlIGNvbnRpbnVlZCBpbmVxdWFsaXR5LiBFeGFtaW5pbmcgdGhlIGRpZmZlcmVuY2UgaW4gY29sbGFib3JhdGlvbiBwYXR0ZXJucyBiZXR3ZWVuIHBvbGl0aWNhbCBzY2llbmNlIGFuZCBzb2Npb2xvZ3kgYXMgZGlzY2lwbGluZXMgd2l0aCB2YXJ5aW5nIGdlbmRlciBjb21wb3NpdGlvbnMgaXMgaW5mb3JtYXRpdmUgYXMgYSBwcmVsaW1pbmFyeSBpbmRpY2F0aW9uIG9mIGhvdyBlcXVhbCBnZW5kZXIgcmVwcmVzZW50YXRpb24gaW5mbHVlbmNlcyBjb2xsYWJvcmF0aW9ucy4gQWRkaXRpb25hbGx5LCB0aGUgcmVsYXRpdmVseSBzbWFsbCBhbmQgaW50ZXJjb25uZWN0ZWQgbmF0dXJlIG9mIER1dGNoIGFjYWRlbWljIG5ldHdvcmtzIGlzIGlkZWFsIGZvciBzb2NpYWwgbmV0d29yayByZXNlYXJjaCwgYXMgdGhlIGNvbXByZWhlbnNpdmUgbmV0d29yayBib3VuZGFyeSBzcGVjaWZpY2F0aW9uIGlzIGVhc2llciB0byBkZWZpbmUgd2hpbGUgdGhlIHByZXN0aWdlIHJlbWFpbnMgcmVsYXRpdmVseSBzaW1pbGFyIChNdWxkZXJzIGV0IGFsLiwgMjAyNCkuIA0KDQpGdXJ0aGVyLCBzb2NpYWwgbmV0d29yayBhbmFseXNpcyBvZmZlcnMgYW4gaWRlYWwgb3Bwb3J0dW5pdHkgdG8gaW52ZXN0aWdhdGUgdGhlIHBhdHRlcm5zIG9mIHRpZSBmb3JtYXRpb24g4oCTIGFuZCBwYXJ0aWN1bGFybHkgdGhlIHRlbmRlbmN5IGZvciBzaW1pbGFyIGFnZW50cyB0byBmb3JtIHRpZXMsIGNvbW1vbmx5IHJlZmVycmVkIHRvIGFzIGhvbW9waGlseSDigJMgd2hpY2ggaXMgaWRlYWwgd2hlbiBjb25zaWRlcmluZyBhbiBlZ28tbGV2ZWwgY2hhcmFjdGVyaXN0aWMgbGlrZSBnZW5kZXIuIFdoaWxlIGhvbW9waGlseSBpcyBhbiBlc3RhYmxpc2hlZCBmaW5kaW5nIGluIHNvY2lhbCBuZXR3b3JrIHJlc2VhcmNoIChNY1BoZXJzb24gZXQgYWwuLCAyMDAxKSwgaXRzIHByZXNlbmNlIGluIGFjYWRlbWljIGNvbGxhYm9yYXRpb24gcmVtYWlucyB1bmRlcmV4cGxvcmVkLiBNb3Jlb3ZlciwgZ2VuZGVyIGhvbW9waGlseSBpbiBjby1hdXRob3JzaGlwIGNvdWxkIHJlZmxlY3QgZ2VudWluZSBwcmVmZXJlbmNlcyBmb3Igd29ya2luZyB3aXRoIHNhbWUtZ2VuZGVyIGNvbGxlYWd1ZXMsIHN0cnVjdHVyYWwgY29uc3RyYWludHMgdGhhdCBsaW1pdCBvcHBvcnR1bml0aWVzIGZvciBjcm9zcy1nZW5kZXIgaW50ZXJhY3Rpb24sIG9yIHRoZSBjdW11bGF0aXZlIGVmZmVjdHMgb2YgaGlzdG9yaWNhbCBnZW5kZXIgaW1iYWxhbmNlcyBpbiBhY2FkZW1pYyBmaWVsZHMgKEJvc2NoaW5pICYgU2rDtmdyZW4sIDIwMDcpLg0KDQpUaGlzIHJlc2VhcmNoIHBhcGVyIHdpbGwgaW52ZXN0aWdhdGUgdGhlIGdlbmRlci1iYXNlZCBwYXR0ZXJucyBpbiBhY2FkZW1pYyBjb2xsYWJvcmF0aW9ucyAoaW4gdGhlIGZvcm0gb2Ygc2hhcmVkIHB1YmxpY2F0aW9ucykgZm9yIHBvbGl0aWNhbCBzY2llbmNlIGFuZCBzb2Npb2xvZ3kgcHJvZmVzc29ycyBpbiB0aGUgTmV0aGVybGFuZHMuIFVzaW5nIHNvY2lhbCBuZXR3b3JrIGFuYWx5c2lzIGFuZCBsb25naXR1ZGluYWwgc3RhdGlzdGljYWwgbW9kZWxpbmcsIEkgaW52ZXN0aWdhdGUgdGhyZWUgaW50ZXJyZWxhdGVkIHF1ZXN0aW9uczogRmlyc3QsIGFyZSB0aGVyZSBnZW5kZXIgZGlmZmVyZW5jZXMgaW4gb3ZlcmFsbCBjb2xsYWJvcmF0aW9uIHJhdGVzPyBTZWNvbmQsIHdoYXQgcHJvcG9ydGlvbiBvZiBjb2xsYWJvcmF0aW9ucyBvY2N1ciBhY3Jvc3MgZ2VuZGVyIGxpbmVzIHZlcnN1cyB3aXRoaW4gc2FtZS1nZW5kZXIgcGFpcnM/IEFuZCB0aGlyZCwgZG9lcyBwcmlvciBleHBlcmllbmNlIHdpdGggY3Jvc3MtZ2VuZGVyIGNvbGxhYm9yYXRpb24gaW5jcmVhc2UgdGhlIGxpa2VsaWhvb2Qgb2YgZnV0dXJlIGNyb3NzLWdlbmRlciB0aWVzPyANCg0KQnkgZXhhbWluaW5nIHRoZXNlIHF1ZXN0aW9ucywgdGhpcyBzdHVkeSBjb250cmlidXRlcyB0byB1bmRlcnN0YW5kaW5nIGhvdyBhY2FkZW1pYyBjb2xsYWJvcmF0aW9uIG5ldHdvcmtzIG1heSByZXByb2R1Y2Ugb3IgY2hhbGxlbmdlIGdlbmRlciBpbmVxdWFsaXR5IGluIER1dGNoIHVuaXZlcnNpdGllcy4gVGhlIGZpbmRpbmdzIGhhdmUgaW1wbGljYXRpb25zIGZvciBwb2xpY2llcyBhaW1lZCBhdCBwcm9tb3RpbmcgZ2VuZGVyIGVxdWl0eSBpbiBhY2FkZW1pYyBjYXJlZXJzLCBhcyB0aGV5IGNhbiByZXZlYWwgd2hldGhlciBpbnRlcnZlbnRpb25zIHNob3VsZCB0YXJnZXQgc3RydWN0dXJhbCBiYXJyaWVycyB0byBjcm9zcy1nZW5kZXIgY29sbGFib3JhdGlvbiwgd29yayB0byBzaGlmdCBwcmVmZXJlbmNlcyBhbmQgbm9ybXMgYXJvdW5kIGNvbGxhYm9yYXRpb24gcGFydG5lciBzZWxlY3Rpb24sIG9yIGFkZHJlc3Mgb3RoZXIgbWVjaGFuaXNtcyB1bmRlcmx5aW5nIG9ic2VydmVkIHBhdHRlcm5zIG9mIGdlbmRlciBzZWdyZWdhdGlvbiBpbiBzY2hvbGFybHkgbmV0d29ya3MuDQoNCg0KDQoqKkNpdGF0aW9uczogKioNCg0KQWJyYW1vLCBHaW92YW5uaSwgQ2lyaWFjbyBBbmRyZWEgRCdBbmdlbG8sIGFuZCBGcmFuY2VzY28gRGkgQ29zdGEuICJSZXNlYXJjaCBDb2xsYWJvcmF0aW9uIGFuZCBQcm9kdWN0aXZpdHk6IElzIFRoZXJlIENvcnJlbGF0aW9uPyIgSGlnaGVyIEVkdWNhdGlvbiwgdm9sLiA1Nywgbm8uIDIsIDIwMDksIHBwLiAxNTUtNzEuDQoNCkJvc2NoaW5pLCBBbm5lLCBhbmQgQW5uYSBTasO2Z3Jlbi4gIklzIFRlYW0gRm9ybWF0aW9uIEdlbmRlciBOZXV0cmFsPyBFdmlkZW5jZSBmcm9tIENvYXV0aG9yc2hpcCBQYXR0ZXJucy4iIEpvdXJuYWwgb2YgTGFib3IgRWNvbm9taWNzLCB2b2wuIDI1LCBuby4gMiwgMjAwNywgcHAuIDMyNS02NS4NCg0KRXVyb3BlYW4gQ29tbWlzc2lvbi4gRGlyZWN0b3JhdGUtR2VuZXJhbCBmb3IgUmVzZWFyY2ggYW5kIElubm92YXRpb24uIFNoZSBGaWd1cmVzIDIwMjE6IEdlbmRlciBpbiBSZXNlYXJjaCBhbmQgSW5ub3ZhdGlvbuKAlFN0YXRpc3RpY3MgYW5kIEluZGljYXRvcnMuIFB1YmxpY2F0aW9ucyBPZmZpY2Ugb2YgdGhlIEV1cm9wZWFuIFVuaW9uLCAyMDIxLg0KDQpMYW5kZWxpamsgTmV0d2VyayBWcm91d2VsaWprZSBIb29nbGVyYXJlbi4gV29tZW4gUHJvZmVzc29ycyBNb25pdG9yIDIwMjEuIExOVkgsIDIwMjEuDQoNCk1jUGhlcnNvbiwgTWlsbGVyLCBMeW5uIFNtaXRoLUxvdmluLCBhbmQgSmFtZXMgTS4gQ29vay4gIkJpcmRzIG9mIGEgRmVhdGhlcjogSG9tb3BoaWx5IGluIFNvY2lhbCBOZXR3b3Jrcy4iIEFubnVhbCBSZXZpZXcgb2YgU29jaW9sb2d5LCB2b2wuIDI3LCAyMDAxLCBwcC4gNDE1LTQ0Lg0KDQpNdWxkZXJzLCBBbm5lIE1hYWlrZSwgQmFzIEhvZnN0cmEsIGFuZCBKb2NoZW0gVG9sc21hLiAiQSBNYXR0ZXIgb2YgVGltZT8gR2VuZGVyIGFuZCBFdGhuaWMgSW5lcXVhbGl0eSBpbiB0aGUgQWNhZGVtaWMgUHVibGlzaGluZyBDYXJlZXJzIG9mIER1dGNoIFBoLkQucy4iIFF1YW50aXRhdGl2ZSBTY2llbmNlIFN0dWRpZXMsIHZvbC4gNSwgbm8uIDMsIDIwMjQsIHBwLiA0ODctNTE1Lg0KDQpXYXNzZXJtYW4sIFN0YW5sZXksIGFuZCBLYXRoZXJpbmUgRmF1c3QuIFNvY2lhbCBOZXR3b3JrIEFuYWx5c2lzOiBNZXRob2RzIGFuZCBBcHBsaWNhdGlvbnMuIENhbWJyaWRnZSBVbml2ZXJzaXR5IFByZXNzLCAxOTk0Lg0KDQpXdWNodHksIFN0ZWZhbiwgQmVuamFtaW4gRi4gSm9uZXMsIGFuZCBCcmlhbiBVenppLiAiVGhlIEluY3JlYXNpbmcgRG9taW5hbmNlIG9mIFRlYW1zIGluIFByb2R1Y3Rpb24gb2YgS25vd2xlZGdlLiIgU2NpZW5jZSwgdm9sLiAzMTYsIG5vLiA1ODI3LCAyMDA3LCBwcC4gMTAzNi0zOS4NCg0KDQoNCiMgVGhlb3J5IA0KDQpUbyBsb29rIGF0IGdlbmRlciBwYXR0ZXJucyBpbiBhY2FkZW1pYyBjb2xsYWJvcmF0aW9uLCBhIGdyb3VuZGluZyBpbiBmZW1pbmlzdCB0aGVvcmV0aWNhbCB0cmFkaXRpb25zIGlzIGtleSBpbiBvcmRlciB0byB1bmRlcnN0YW5kIHRoZSB3YXlzIGdlbmRlciBvcGVyYXRlcyBhcyBhIGZ1bmRhbWVudGFsIG9yZ2FuaXppbmcgcHJpbmNpcGxlIG9mIHNvY2lhbCBsaWZlLCBzdHJ1Y3R1cmluZyBhY2Nlc3MgdG8gcmVzb3VyY2VzLCBvcHBvcnR1bml0aWVzLCBhbmQgcmVjb2duaXRpb24gKEFja2VyLCAyMDA2KS4gRmVtaW5pc3Qgc2Nob2xhcnMgaGF2ZSBsb25nIGRvY3VtZW50ZWQgaG93IOKAnGdlbmRlci1uZXV0cmFs4oCdIGluc3RpdHV0aW9uYWwgcHJhY3RpY2VzLCBzdWNoIGFzIGhpcmluZywgcHJvbW90aW9uLCBhbmQgZXZhbHVhdGlvbiBjcml0ZXJpYSwgc3lzdGVtYXRpY2FsbHkgZGlzYWR2YW50YWdlIHdvbWVuIHRocm91Z2ggd2hhdCBKb2FuIEFja2VyIHRlcm1zICJnZW5kZXJlZCBvcmdhbml6YXRpb25zIiAoQWNrZXIsIDE5OTApLiBJbiBhY2FkZW1pYyBzZXR0aW5ncywgdGhlc2UgZ2VuZGVyZWQgZHluYW1pY3MgbWF5IGFwcGVhciB0aHJvdWdoIGRpZmZlcmVudCBtZWNoYW5pc21zLCBzdWNoIGFzIGdlbmRlciBiaWFzIGluIGV2YWx1YXRpb24gKE1vc3MtUmFjdXNpbiBldCBhbC4sIDIwMTIpLCBkaWZmZXJlbnRpYWwgc2VydmljZSBidXJkZW5zIHRoYXQgZGl2ZXJ0IHdvbWVuIGZyb20gcmVzZWFyY2ggKEd1YXJpbm8gYW5kIEJvcmRlbiwgMjAxNyksIGFuZCBleGNsdXNpb24gZnJvbSBpbmZvcm1hbCBuZXR3b3JrcyB3aGVyZSBvcHBvcnR1bml0aWVzIGFyZSBjb21tdW5pY2F0ZWQgYW5kIGNvbGxhYm9yYXRpb25zIGluaXRpYXRlZCAodmFuIGRlbiBCcmluayBhbmQgQmVuc2Nob3AsIDIwMTQpLg0KDQpXb21lbiBpbiBtYWxlLWRvbWluYXRlZCBmaWVsZHMgZGV2ZWxvcCBhZGFwdGl2ZSBzdHJhdGVnaWVzIHRvIG5hdmlnYXRlIGhvc3RpbGUgb3IgdW5zdXBwb3J0aXZlIGVudmlyb25tZW50cywgd2hpY2ggbWF5IGluY2x1ZGUgc2Vla2luZyBzYW1lLWdlbmRlciBjb2xsYWJvcmF0aW9ucyBmb3IgcHJvZmVzc2lvbmFsIHN1cHBvcnQgYW5kIHZhbGlkYXRpb24gKFNldHRsZXMgZXQgYWwuLCAyMDA2OyBTZXR0bGVzICYgQ29ubm9yLCAyMDE0KS4gU2ltdWx0YW5lb3VzbHksIHdvbWVuIG1heSBwdXJzdWUgY3Jvc3MtZ2VuZGVyIGNvbGxhYm9yYXRpb25zIG1vcmUgYWN0aXZlbHkgdGhhbiBtZW4gYXMgYSBzdHJhdGVneSB0byBhY2Nlc3MgcmVzb3VyY2VzLCBlbmhhbmNlIGNyZWRpYmlsaXR5LCBvciBpbnRlZ3JhdGUgaW50byBtYWluc3RyZWFtIHNjaG9sYXJseSBuZXR3b3Jrcy4gVGhlc2UgY29tcGV0aW5nIHByZXNzdXJlcyBjcmVhdGUgY29tcGxleCBwYXR0ZXJucyB0aGF0IHNpbXBsZSBob21vcGhpbHkgbW9kZWxzIG1heSBub3QgY2FwdHVyZS4NCkZyb20gYSBjb25mbGljdCB0aGVvcnkgcGVyc3BlY3RpdmUsIGFjYWRlbWljIGNvbGxhYm9yYXRpb24gbmV0d29ya3MgY2FuIGJlIHVuZGVyc3Rvb2QgYXMgc2l0ZXMgb2YgcmVzb3VyY2UgY29tcGV0aXRpb24gd2hlcmUgZ2VuZGVyIGZ1bmN0aW9ucyBhcyBhIGJhc2lzIGZvciBpbmNsdXNpb24gYW5kIGV4Y2x1c2lvbiAoQ29sbGlucywgMTk3MSkuIEFjY29yZGluZyB0byB0aGlzIHBlcnNwZWN0aXZlLCB0aGUgZG9taW5hbnQgZ3JvdXBzIGNvbnRyb2wgYWNjZXNzIHRvIHZhbHVlZCByZXNvdXJjZXMuIEluIHRoZSBjb250ZXh0IG9mIGFjYWRlbWlhIGFuZCBjYXJlZXJzIGFzIHByb2Zlc3NvcnMsIG1lbiBoaXN0b3JpY2FsbHkgaGF2ZSBiZWVuIGFuZCBwcmVzZW50bHkgcmVtYWluIHRoZSBkb21pbmFudCBncm91cCBpbiBtYW55IGFjYWRlbWljIGZpZWxkcyBieSBwcm9wb3J0aW9uIGluIGxlYWRlcnNoaXAuIFRoZXJlZm9yZSwgdGhlIGNvbnRyb2wgb2YgYWNjZXNzIHRvIHZhbHVlZCByZXNvdXJjZXMgaW5jbHVkaW5nIGF1dGhvcnNoaXAgb3Bwb3J0dW5pdGllcywgcmVzZWFyY2ggZnVuZGluZywgYW5kIGluc3RpdHV0aW9uYWwgcG9zaXRpb25zIHJlbWFpbnMgaGVsZCBieSBhIG1hbGUtZG9taW5hbnQgZW52aXJvbm1lbnQuIFByb2Zlc3NvcnMgaGF2ZSB0aGUgb3Bwb3J0dW5pdHkgdG8gY29sbGFib3JhdGUgc2VsZWN0aXZlbHksIHdpdGggdGhlIHBvdGVudGlhbCBmb3IgY29uc2Npb3VzIG9yIGltcGxpY2l0IGJpYXNlcyB0byBpbmZsdWVuY2UgdGhlaXIgY29sbGFib3JhdGlvbiBwYXR0ZXJucy4gVGhlIHN0cnVjdHVyYWwgcG93ZXIgaW1iYWxhbmNlIHRoYXQgc3RpbGwgZmF2b3JzIG1lbiwgY29tYmluZWQgd2l0aCBzdGlsbCBoYXZlIHRoZSBvcHBvcnR1bml0eSB0byBjb2xsYWJvcmF0ZSBzZWxlY3RpdmVseSwgcG90ZW50aWFsbHkgZmF2b3Jpbmcgb3RoZXIgbWVuIHRocm91Z2ggdGhlIHRlbmRlbmN5IGZvciBkb21pbmFudCBncm91cHMgdG8gcmVwbGljYXRlIHRoZW1zZWx2ZXMgKEthbnRlciwgMTk3NykuIFdvbWVuLCBjb252ZXJzZWx5LCBtdXN0IG5hdmlnYXRlIHRoZXNlIG1hbGUtZG9taW5hdGVkIHN0cnVjdHVyZXMgc3RyYXRlZ2ljYWxseSwgcG90ZW50aWFsbHkgbGVhZGluZyB0byBkaWZmZXJlbnQgY29sbGFib3JhdGlvbiBwYXR0ZXJucy4NCg0KQWRkaXRpb25hbGx5LCB3b21lbiBpbiBhY2FkZW1pYSwgcGFydGljdWxhcmx5IGluIG1hbGUtZG9taW5hdGVkIGZpZWxkcywgbWF5IHNpbXVsdGFuZW91c2x5IGZhY2UgdW5pcXVlIGFuZCBpbmNyZWFzZWQgcHJlc3N1cmVzIGFyb3VuZCBjb2xsYWJvcmF0aW9ucy4gV29tZW4gbWF5IGZhY2UgaGVpZ2h0ZW5lZCBzY3J1dGlueSBhbmQgc2tlcHRpY2lzbSBhYm91dCB0aGVpciBpbmRpdmlkdWFsIGNvbnRyaWJ1dGlvbnMsIGNyZWF0aW5nIHByZXNzdXJlIHRvIGRlbW9uc3RyYXRlIGNvbXBldGVuY2UgdGhyb3VnaCBjb2xsYWJvcmF0aXZlIHdvcmssIGFzIGFuIGV4dGVuc2lvbiBvZiByZXNlYXJjaCBmaW5kaW5nIGdlbmRlciBiaWFzZXMgZmF2b3JpbmcgbWFsZSBzdHVkZW50cyAoTW9zcy1SYWN1c2luIGV0IGFsLiwgMjAxMikuIEluZGl2aWR1YWwgY29udHJpYnV0aW9ucyBvciBwdWJsaWNhdGlvbnMgYnkgZmVtYWxlIHByb2Zlc3NvcnMgbWF5IGJlIGRpc2NvdW50ZWQsIHdoaWxlIGNvbGxhYm9yYXRpdmUgd29yayBwcm92aWRlcyB2aXNpYmxlIGV2aWRlbmNlIG9mIHByb2Zlc3Npb25hbCBpbnRlZ3JhdGlvbiBhbmQgcGVlciB2YWxpZGF0aW9uLiBXb21lbiBtYXkgYWN0aXZlbHkgcHVyc3VlIGNvbGxhYm9yYXRpb25zIHdpdGggbWFsZSBjb2xsZWFndWVzLCBwYXJ0aWN1bGFybHkgc2VuaW9yIG1lbiwgYXMgYSBzdHJhdGVneSB0byBhY2Nlc3MgcmVzb3VyY2VzLCBlbmhhbmNlIGxlZ2l0aW1hY3ksIGFuZCBzaWduYWwgcHJvZmVzc2lvbmFsIGNvbXBldGVuY2UgKEphZGlkaSBldCBhbC4sIDIwMTcpLg0KSG9tb3BoaWx5IGhhcyBiZWVuIG9uZSBvZiB0aGUgbW9zdCByb2J1c3QgZmluZGluZ3MgaW4gc29jaWFsIG5ldHdvcmsgcmVzZWFyY2gsIG9wZXJhdGluZyBhY3Jvc3MgbXVsdGlwbGUgZGltZW5zaW9ucyBpbmNsdWRpbmcgcmFjZSwgYWdlLCBlZHVjYXRpb24sIHJlbGlnaW9uLCBhbmQgZ2VuZGVyIChNY1BoZXJzb24gZXQgYWwuLCAyMDAxKS4gVGhlIGJhc2ljIG1lY2hhbmlzbSBpcyBzdHJhaWdodGZvcndhcmQ6IHBlb3BsZSBnZW5lcmFsbHkgZmluZCBpdCBlYXNpZXIgdG8gY29ubmVjdCB3aXRoIG90aGVycyB3aG8gc2hhcmUgc2ltaWxhcml0aWVzIHdpdGggdGhlbS4gSW4gYWNhZGVtaWMgc2V0dGluZ3MsIGhvbW9waGlseSBpbiBjb2xsYWJvcmF0aW9ucyBjYW4gcHJlc2VudCBpdHNlbGYgdGhyb3VnaCBwcm9mZXNzb3JzIHNoYXJpbmcgaW5zdGl0dXRpb25hbCBhZmZpbGlhdGlvbiwgZGlzY2lwbGluYXJ5IHNwZWNpYWx0eSwgbWV0aG9kb2xvZ2ljYWwgYXBwcm9hY2gsIGFuZCBkZW1vZ3JhcGhpYyBjaGFyYWN0ZXJpc3RpY3MgKEJvemVtYW4gYW5kIENvcmxleSwgMjAwNCkuIEltcG9ydGFudGx5LCB0aGUgcHJlc2VuY2Ugb2YgaG9tb3BoaWx5IGRvZXMgbm90IGFsb25lIGV4cGxhaW4gdGhlIHJlYXNvbiBmb3IgY29ubmVjdGlvbnMgKHRpZXMsIG9yIGNvbGxhYm9yYXRpb25zIGluIHRoZSBhY2FkZW1pYyBjb250ZXh0KSB0byBmb3JtLiANCg0KSW52ZXN0aWdhdGluZyB0aGUgcHJlc2VuY2Ugb2YgZ2VuZGVyIGhvbW9waGlseSBpbiBjb2xsYWJvcmF0aW9uIHBhdHRlcm5zLCBjb25zaWRlcmF0ZSBvZiBpbmRpdmlkdWFsIHByZWZlcmVuY2UgYXMgd2VsbCBhcyBzdHJ1Y3R1cmFsIG9wcG9ydHVuaXR5LCBpcyBrZXkgdG8gdW5kZXJzdGFuZGluZyB0aGUgbWVjaGFuaXNtcyB0aGF0IHBlcnBldHVhdGUgdW5lcXVhbCBvcHBvcnR1bml0aWVzIGJ5IGdlbmRlciwgYW5kIGhvdyB0aGV5IG1heSBhcmlzZSBvciBiZSBwZXJwZXR1YXRlZC4gQnkgdXNpbmcgc29jaWFsIG5ldHdvcmsgYW5hbHlzaXMgdG8gbG9vayBhdCB0aGUgZWdvLWxldmVsIGNoYXJhY3RlcmlzdGljIG9mIGdlbmRlciwgd2l0aCBmZW1hbGUgYXMgdGhlIGluZGVwZW5kZW50IHZhcmlhYmxlIG9mIGludGVyZXN0IGFuZCBzaGFyZWQgYWNhZGVtaWMgcHVibGljYXRpb25zICh0aGUgdGllcyBpbiB0aGUgc29jaWFsIG5ldHdvcmssIHJlZmVyZW5jZWQgYXMg4oCYY29sbGFib3JhdGlvbnPigJkpIGFzIHRoZSBkZXBlbmRlbnQgdmFyaWFibGUsIHRoZXJlIGlzIHRoZSBvcHBvcnR1bml0eSB0byBsb29rIGF0IHRoZSBlZmZlY3Qgb2YgZ2VuZGVyIG9uIGNvbGxhYm9yYXRpb25zLiBDb25zaWRlcmluZyB0aGUgbGFyZ2UgYW1vdW50IG9mIGRhdGEgZm9yIGFzc2Vzc2luZyB0aGUgc29jaWFsIG5ldHdvcmsgb2YgYWxsIGR1dGNoIHVuaXZlcnNpdGllcywgdGhvdWdoLCB0aGlzIHJlc2VhcmNoIHdpbGwgZm9jdXMgb24gb25lIHVuaXZlcnNpdHksIFJhZGJvdWQgVW5pdmVyc2l0eSwgYXMgYSBjYXNlIHN0dWR5LiANCg0KVGhlcmVmb3JlLCBteSByZXNlYXJjaCBxdWVzdGlvbiBpcyBhcyBmb2xsb3dzOiANCg0KKipIb3cgZG9lcyBnZW5kZXIgZWZmZWN0IGNvbGxhYm9yYXRpb25zIGFtb25nIHBvbGl0aWNhbCBzY2llbmNlIGFuZCBzb2Npb2xvZ3kgcHJvZmVzc29ycyBhdCBSYWRib3VkIFVuaXZlcnNpdGllcz8gKioNCg0KVG8gZ3VpZGUgbXkgcmVzZWFyY2ggYW5kIGFuYWx5c2lzLCBJIGZ1cnRoZXIgc3BlY2lmeSBteSByZXNlYXJjaCBxdWVzdGlvbiBieSBicmVha2luZyBpdCBpbnRvIHR3byBwYXJ0czogDQoNClJlc2VhcmNoIFF1ZXN0aW9uIDE6IFdoYXQgYXJlIHRoZSBnZW5kZXIgZGlmZmVyZW5jZXMgaW4gb3ZlcmFsbCBjb2xsYWJvcmF0aW9uIHJhdGVzPw0KDQpSZXNlYXJjaCBRdWVzdGlvbiAyOiBIb3cgZG9lcyBnZW5kZXIgZWZmZWN0IHBvdGVudGlhbCBmb3IgY29sbGFib3JhdGlvbnM/IEFuZCwgaXMgb25lIGdlbmRlciBtb3JlIGxpa2VseSB0byBjb2xsYWJvcmF0ZSB0aGFuIHRoZSBvdGhlcj8gDQoNCkh5cG90aGVzaXMgMi4xOiBJbiByZXNwb25zZSB0byB0aGlzIHJlc2VhcmNoIHF1ZXN0aW9uLCBJIGh5cG90aGVzaXplIHRoYXQgd29tZW4gd2lsbCBiZSBtb3JlIGxpa2VseSB0byBwYXJ0aWNpcGF0ZSBpbiBjb2xsYWJvcmF0aW9ucywgYXMgaXQgbWF5IGJlIG1vcmUgaW1wb3J0YW50IGZvciB0aGVpciBjcmVkaWJpbGl0eSBhbmQgb3Bwb3J0dW5pdHkgZm9yIHByb21vdGlvbi4gDQoNCkh5cG90aGVzaXMgMi4yOiBSZWxhdGVkIHRvIHRoaXMsIGNvbnRyb2xsaW5nIGZvciB0aGUgZWZmZWN0IG9mIGRpc2NpcGxpbmUsIEkgaHlwb3RoZXNpemUgdGhhdCB0aGUgZWZmZWN0IG9mIGZlbWFsZSBvbiBwcm9mZXNzb3IgY29sbGFib3JhdGlvbnMgd2lsbCB2YXJ5IGJ5IGRlcGFydG1lbnQvZGlzY2lwbGluZSwgc3VjaCB0aGF0IHdvbWVuIGluIHBvbGl0aWNhbCBzY2llbmNlIGFyZSBtb3JlIGxpa2VseSB0aGFuIHRoZWlyIG1hbGUgY291bnRlciBwYXJ0cyB0byBjb2xsYWJvcmF0ZS4gDQoNCkh5cG90aGVzaXMgMi4zOiBGdXJ0aGVyLCBidWlsZGluZyBvbiBteSBhc3N1bXB0aW9ucyBpbiBteSBmaXJzdCB0d28gaHlwb3RoZXNlcywgSSBoeXBvdGhlc2l6ZSB0aGF0IGZlbWFsZSBwcm9mZXNzb3JzIGluIHNvY2lvbG9neSBhcmUgZXZlbiBtb3JlIGxpa2VseSB0byBwYXJ0aWNpcGF0ZSBpbiBjcm9zcy1nZW5kZXIgY29sbGFib3JhdGlvbnMsIGFzIHRoZSBlZmZlY3Qgb2Ygd29tZW4gYmVpbmcgbW9yZSBsaWtlbHkgdG8gcGFydGljaXBhdGUgaW4gY3Jvc3MtZ2VuZGVyIGNvbGxhYm9yYXRpb25zIGlzIGFtcGxpZmllZCB3aXRoIHRoZSBtb3JlIGV2ZW4gcHJvcG9ydGlvbiBvZiB3b21lbiBpbiBzb2Npb2xvZ3ksIGFuZCBwb3RlbnRpYWxseSBhIG1vcmUgcHJvZ3Jlc3NpdmUgZGVwYXJ0bWVudCBjdWx0dXJlDQoNCg0KDQoNCg0KDQoNCg0KDQoNCkNpdGF0aW9uczogDQpBY2tlciwgSi4gKDE5OTApLiBIaWVyYXJjaGllcywgSm9icywgQm9kaWVzOiBBIFRoZW9yeSBvZiBHZW5kZXJlZCBPcmdhbml6YXRpb25zLiBHZW5kZXIgYW5kIFNvY2lldHksIDQoMiksIDEzOeKAkzE1OC4gaHR0cDovL3d3dy5qc3Rvci5vcmcvc3RhYmxlLzE4OTYwOSANCg0KQWNrZXIsIEouICgyMDA2KS4gSW5lcXVhbGl0eSBSZWdpbWVzIEdlbmRlciwgQ2xhc3MsIGFuZCBSYWNlIGluIE9yZ2FuaXphdGlvbnMuIEdlbmRlciBhbmQgU29jaWV0eSwgMjAoNCksIDQ0MeKAkzQ2NC4gaHR0cDovL3d3dy5qc3Rvci5vcmcvc3RhYmxlLzI3NjQwOTA0IA0KDQpDb2xsaW5zLCBSLiAoMTk3MSkuIEEgQ29uZmxpY3QgVGhlb3J5IG9mIFNleHVhbCBTdHJhdGlmaWNhdGlvbi4gU29jaWFsIFByb2JsZW1zLCAxOSgxKSwgM+KAkzIxLiBodHRwczovL2RvaS5vcmcvMTAuMjMwNy83OTk5MzYgDQoNCkJvemVtYW4sIEJhcnJ5ICYgQ29ybGV5LCBFbGl6YWJldGggKDIwMDQpLiBTY2llbnRpc3Rz4oCZIGNvbGxhYm9yYXRpb24gc3RyYXRlZ2llczogaW1wbGljYXRpb25zIGZvciBzY2llbnRpZmljIGFuZCB0ZWNobmljYWwgaHVtYW4gY2FwaXRhbC4gUmVzZWFyY2ggUG9saWN5LCAzMyg0KSwgNTk5LTYxNi4gaHR0cHM6Ly9kb2kub3JnLzEwLjEwMTYvai5yZXNwb2wuMjAwNC4wMS4wMDguIA0KR3VhcmlubywgQy5NLiwgQm9yZGVuLCBWLk0uSC4gRmFjdWx0eSBTZXJ2aWNlIExvYWRzIGFuZCBHZW5kZXI6IEFyZSBXb21lbiBUYWtpbmcgQ2FyZSBvZiB0aGUgQWNhZGVtaWMgRmFtaWx5Py4gUmVzIEhpZ2ggRWR1YyA1OCwgNjcy4oCTNjk0ICgyMDE3KS4gaHR0cHM6Ly9kb2kub3JnLzEwLjEwMDcvczExMTYyLTAxNy05NDU0LTIgDQoNCkphZGlkaSwgTS4sIEthcmltaSwgRi4sIExpZXR6LCBILiwgJiBXYWduZXIsIEMuICgyMDE3KS4gR2VuZGVyIERpc3Bhcml0aWVzIGluIFNjaWVuY2U/IERyb3BvdXQsIFByb2R1Y3Rpdml0eSwgQ29sbGFib3JhdGlvbnMgYW5kIFN1Y2Nlc3Mgb2YgTWFsZSBhbmQgRmVtYWxlIENvbXB1dGVyIFNjaWVudGlzdHMuIEFkdmFuY2VzIGluIENvbXBsZXggU3lzdGVtcywgMjEoMy80KSwgQXJ0aWNsZSAxNzUwMDExLiBodHRwczovL2RvaS5vcmcvMTAuMTE0Mi9TMDIxOTUyNTkxNzUwMDExNCANCkthbnRlciwgUi4gTS4gKDE5NzcpLiBTb21lIEVmZmVjdHMgb2YgUHJvcG9ydGlvbnMgb24gR3JvdXAgTGlmZTogU2tld2VkIFNleCBSYXRpb3MgYW5kIFJlc3BvbnNlcyB0byBUb2tlbiBXb21lbi4gQW1lcmljYW4gSm91cm5hbCBvZiBTb2Npb2xvZ3ksIDgyKDUpLCA5NjXigJM5OTAuIGh0dHA6Ly93d3cuanN0b3Iub3JnL3N0YWJsZS8yNzc3ODA4DQogDQpNY1BoZXJzb24sIE0uLCBTbWl0aC1Mb3ZpbiwgTC4sICYgQ29vaywgSi4gTS4gKDIwMDEpLiBCaXJkcyBvZiBhIEZlYXRoZXI6IEhvbW9waGlseSBpbiBTb2NpYWwgTmV0d29ya3MuIEFubnVhbCBSZXZpZXcgb2YgU29jaW9sb2d5LCAyNywgNDE14oCTNDQ0LiBodHRwOi8vd3d3LmpzdG9yLm9yZy9zdGFibGUvMjY3ODYyOCANCk1vc3MtUmFjdXNpbiwgQy4gQS4sIERvdmlkaW8sIEouIEYuLCBCcmVzY29sbCwgVi4gTC4sIEdyYWhhbSwgTS4gSi4sICYgSGFuZGVsc21hbiwgSi4gKDIwMTIpLiBTY2llbmNlIGZhY3VsdHnigJlzIHN1YnRsZSBnZW5kZXIgYmlhc2VzIGZhdm9yIG1hbGUgc3R1ZGVudHMuIFByb2NlZWRpbmdzIG9mIHRoZSBOYXRpb25hbCBBY2FkZW15IG9mIFNjaWVuY2VzLCAxMDkoNDEpLCAxNjQ3NC0xNjQ3OS4gaHR0cHM6Ly9kb2kub3JnLzEwLjEwNzMvcG5hcy4xMjExMjg2MTA5DQoNClNldHRsZXMsIEkuIEguLCBDb3J0aW5hLCBMLiBNLiwgTWFsbGV5LCBKLiwgJiBTdGV3YXJ0LCBBLiBKLiAoMjAwNikuIFRoZSBDbGltYXRlIGZvciBXb21lbiBpbiBBY2FkZW1pYyBTY2llbmNlOiBUaGUgR29vZCwgdGhlIEJhZCwgYW5kIHRoZSBDaGFuZ2VhYmxlLiBQc3ljaG9sb2d5IG9mIFdvbWVuIFF1YXJ0ZXJseSwgMzAoMSksIDQ3LTU4LiBodHRwczovL2RvaS5vcmcvMTAuMTExMS9qLjE0NzEtNjQwMi4yMDA2LjAwMjYxLngNClNldHRsZXMsIEkuSC4sIE/igJlDb25ub3IsIFIuQy4gSW5jaXZpbGl0eSBhdCBBY2FkZW1pYyBDb25mZXJlbmNlczogR2VuZGVyIERpZmZlcmVuY2VzIGFuZCB0aGUgTWVkaWF0aW5nIFJvbGUgb2YgQ2xpbWF0ZS4gU2V4IFJvbGVzIDcxLCA3MeKAkzgyICgyMDE0KS4gaHR0cHM6Ly9kb2kub3JnLzEwLjEwMDcvczExMTk5LTAxNC0wMzU1LXkgDQp2YW4gZGVuIEJyaW5rLCBNLiBhbmQgQmVuc2Nob3AsIFkuICgyMDE0KSwgR2VuZGVyIGluIEFjYWRlbWljIE5ldHdvcmtpbmcuIEpvdXJuYWwgb2YgTWFuYWdlbWVudCBTdHVkaWVzLCA1MTogNDYwLTQ5Mi4gaHR0cHM6Ly9kb2kub3JnLzEwLjExMTEvam9tcy4xMjA2MA0KDQoNCg0K</div>
 
 
 </div>

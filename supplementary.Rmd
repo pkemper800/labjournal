@@ -1,0 +1,2460 @@
+---
+title: "finalpaper_datamethods"
+author: "Paige Kemper"
+date: "2025-10-31"
+output: html_document
+---
+
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
+
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+_Supplementary Code for SNA Final Paper: Extended Data, Methods, and Results_
+
+
+
+# Supplementary research
+To further investigate gender effect in collaborations, I do additional work to look at cross-gender collaborations. This is supplementary to my research, and can be expanded upon in future research. 
+
+Next, to better understand the effect of gender on collaborations, I will look at the nature of the collaborations between professors – and in particular, I will look at the proportion of collaborations that happen across gender, such that the collaboration has at least one male professor and one female professor collaborating. I will refer to this as “cross-gender collaborations.” This brings us to the second research question: 
+
+This supplementary research is guided by the following research questions: 
+
+Research Question 1: What proportion of collaborations happen between professors that have different genders? 
+As a descriptive research question, I will also investigate what proportion of collaborations happen with professors that have the same gender, and how this proportion varies per department (political science vs. sociology). 
+
+Hypothesis 1.1: I hypothesize that collaborations will exhibit gender homophily, with cross-gender ties occurring less frequently than same-gender collaborations. 
+Hypothesis 1.2: Additionally, given that women remain underrepresented in senior positions and may face barriers to network integration in academia, and may therefore pursue more collaborations in publications in order to strengthen their opportunity for promotion, I hypothesize that female professors will exhibit higher overall collaboration rates than men. So, in response to research question 1, I hypothesize that women collaborate more than men among political science and sociology professors at Dutch universities. 	 
+
+
+
+Research Question 2: How does gender effect potential for collaborations? Furthermore, is one gender more likely to collaborate than the other, and is one gender more likely to participate in cross-gender collaborations than the other? 
+
+As an exploratory research question, hypothesis testing is needed to answer this. 
+Hypothesis 2.1: In response to this research question, I hypothesize that women will be more likely to participate in cross-gender collaborations, as it may be more important for their credibility and opportunity for promotion. 
+
+Hypothesis 2.2: Further, I hypothesize that the effect of female on professor collaborations will vary by department/discipline, such that women in political science are more likely than their male counter parts to participate in cross-gender collaborations. 
+
+Based on literature, I would expect cross-gender collaborations to be more frequent in departments with more balanced gender representation (close to 50% female population of professors). 
+
+Hypothesis 2.2.1: Therefore, I hypothesize that female professors in political science are more likely to participate in cross-gender collaborations than their male counter parts, as a field with continued gender imbalances that may leave women with increased pressure to publish works and partner with established males in order to gain credibility and promotions. 
+
+Hypothesis 2.2.2: Further, building on my assumptions in my first two hypotheses, I hypothesize that female professors in sociology are even more likely to participate in cross-gender collaborations, as the effect of women being more likely to participate in cross-gender collaborations is amplified with the more even proportion of women in sociology, and potentially a more progressive department culture toward cross-gender collaborations as a result. 
+
+Lastly, to better understand the implications of gender on collaborations over time – and the implications on structural changes that exposure to cross-gender collaborations may have – I lastly will look at the effect of previous cross-gender collaborations on modeling/predicting the effect of female on both same-gender and cross-gender collaborations. The last research question I pose is as follows: 
+
+Research Question 3: Does prior cross-gender collaboration increase the likelihood of future cross-gender collaboration?
+a.  If a professor has collaborated before, are they likely to collaborate again – and in particular, if a professor has participated in cross-gender collaborations before, are they more likely to do so again?)
+b.	Hypothesis: They would be more likely to, because 1) they are more likely to collaborate already, 2) they have already overcome the barrier of cross-cultural collaboration and may be less effected by the potential differences in working (both with another person, and another person from a different gender) 
+
+Hypothesis 3: In response to this research question, I hypothesize that professors with prior cross-gender collaborations will be more likely to form new cross-gender collaborations in subsequent periods, suggesting that boundary-crossing experiences weaken homophilic preferences or expand structural opportunities for diverse collaboration. 
+
+
+Additionally, it generally identifies a dynamic pattern that has important implications for understanding gender inequality reproduction in academia. The strong positive interaction between being female and having cross-gender collaboration experience suggests that cross-gender collaboration may function differently for women than for men. This finding resonates with feminist scholarship on adaptive strategies women employ in male-dominated fields (Settles et al., 2006; Settles & Connor, 2014). Cross-gender collaborations may provide women with enhanced access to resources, credibility signals, and integration into mainstream scholarly networks. Once women successfully navigate initial cross-gender collaborations, they appear to gain momentum in their collaborative work overall. This pattern is consistent with conflict theory perspectives on academic networks as sites of resource competition (Collins, 1971). If men continue to hold structural power in many academic fields through their historical and continued numerical dominance in senior positions, then women's successful integration into collaborative networks with male colleagues may be particularly consequential for their access to the resources those networks provide—including co-authorship opportunities that enhance visibility and career advancement (Abramo et al., 2009).
+
+
+
+# Previous Code Inclusion: 
+
+
+## Clear data
+```{r}
+rm(list=ls()) #start clean
+```
+
+
+## Load Functions + Packages
+```{r}
+library(readxl)
+library(selenider)
+library(rvest)
+library(tidyverse)
+library(netstat)
+library(pingr)
+library(jsonlite)
+library(stringr)
+library(openalexR)
+
+
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+packages <- c("devtools", "igraph")
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, file, "_", datename, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+```
+
+
+
+### Load Dataset 
+```{r}
+scholars <- fload("C:/Github/labjournal/20251017scholars.Rda") 
+```
+
+
+### Isolate RU from RUG (rename Groningen Uni) 
+```{r}
+scholars$demographics = scholars$demographics |>
+  mutate(
+    universiteit.22 = str_replace(universiteit.22, 'RUG', "UvG"),
+    universiteit.24 = str_replace(universiteit.24, 'RUG', "UvG"),
+    universiteit.25 = str_replace(universiteit.25, 'RUG', "UvG")
+)
+```
+
+
+### New fcolnet function
+
+### Define Network Data Helper Function
+```{r}
+fcolnet = function(data = scholars, university = c("RU", 'UU', 'VU', 'UvA', 'UvG', 'UvT', 'Leiden', 'EUR', 'NA'), discipline = c('Sociologie', 'Politicologie'), waves = list(c(2015,
+    2018), c(2019, 2023), c(2024, 2025)), type = c("first")) {
+
+    university = paste0('(', paste0(university, collapse='|' ), ')')
+    discipline = paste0('(', paste0(discipline, collapse='|' ), ')')
+
+    # step 1
+    demographics = data$demographics
+    sample = which(
+        (str_detect(demographics$universiteit.22, university)
+            | str_detect(demographics$universiteit.24, university)
+            | str_detect(demographics$universiteit.25, university)
+        ) & (
+            str_detect(demographics$discipline.22, discipline)
+            | str_detect(demographics$discipline.24, discipline)
+            | str_detect(demographics$discipline.25, discipline)
+        ) |> replace_na(FALSE))
+
+    demographics_soc = demographics[sample, ] |> drop_na(id)
+
+    # step 2
+    ids = demographics_soc$id |> unique()
+
+
+    scholars_sel = list() 
+    for (id_ in ids){
+        scholars_sel[[id_]] = bind_rows(scholars$works) |>
+            filter(author_id == id_)
+    }
+    scholars_sel = bind_rows(scholars$works) 
+    
+
+    nwaves = length(waves)
+    nets = array(0, dim = c(nwaves, length(ids), length(ids)), dimnames = list(wave = 1:nwaves, ids,
+        ids))
+    dimnames(nets)
+
+    # step 3
+    df_works = tibble(
+            works_id = scholars_sel$id, 
+            works_author = scholars_sel$authorships, 
+            works_year = scholars_sel$publication_year
+        )
+
+
+    df_works = df_works[!duplicated(df_works), ]
+
+    # step 4
+    if (type == "first") {
+        for (j in 1:length(waves)) {
+            df_works_w = df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego = df_works_w$works_author[i][[1]]$id[1]
+                alters = df_works_w$works_author[i][[1]]$id[-1]
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] = 1
+                }
+            }
+        }
+    }
+
+    if (type == "last") {
+        for (j in 1:length(waves)) {
+            df_works_w = df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                ego = rev(df_works_w$works_author[i][[1]]$id[1])
+                alters = rev(df_works_w$works_author[i][[1]]$id[-1])
+                if (sum(ids %in% ego) > 0 & sum(ids %in% alters) > 0) {
+                  nets[j, which(ids %in% ego), which(ids %in% alters)] = 1
+                }
+            }
+        }
+    }
+    if (type == "all") {
+        for (j in 1:length(waves)) {
+            df_works_w = df_works[df_works$works_year >= waves[[j]][1] & df_works$works_year <= waves[[j]][2],
+                ]
+            for (i in 1:nrow(df_works_w)) {
+                egos = df_works_w$works_author[i][[1]]$id
+                if (sum(ids %in% egos) > 0) {
+                  nets[j, which(ids %in% egos), which(ids %in% egos)] = 1
+                }
+            }
+            diag(nets[j,,]) = 0
+        }
+    }
+
+    output = list()
+    output$data = demographics_soc
+    output$nets = nets
+    return(output)
+}
+```
+
+
+
+
+### load Rsiena packages
+```{r}
+packages = c(
+    "RSiena", "tidyverse",
+    'dplyr', 'stringr' # these packages were added to make the code run
+)
+fpackage.check(packages)
+
+```
+
+
+## Radboud Data
+
+## Getting Data for Radboud 
+
+### Load Data
+```{r}
+# Radboud only (where I want to start)
+test = fcolnet(scholars, 
+               university = c("RU"), #only Radboud 
+               discipline = c("Sociologie", "Politicologie"),
+               type = c("first")) #directed 
+df_ego = bind_rows(test$data)
+```
+
+
+
+### Wrangle Data
+
+```{r}
+wave1 = test$nets[1,,]
+wave2 = test$nets[2,,]
+wave3 = test$nets[3,,] # code currently includes wave 3, however this wave is not included in my analysis (my analysis prioritizes waves 1 and 2). 
+
+nets = array(
+    data = c(wave1, wave2), # NOTE TO SELF: REMOVED WAVE 3 FROM 'NETS' 
+    dim = c(dim(wave2), 2)
+)
+
+net = sienaDependent(nets)
+```
+
+
+## Isolate and Review Key Variables
+
+### Isolate Gender variable (binary)
+
+
+```{r}
+# Recoding for gender
+df_ego = df_ego |>
+    mutate(
+        female = case_when(
+            gender == "female" ~ 1,
+            gender == "male" ~ 0,
+            .default = NA 
+        )
+    )
+
+female = coCovar(df_ego$female) #CREATE GENDER CO VARIABLE
+```
+
+
+### Isolate disicipline variable (binary, used for control)
+
+```{r}
+# Recoding for discipline, must include all three waves because authors scraped from most recent wave need to be accounted for. Latest discipline is the discipline that the professor is associated with (we assume that the discipline does not change).
+df_ego = df_ego |>
+    mutate(
+        polsci = case_when(
+            discipline.22 == "Politicologie" ~ 1, #assume discipline remains the same?
+            discipline.22 == "Sociologie" ~ 0,
+            discipline.24 == "Politicologie" ~ 1, #assume discipline remains the same?
+            discipline.24 == "Sociologie" ~ 0,
+            discipline.25 == "Politicologie" ~ 1, #assume discipline remains the same?
+            discipline.25 == "Sociologie" ~ 0,
+            .default = NA
+        )
+    )
+
+polsci = coCovar(df_ego$polsci) #CREATE DISCIPLINE CO VAR
+```
+
+
+
+
+----
+
+
+
+# Part 1.2: Preliminary Descriptives Statistics 
+
+
+### Distribution of Gender (Female = 1) Overall 
+```{r}
+summary(df_ego$female)
+```
+
+
+### Distribution of Discipline (Political Science = 1)
+```{r}
+summary(df_ego$polsci)
+```
+
+
+### Distribution of Gender by Discipline 
+```{r}
+table(df_ego$gender, df_ego$discipline.24, useNA = "ifany")
+```
+
+
+### Plot Distribution of Gender by Discipline
+```{r}
+library(ggplot2)
+
+df_ego %>%
+  filter(!is.na(gender) & !is.na(discipline.24)) %>%
+  ggplot(aes(x = discipline.24, fill = gender)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Gender Distribution by Discipline",
+       x = "Discipline", 
+       y = "Count") +
+  theme_minimal()
+```
+
+
+----
+
+
+
+# Part 2: Network Descriptives for Radboud University
+
+
+## Visualizing Networks - Radboud University Wave 1
+
+
+#### Make adjacency matrix for first wave of RU data
+```{r}
+# make adjacency matrix with first wave of data
+test_wave1ru <- igraph::graph_from_adjacency_matrix(
+  test$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"), # directed from the first author
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+test_wave1ru
+```
+
+
+#### RU Wave 1 - First plot of data (colored: women represented with red and men represented with blue)
+```{r}
+# changing V: Let’s make size proportional to betweenness score
+# V(test_wave1ru)$size = betweenness(test_wave1ru, normalized = T, directed = TRUE) * 100 + 20  #after some trial and error
+
+#plot to see if it worked 
+plot(test_wave1ru,
+  vertex.color = ifelse(df_ego$female == 1, "red", "blue"),
+  vertex.label = NA,
+  edge.width = 0.2,
+  vertex.size = sqrt(igraph::degree(test_wave1ru))*3 + 5,
+  edge.arrow.size =0.2)
+
+dim(test_wave1ru) #check it works 
+sum(is.na(test_wave1ru)) #check it is complete -- if 0 missing values
+
+
+# how do I plot only the collaborations? 
+# test_wave1ru_collabs <- 
+
+```
+
+
+## Visualizing Networks - Radboud University Wave 2
+
+#### Make adjacency matrix for second wave of RU data
+```{r}
+test_wave2ru <- igraph::graph_from_adjacency_matrix(
+  test$nets[2,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+```
+
+
+#### RU Wave 2 - First plot of data (colored: women represented with red and men represented with blue)
+```{r}
+#V(test_wave2ru)$size = betweenness(test_wave2ru, normalized = T, directed = TRUE) * 100 + 8  #after some trial and error
+
+#plot to see if it worked 
+plot(test_wave2ru,
+  vertex.color = ifelse(df_ego$female == 1, "red", "blue"),
+  vertex.label = NA,
+  edge.width = 0.2,
+  vertex.size = sqrt(igraph::degree(test_wave2ru))*3 + 5,
+  edge.arrow.size =0.2)
+```
+
+
+
+## Descriptive Statistics 
+
+
+### Load Packages
+```{r}
+library(igraph)
+require(igraph)
+
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+packages <- c("devtools", "igraph")
+```
+
+
+### Size 
+```{r}
+#SIZE
+# number of nodes for RU professors - both sociology and political science 
+vcount(test_wave1ru) #returns 111
+vcount(test_wave2ru) #returns 111
+```
+
+
+### Edges
+```{r}
+#EDGES
+# number of edges for RU professors
+ecount(test_wave1ru) #returns 31
+ecount(test_wave2ru) #returns 85
+```
+
+
+### In-Degree Clustering and Spread
+```{r}
+#DEGREE
+# looking at clustering and spread
+igraph::degree(test_wave1ru)
+igraph::degree(test_wave2ru)
+
+
+hist(table(degree(test_wave1ru)), xlab='indegree', main= 'Histogram of indegree') 
+# every number is the degree level of each actor. We can see it is heavily skewed to the left. 
+# Wave 1: see frequency of 7 for indegree 0:20, frequency of 0 for indegree 20:80, frequency 1 for indegree 100:150
+
+hist(table(degree(test_wave2ru)), xlab='indegree', main= 'Histogram of indegree') 
+# Similarly, we can see that wave 2 is also heavily left skewed.  
+# Wave 2: see frequency of 8 for indegree 0:10, frequency of 2 for indegree 10:20, 0 for 20:50, 1 for 50:60. 
+```
+
+
+### Degree Centrality Wave 1
+```{r}
+#degree centrality w1 
+degree_w1 <- degree(test_wave1ru)
+degree_w1 <- as.data.frame(degree_w1)
+
+# view(degree_w1)
+ggplot(degree_w1, aes(as.numeric(degree_w1), colour = as.numeric(degree_w1) )) +
+  geom_histogram(binwidth = .5) +
+  labs(
+    title = "Distribution Degrees Wave 1",
+    x = "Distribution of Degrees",
+    y = "Count"
+  )  +
+  ylim(0, 150) +
+  theme_bw()
+```
+
+```{r}
+summary(degree_w1)
+```
+
+
+
+### Degree Centrality Wave 2
+```{r}
+#degree centrality w2 
+degree_w2 <- degree(test_wave2ru)
+degree_w2 <- as.data.frame(degree_w2)
+ggplot(degree_w2, aes(as.numeric(degree_w2), colour = as.numeric(degree_w2))) +
+  geom_histogram(binwidth = .5) +
+  labs(
+    title = "Distribution Degrees Wave 2",
+    x = "Distribution of Degrees",
+    y = "Count"
+  ) +
+  ylim(0, 150) +
+  theme_bw()
+```
+
+```{r}
+summary(degree_w2)
+```
+
+
+
+### Transitivity 
+
+
+### Dyad and Triad Census (for ref.)
+
+```{r}
+igraph::dyad_census(test_wave1ru) #with plot -- works 
+  # Returns: 4 mut, 23 asym, 6078 null 
+igraph::dyad_census(test_wave2ru) #with plot -- works
+  # Returns: 7 mut, 71 asym, 6027 null
+```
+
+
+
+### Triad census, transitivity and triad allegation (for ref.)
+
+**Triad Census**
+```{r}
+igraph::triad_census(test_wave1ru) #with plot -- works
+  # Returns:  [1] 218926   2422    416     10     14      8      9      6      1      0      1      0      0      1      1      0
+
+igraph::triad_census(test_wave2ru) #with plot -- works
+  # Returns:   [1] 213567   7306    709     25    106     41     34      6     10      1      0      1      4      2      2      1
+
+```
+
+
+**Transitivity and Triad Allegation**
+```{r}
+library(sna)
+
+# Wave 1
+sna::triad.census(test$nets[1,,]) #with adj matrix of test_wave1ru -- triad.census of (test_w1) doesn't work. 
+unloadNamespace("sna")  #detach this package again to avoid interference with other igraph functions 
+  # Returns:         003  012  102   021D 021U 021C 111D 111U 030T 030C 201 120D 120U 120C 210 300
+           # [1,] 218926 2422  416   10   14    8    9    6    1    0   1    0    0    1   1   0
+  # Same as igraph triad census! 
+
+
+igraph::transitivity(test_wave1ru, type = "global") #with plot
+  # Returns: [1] 0.1578947
+sna::gtrans(test$nets[1,,]) #triad census a different way, but this is with plot - need with adj mat:
+  # Returns: [1] 0.1515152
+
+triad_w1ru <- data.frame(sna::triad.census(test$nets[1,,])) #save as df, #with adj matrix
+transitivity_w1 <- (3 * triad_w1ru$X300)/(triad_w1ru$X201 + 3 * triad_w1ru$X300) #X300 is variable for transitive triad (the fully closed triad) - we multiply by 3 because there are 3 possible transitive triads
+transitivity_w1
+  # Returns 0 (?)
+
+
+# Wave 2
+sna::triad.census(test$nets[2,,])
+unloadNamespace("sna")  #I will detach this package again
+   # Returns: 003    012   102   021D  021U  021C  111D  111U  030T  030C 201  120D  120U 120C  210  300
+      # [1,] 213567  7306  709   25    106   41    34     6    10    1    0    1     4    2     2    1
+
+
+triad_w2ru <- data.frame(sna::triad.census(test$nets[2,,])) #save as df
+
+igraph::transitivity(test_wave2ru, type = "global")
+  # Returns: [1] 0.2290909
+sna::gtrans(test$nets[2,,]) #triad census a different way 
+  # Returns: [1] 0.2741935
+
+
+transitivity_w2 <- (3 * triad_w2ru$X300)/(triad_w2ru$X201 + 3 * triad_w2ru$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_w2
+  # Returns: [1] 1
+
+```
+
+
+
+
+
+
+----
+
+
+
+
+# Part 3: RSiena Analysis - Radboud Profs
+
+
+## Rsiena results
+
+
+### ansM1 - Looking at (net, female): isolateNet, inPop.c, and egoX of "female"
+``` {r}
+ #check this later tho
+mydata = sienaDataCreate(net, female) 
+myeff = getEffects(mydata)
+myeff = includeEffects(myeff, isolateNet, inPop.c)
+myeff = includeEffects(myeff, egoX, interaction1 = "female") # Independent variable under investigation
+
+# ONLY LOOKING AT FEMALE EFFECT FIRST - look at this in ansM3
+# myeff = includeEffects(myeff, egoX, interaction1 = "polsci") # Control for sociology vs political science departments
+
+# myeff = includeEffects(myeff, egoX, altX, diffX, interaction1 = "female") -- removing altX and diffX because they didn't help initial model at all! 
+
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "finalpaper_ru")
+
+ansM1 = siena07(
+    myAlgorithm, 
+    data = mydata, 
+    effects = myeff,
+    returnDeps = TRUE
+)
+
+ansM1
+
+```
+Estimates, standard errors and convergence t-ratios
+
+                                       Estimate   Standard   Convergence 
+                                                    Error      t-ratio   
+
+Rate parameters: 
+  0       Rate parameter                2.6776  ( 0.4955   )             
+
+Other parameters: 
+  1. eval outdegree (density)          -1.7542  ( 0.8515   )    0.2033   
+  2. eval reciprocity                   1.5298  ( 0.5151   )   -0.2035   
+  3. eval indegree-popularity (centrd)  0.4095  ( 0.0873   )    0.3796   
+  4. eval network-isolate               6.5281  ( 2.1119   )   -0.2386   
+  5. eval female ego                    2.0429  ( 1.4349   )   -0.0111   
+
+Overall maximum convergence ratio:    0.4158 
+
+
+
+
+
+### ansM2 - Looking at (net, female): isolateNet, inPop.c, and egoX and sameX of "female"
+```{r}
+mydata2 = sienaDataCreate(net, female) 
+myeff2 = getEffects(mydata2)
+myeff2 = includeEffects(myeff, isolateNet, inPop.c)
+myeff2 = includeEffects(myeff, egoX, sameX, interaction1 = "female") # better to include sameX too? 
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "finalpaper_ru")
+
+ansM2 = siena07(
+    myAlgorithm, 
+    data = mydata2, 
+    effects = myeff2,
+    returnDeps = TRUE
+)
+ansM2
+```
+Estimates, standard errors and convergence t-ratios
+
+                                       Estimate   Standard   Convergence 
+                                                    Error      t-ratio   
+
+Rate parameters: 
+  0       Rate parameter                2.7969  ( 0.5123   )             
+
+Other parameters: 
+  1. eval outdegree (density)          -2.0130  ( 1.0826   )    0.0848   
+  2. eval reciprocity                   1.4854  ( 0.4972   )   -0.0243   
+  3. eval indegree-popularity (centrd)  0.4111  ( 0.1205   )    0.2808   
+  4. eval network-isolate               6.6122  ( 2.6827   )    0.0217   
+  5. eval female ego                    2.0964  ( 1.7283   )   -0.0700   
+  6. eval same female                   0.4344  ( 0.2658   )   -0.0099   
+
+Overall maximum convergence ratio:    0.3302 
+
+
+
+
+### Primary RSiena Model - Looking at (net, female, polsci): isolateNet, inPop.c, and egoX and sameX of "female", and interaction with sameX, controlling for polsci
+
+```{r}
+mydata_main = sienaDataCreate(net, female, polsci) 
+myeff_main = getEffects(mydata_main)
+myeff_main = includeEffects(myeff_main, isolateNet, inPop.c)
+myeff_main = includeEffects(myeff_main, egoX, sameX, interaction1 = "female") # better to include sameX too? 
+
+myeff_main = includeEffects(myeff_main, egoX, interaction1 = "polsci") #controlling for the effect of this (not an active variable)
+
+
+myeff_main = includeInteraction(myeff_main, egoX, sameX, interaction1 = c("female", "female"))
+# we want to see if female professors are then more likely to collaborate with other female professors, looking at the effect of gender on collaboration - however, this interaction over controls for them. 
+
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "finalpaper_ru")
+
+ansM_main = siena07(
+    myAlgorithm, 
+    data = mydata_main, 
+    effects = myeff_main,
+    returnDeps = TRUE
+)
+
+ansM_main
+
+```
+Show in New Window
+Estimates, standard errors and convergence t-ratios
+
+                                       Estimate   Standard   Convergence 
+                                                    Error      t-ratio   
+
+Rate parameters: 
+  0       Rate parameter                2.8967  ( 0.5495   )             
+
+Other parameters: 
+  1. eval outdegree (density)          -2.5335  ( 0.7487   )    0.1562   
+  2. eval reciprocity                   1.7616  ( 0.4719   )   -0.0874   
+  3. eval indegree-popularity (centrd)  0.3812  ( 0.0680   )    0.3248   
+  4. eval network-isolate               6.5023  ( 2.0307   )   -0.0743   
+  5. eval female ego                    2.9438  ( 1.4583   )   -0.0975   
+  6. eval same female                   0.5749  ( 0.2722   )    0.0253   
+  7. eval polsci ego                   -1.5403  ( 0.7956   )    0.0315   
+  8. eval female ego x same female     -0.8323  ( 0.6125   )   -0.1709   
+
+Overall maximum convergence ratio:    0.3617 
+
+
+
+
+## GOODNESS OF FIT 
+
+### Create function
+```{r}
+# Note: The geodesic distribution is not available from within RSiena, and therefore is copied from the help page of sienaGOF-auxiliary. GeodesicDistribution calculates the distribution of non-directed geodesic distances; 
+
+GeodesicDistribution <- function(i, data, sims, period, groupName, varName, levls = c(1:5, Inf), cumulative = TRUE,
+    ...) {
+    x <- networkExtraction(i, data, sims, period, groupName, varName)
+    require(sna)
+    a <- sna::geodist(symmetrize(x))$gdist
+    if (cumulative) {
+        gdi <- sapply(levls, function(i) {
+            sum(a <= i)
+        })
+    } else {
+        gdi <- sapply(levls, function(i) {
+            sum(a == i)
+        })
+    }
+    names(gdi) <- as.character(levls)
+    gdi
+}
+```
+
+
+### GOF for ansM1
+
+#### Indegree:
+```{r}
+# The following function is taken from the help page for sienaTest -- use "ansM1"
+
+testall <- function(ansM_main) {
+    for (i in which(ansM_main$test)) {
+        sct <- score.Test(ansM_main, i)
+        cat(ansM_main$requestedEffects$effectName[i], "\n")
+        print(sct)
+    }
+    invisible(score.Test(ansM_main))
+}
+
+gofi0 <- sienaGOF(ansM_main, IndegreeDistribution, verbose = FALSE, join = TRUE, varName = "net")
+# gofi0
+plot(gofi0)
+
+# variable name from example = net
+# x-axis = indegree 
+# y-axis = frequency (plotting the people with 0 in-degrees)
+
+```
+
+
+#### Outdegree: 
+```{r}
+# outdegree distribution
+gofi1 <- sienaGOF(ansM_main, OutdegreeDistribution, verbose = FALSE, join = TRUE, varName = "net")
+plot(gofi1)
+```
+
+
+#### TriadCensus: 
+```{r}
+# triad census distribution
+gofi2 <- sienaGOF(ansM_main, TriadCensus, verbose = FALSE, join = TRUE, varName = "net")
+plot(gofi2)
+```
+
+
+
+
+## RELATIVE INFLUENCE 
+
+Relative Influence Analysis - RU profs 
+
+
+```{r}
+RI <- RSiena:::sienaRI(data = mydata2, ans = ansM2)
+
+RSiena:::plot.sienaRI(RI, addPieChart = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Supplementary research - Radboud University
+
+## Supplementary Data Manipulation for Cross Gender Collaborations
+
+Next, I would like to create a column added to the Radboud University dataframe (df_ego) that will track if each professor has participated in a cross-gender collaboration in wave 1 and in wave 2. To do so, I first will count the total collaborations in the Radboud professors social network. 
+
+Looking at mydata, I want to investigate the effect of female (male=0, female=1) over collaborations by RU professors. I also want to compare this effect to controls/statistics (egoX, sameX, etc.). To do this, I first will look at if professors have cross gender collaborations, and to count the total number of cross gender collaborations that take place in each wave. 
+
+Next, I will create a function to count the number of collaborations in wave 1 and wave 2 that happened with at least one male and one female. This will then support answering RESEARCH QUESTION 1, as it directly will answer the proportion of collaborations that happen with same gender professors at Radboud. When expanding this function to all universities, I will also be able to tell how it varies by university. 
+
+### Count total collaborations
+```{r}
+# Total number of collaboration ties in each wave
+total_ties_w1 <- sum(test$nets[1,,]) # 31 total ties in Wave 1, same as edges
+total_ties_w2 <- sum(test$nets[2,,]) # 85 total ties in Wave 2, same as edges 
+
+
+# Count total unique collaborations (both outgoing and incoming)
+df_ego$collab_total_w1 <- rowSums(test$nets[1,,]) # + colSums(test$nets[1,,])
+df_ego$collab_total_w2 <- rowSums(test$nets[2,,]) # + colSums(test$nets[2,,])
+
+sum(df_ego$collab_total_w1) # 31, confirmation that collaborations = edges 
+sum(df_ego$collab_total_w2) # 85 
+```
+This confirms the count of total collaborations as 31 for wave 1, and 85 for wave 2, the same total as indicated with "edges" in the descriptive statistics. I retrieve the count in a different way though, as I build on this function when I next count the number of cross-gender collaborations out of the total collaborations. 
+
+
+### Count cross gender ties in W1 and W2 
+To answer RESEARCH QUESTION 2.1, "What proportion of collaborations happen across gender?", I create a function that will count the number of cross gender collaborations. 
+
+
+### Count the number of collaborations that happened between different genders 
+```{r}
+# RQ1.1: Loop over network of who connects with whom, return count of different gender collaborations** 
+
+# Function to count cross-gender ties 
+count_xgen <- function(test, gender) {
+  edges <- which(test != 0, arr.ind = TRUE)
+  sum (
+    (gender[edges[,1]] == "female" & gender[edges[,2]] == "male") | 
+      (gender[edges[,1]] == "male" & gender[edges[,2]] == "female") 
+    )
+}
+
+# Wave 1
+valid_nodes_w1 <- which(!is.na(df_ego$gender))
+adj_w1_clean <- test$nets[1, valid_nodes_w1, valid_nodes_w1]
+discipline_w1_clean <- df_ego$gender[valid_nodes_w1]
+
+xgen_w1 <- count_xgen(adj_w1_clean, discipline_w1_clean)
+
+
+# Wave 2 -- swap w W1
+valid_nodes_w2 <- which(!is.na(df_ego$gender))
+adj_w2_clean <- test$nets[2, valid_nodes_w2, valid_nodes_w2]
+discipline_w2_clean <- df_ego$gender[valid_nodes_w2]
+
+xgen_w2 <- count_xgen(adj_w2_clean, discipline_w2_clean)
+
+
+#make summary table
+cross_gender_collabs_table <- data.frame(wave = c(1, 2), 
+                              cross_gender_ties = c(xgen_w1, xgen_w2))
+
+
+print(cross_gender_collabs_table)
+```
+wave    cross_gender_ties
+1     	10			
+2	      33	
+
+This table demonstrates the findings that 10 of the 31 collaborations in wave 1 of Radboud University political science and sociology professors happened in a collaboration with at least one male and one female. It also demonstrates that 33 out of 85 of the total collaborations in wave 2 happened with cross-gender collaboration. This indicates that not only did the amount of collaborations and the amount of cross-gender collaborations increase from wave 1 to wave 2, but that the proportion of cross-gender collaborations out of all of the collaborations also increased. 
+
+
+### Count the number of collaborations that happened between the same genders 
+Next, I use the same function structure to count the same gender ties. This will serve to answer the second part of RESEARCH QUESTION 2,  and will function as a double-check to confirm that the sum of the cross-gender and same-gender collaborations is equal to the total collaborations already accounted for with the number of edges/count of collabortions already found.
+```{r}
+# RQ1.2 REVERSE OF 1.1: Loop over network of who connects with whom, return if same gender or different gender** 
+
+# Function to count same-gender ties 
+count_same_gen <- function(test, gender) {
+  edges <- which(test != 0, arr.ind = TRUE)
+  sum (
+    (gender[edges[,1]] == "male" & gender[edges[,2]] == "male") | 
+      (gender[edges[,1]] == "female" & gender[edges[,2]] == "female") 
+    )
+}
+
+
+# Wave 1
+validnodesw1 <- which(!is.na(df_ego$gender))
+adjw1clean <- test$nets[1, validnodesw1, validnodesw1]
+disciplinew1clean <- df_ego$gender[validnodesw1]
+
+same_gen_w1 <- count_same_gen(adjw1clean, disciplinew1clean)
+
+# Wave 2 -- swap w W1
+validnodesw2 <- which(!is.na(df_ego$gender))
+adjw2clean <- test$nets[2, validnodesw2, validnodesw2]
+disciplinew2clean <- df_ego$gender[validnodesw2]
+
+same_gen_w2 <- count_same_gen(adjw2clean, disciplinew2clean)
+
+#make summary table
+same_gender_collabs_table <- data.frame(wave = c(1, 2), 
+                              same_gender_ties = c(same_gen_w1, same_gen_w2))
+
+print(same_gender_collabs_table)
+
+#same gender collaborations: 21 in wave 1, 52 in wave 2. 
+
+```
+wave    same_gender_ties
+1   	  21			
+2	      52	
+
+
+Confirmation: total number ties/edges/collaborations W1 = 31, 10 = xgen, 21 = same_gen
+              total number ties/edges/collaborations W2 = 85, 33 = xgen, 52 = same_gen
+
+
+This table demonstrates the findings that 21 of the 31 collaborations in Wave 1 happened with professors with the same gender at Radboud University. It also demonstrates that 52 out of 85 of the collaborations in wave 2 happened professors having the same gender. This indicates that same-gender collaborations remain the majority of collaborations that take place, however conversely to cross-gender collaborations, the proportion of same-gender collaborations decreases between wave 1 and wave 2. 
+
+
+
+## Counting the cross gender collaborations per professor
+Create column to count if each professor has participated in a collaboration with at least one male and one female.
+
+#### Create function to count if ego has collaborated with another gender professor, and apply to waves 1 and 2 
+```{r}
+# Make function to check if an ego has cross-gender collaborations
+has_cross_gender_collab <- function(wave_net, ego_idx, ego_gender, all_genders) {
+  # Get all collaborations for this ego (both outgoing and incoming)
+  outgoing <- which(wave_net[ego_idx, ] != 0)  # who ego collaborates with, identify ego gender 
+  incoming <- which(wave_net[, ego_idx] != 0)  # who collaborates with ego, identify collaborator/alter gender characteristic
+  all_collabs <- unique(c(outgoing, incoming))
+
+  # If no collaborations, return 0 - We are focused on the patterns with collaborations.
+  if (length(all_collabs) == 0) {
+    return(0)
+  }
+  
+  # Check if any collaborator has different gender: Go through each collaboration, then each collaborator that work, and if any of the collaborators have a different gender than the first ego, return value to represent this!
+  collab_genders <- all_genders[all_collabs]
+  has_xgen <- any(collab_genders != ego_gender) # & !is.na(collab_genders))
+  
+  return(as.integer(has_xgen))
+}
+
+
+
+# Next: 
+# Apply function to Wave 1: Count the cross-gender collaborations per ego in Wave 1
+df_ego$xgen_w1 <- sapply(1:nrow(df_ego), function(i) {
+  if (is.na(df_ego$gender[i])) {
+    return(NA)
+  }
+  has_cross_gender_collab(
+    wave_net = test$nets[1,,],
+    ego_idx = i,
+    ego_gender = df_ego$gender[i],
+    all_genders = df_ego$gender
+  )
+})
+
+
+
+# Apply function to Wave 2: Count the cross-gender collaborations per ego in Wave 2
+df_ego$xgen_w2 <- sapply(1:nrow(df_ego), function(i) {
+  if (is.na(df_ego$gender[i])) {
+    return(NA)
+  }
+  has_cross_gender_collab(
+    wave_net = test$nets[2,,],
+    ego_idx = i,
+    ego_gender = df_ego$gender[i],
+    all_genders = df_ego$gender
+  )
+})
+```
+
+
+
+**Next** 
+Results: Summary of the number of male and female professors who did and didn't participate in cross-gender collaborations
+
+
+### Total proportion of professors participating in cross-gender collaborations
+```{r}
+# See how many professors had cross-gender collabs in each wave
+summary_table <- data.frame(
+  wave = c("Wave 1", "Wave 2"),
+  profs_with_xgen = c(sum(df_ego$xgen_w1, na.rm = TRUE), 
+                      sum(df_ego$xgen_w2, na.rm = TRUE)),
+  profs_without_xgen = c(sum(df_ego$xgen_w1 == 0, na.rm = TRUE),
+                         sum(df_ego$xgen_w2 == 0, na.rm = TRUE))
+)
+print(summary_table)
+```
+Radboud Totals: 
+wave    profs_with_xgen     profs_without_xgen
+1	      12                	98		
+2	      31	                79	
+
+Proportions: 12/110 professors participated in cross-gender collaborations in wave 1, while 31/110 professors participated in cross-gender collaborations in wave 2. Looking at the number of professors participating in cross-gender collaborations, we can see that the proportion of professors participating in cross-gender collaborations increases between wave 1 and wave 2. 
+
+Disclaimer: As a reminder, the number of professors participating in cross-gender collaborations is different than the number of cross-gender collaborations altogether. It is understandable why the number of professors and ties will vary: the number of professors participating in a collaboration can vary, and so while the functions used may count "1" cross-gender collaboration, this cross-gender collaboration could include more than two authors, such that the number of professors participating in the cross-gender collaboration is higher than the count of cross gender collaborations. Alternatively, if the same male and female professors collaborate on multiple works, then the count of cross-gender collaborations will exceed the number of egos involved in the cross gender collaborations. 
+
+
+### Count/Compare number of ties and number of professors involved in ties 
+```{r}
+# Wave 1 analysis
+# 1. Count professors with at least one cross-gender collab
+profs_with_xgen_w1 <- sum(df_ego$xgen_w1 == 1, na.rm = TRUE) 
+profs_with_xgen_w1 # Counts 12 professors 
+
+# 2. Count total cross-gender ties in network
+total_xgen_ties_w1 <- xgen_w1  # from your count_xgen function: 
+total_xgen_ties_w1 #Counts 10 cross-gender ties 
+
+
+
+# Same for Wave 2
+profs_with_xgen_w2 <- sum(df_ego$xgen_w2 == 1, na.rm = TRUE)
+profs_with_xgen_w2 # Counts 31 professors 
+
+total_xgen_ties_w2 <- xgen_w2
+total_xgen_ties_w2 # Counts 33 cross-gender ties 
+
+```
+
+
+### Wave 1 Proportion of male and female professors participating in cross-gender collaborations
+```{r}
+# View summary
+table(df_ego$xgen_w1, df_ego$female, useNA = "ifany")
+ # count number of male and female professors who did and did not participate in x gender collaborations
+ # finds: Female: 49 = no xgen, 7 = xgen
+        # Male:   49 = no xgen, 5 = xgen
+```
+I find that 7 female professors participate in cross-gender collaborations and 49 female professors do not (including both the professors that collaborated with same gender and the professors that did not collaborate with anyone else) among political science and sociology professors at Radboud University during wave 1. Similarly, 5 male professors participate in cross-gender collaborations and 49 male professors do not, conveying similar proportion of participation in cross-gender collaboration by gender. 
+
+### Wave 2 Proportion of male and female professors participating in cross-gender collaborations
+```{r}
+table(df_ego$xgen_w2, df_ego$female, useNA = "ifany")
+ # count number of male and female professors who did and did not participate in x gender collaborations
+ # finds: Female: 37 = no xgen, 19 = xgen
+        # Male:   42 = no xgen, 12 = xgen
+```
+I find that 19 female professors participate in cross-gender collaborations and 37 female professors do not among political science and sociology professors at Radboud University during wave 2, while 12 male professors participate in cross-gender collaborations and 42 male professors do not. This demonstrates that a larger proportion of women participate in cross-gender collaborations than men. 
+
+These are preliminary findings though, and could be effected by discipline. As a result, we must account/control for discipline to better understand if differences in collaborations, and particularly cross-gender collaborations, vary per discipline. 
+
+### Wave 1 Gender/Discipline/Cross-gender collaborations table 
+```{r}
+xgen_by_gender_discipline <- df_ego %>%
+  filter(!is.na(female) & !is.na(xgen_w1) & !is.na(discipline.24)) %>%
+  group_by(discipline.24, female) %>%
+  summarise(
+    total_professors = n(),
+    with_xgen_collab = sum(xgen_w1 == 1, na.rm = TRUE),
+    without_xgen_collab = sum(xgen_w1 == 0, na.rm = TRUE),
+    proportion_with_xgen = round(sum(xgen_w1 == 1) / n() * 100, 2),
+    .groups = "drop"
+  ) %>%
+  arrange(discipline.24, female)
+
+print(xgen_by_gender_discipline)
+```
+
+The variables represented in the table are as follows: 
+-    Disciplines: Political science is referred to as "politicologie" while sociology is referred to as "sociologie" in this dataset. 
+-    Gender binary: As a reminder, females are denoted with a "1" while men are denoted with a "0". 
+
+In comparing the number of professors of political science and sociology at Radboud University that participated in cross-gender collaborations in wave 1, it becomes evident that while the same number of male and female professors participate in cross-gender collaborations from the political science discipline, more female than male professors in sociology participate in cross-gender collaborations. The statistical significance of these findings is difficult to establish with such a small sample size, which is why these methods will next be applied to all universities. 
+
+
+### Wave 1 Gender/Discipline/Cross-gender collaborations table - Chi-squared check.
+```{r}
+# Test if gender and discipline affect cross-gender collaboration rates
+# Create contingency table
+contingency_table <- df_ego %>%
+  filter(!is.na(female) & !is.na(xgen_w1) & !is.na(discipline.24)) %>%
+  count(discipline.24, female, xgen_w1) %>%
+  pivot_wider(names_from = xgen_w1, values_from = n, values_fill = 0)
+
+# Chi-square test for independence
+chisq.test(table(df_ego$female, df_ego$xgen_w1))
+chisq.test(table(df_ego$discipline.24, df_ego$xgen_w1))
+```
+Pearson's Chi-squared test with Yates' continuity correction for gender effect on cross-gender collaborations results in a preliminary finding of X-squared = 0.057193, df = 1, and a p-value of 0.811. This finding fails to reject the null hypothesis that female ego-level characteristic correlates with cross-gender collaborations. 
+
+Pearson's Chi-squared test with Yates' continuity correction for discipline effect on cross-gender collaborations results in a preliminary finding of X-squared = 4.4613, df = 1, and a p-value of 0.03467. This finding provides evidence to reject the null hypothesis that discipline does not have an effect on cross-gender collaborations.  
+
+
+### Wave 2 Gender/Discipline/Cross-gender collaborations table 
+```{r}
+xgen_by_gender_discipline2 <- df_ego %>%
+  filter(!is.na(female) & !is.na(xgen_w2) & !is.na(discipline.24)) %>%
+  group_by(discipline.24, female) %>%
+  summarise(
+    total_professors = n(),
+    with_xgen_collab = sum(xgen_w2 == 1, na.rm = TRUE),
+    without_xgen_collab = sum(xgen_w2 == 0, na.rm = TRUE),
+    proportion_with_xgen = round(sum(xgen_w2 == 1) / n() * 100, 2),
+    .groups = "drop"
+  ) %>%
+  arrange(discipline.24, female)
+
+print(xgen_by_gender_discipline2)
+```
+Comparing the number of professors that participated in cross-gender collaborations in wave 2, we see that while a similar number of male and female professors participate in cross-gender collaborations from the political science discipline, more female than male professors in sociology participate in cross-gender collaborations. Further, we see overall that sociology professors participate in cross-gender collaborations at a much higher amount and proportion compared to political science professors. The statistical significance of these findings is difficult to establish with such a small sample size, which is why these methods will next be applied to all universities. 
+
+### Wave 2 Gender/Discipline/Cross-gender collaborations table - Chi-squared check.
+```{r}
+contingency_table <- df_ego %>%
+  filter(!is.na(female) & !is.na(xgen_w2) & !is.na(discipline.24)) %>%
+  count(discipline.24, female, xgen_w2) %>%
+  pivot_wider(names_from = xgen_w2, values_from = n, values_fill = 0)
+
+# Chi-square test for independence
+chisq.test(table(df_ego$female, df_ego$xgen_w2))
+chisq.test(table(df_ego$discipline.24, df_ego$xgen_w2))
+```
+Pearson's Chi-squared test with Yates' continuity correction for gender effect on cross-gender collaborations results in a preliminary finding of X-squared = 1.3279, df = 1, and a p-value of 0.2492. This finding fails to reject the null hypothesis that female ego-level characteristic correlates with cross-gender collaborations. 
+
+Pearson's Chi-squared test with Yates' continuity correction for discipline effect on cross-gender collaborations results in a preliminary finding of X-squared = 8.9736, df = 1, and a p-value of 0.002739. This finding provides evidence to reject the null hypothesis that discipline does not have an effect on cross-gender collaborations. 
+
+
+### Create column to count the number of cross gender collaborations per professor
+```{r}
+# Count how many cross-gender collaborations each professor has
+df_ego$xgen_count_w1 <- sapply(1:nrow(df_ego), function(i) {
+  if (is.na(df_ego$gender[i])) return(NA)
+  
+  # Get ego's outgoing and incoming ties
+  outgoing <- which(test$nets[1,i,] != 0)
+  incoming <- which(test$nets[1,,i] != 0)
+  all_collabs <- unique(c(outgoing, incoming))
+  
+  # Count how many have different gender
+  if (length(all_collabs) == 0) return(0)
+  
+  sum(df_ego$gender[all_collabs] != df_ego$gender[i] & 
+      !is.na(df_ego$gender[all_collabs]))
+})
+
+df_ego$xgen_count_w2 <- sapply(1:nrow(df_ego), function(i) {
+  if (is.na(df_ego$gender[i])) return(NA)
+  
+  outgoing <- which(test$nets[2,i,] != 0)
+  incoming <- which(test$nets[2,,i] != 0)
+  all_collabs <- unique(c(outgoing, incoming))
+  
+  if (length(all_collabs) == 0) return(0)
+  
+  sum(df_ego$gender[all_collabs] != df_ego$gender[i] & 
+      !is.na(df_ego$gender[all_collabs]))
+})
+
+
+# Distribution of cross-gender collaborations
+table(df_ego$xgen_count_w1, useNA = "ifany")
+# Distribution in Wave 1: # of professors (bottom) with # of xgen collabs (top)
+#   0    1    2    3 <NA> 
+#  98    9    2    1    1 
+
+
+table(df_ego$xgen_count_w2, useNA = "ifany")
+# Distribution in Wave 1: # of professors (bottom) with # of xgen collabs (top)
+#   0    1    2    3    5    7 <NA> 
+#  79   16    9    3    2    1    1 
+
+# Summary statistics
+summary(df_ego$xgen_count_w1)
+summary(df_ego$xgen_count_w2)
+
+
+# MAKE COLUMN WITH THE NEW X GENDER COLLABORATIONS FORMED SINCE WAVE 1
+df_ego$xgen_count_new <- (df_ego$xgen_count_w2) - (df_ego$xgen_count_w1)
+
+```
+Lastly, I create a column to count the number of cross gender collaborations per professor, to better understand the distribution of cross-gender collaborations by professor. 
+
+
+
+
+----
+
+
+
+### Make new CoVariable - Cross Generation Collaboration
+```{r}
+# Wave 1
+xgen_w1 = coCovar(df_ego$xgen_w1)
+ # NAs make it difficult: since not "1", make "0": 
+
+df_ego$xgen_w1[is.na(df_ego$xgen_w1)] <- 0
+table(df_ego$xgen_w1) # make sure is right
+xgen_w1 = coCovar(df_ego$xgen_w1) #reset again just in case
+
+# and recode Wave 2 
+df_ego$xgen_w2[is.na(df_ego$xgen_w2) <- 0]
+xgen_w2 = coCovar(df_ego$xgen_w2)
+
+# matrix - variation of the two
+xgen_varying = varCovar(cbind(df_ego$xgen_w1, df_ego$xgen_w2))
+```
+
+
+
+
+### ansM4 - Looking at (net, female, xgen_w1): isolateNet, inPop.c, and egoX and sameX of "female", Compare with xgen_w1
+```{r, eval=FALSE}
+mydata4 = sienaDataCreate(net, female, xgen_w1) 
+myeff4 = getEffects(mydata4)
+myeff4 = includeEffects(myeff4, isolateNet, inPop.c)
+
+myeff4 = includeEffects(myeff4, egoX, sameX, interaction1 = "female")
+myeff4 = includeEffects(myeff4, egoX, interaction1 = "xgen_w1")
+
+myeff4 = includeInteraction(myeff4, egoX, egoX, interaction1 = c("female", "xgen_w1"))
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "finalpaper_ru")
+
+ansM4 = siena07(
+    myAlgorithm, 
+    data = mydata4, 
+    effects = myeff4,
+    returnDeps = TRUE
+)
+
+ansM4
+
+fsave(ansM4)
+```
+
+
+```{r}
+ansM4_load <- fload('data/processed/ansM4_20251031.rda')
+
+ansM4_load
+```
+Estimates, standard errors and convergence t-ratios
+
+                                       Estimate   Standard   Convergence 
+                                                    Error      t-ratio   
+
+Rate parameters: 
+  0       Rate parameter                2.7817  ( 0.5506   )             
+
+Other parameters: 
+  1. eval outdegree (density)          -1.8989  ( 0.7928   )    0.1299   
+  2. eval reciprocity                   1.6968  ( 0.5112   )   -0.0697   
+  3. eval indegree-popularity (centrd)  0.3995  ( 0.0650   )    0.3252   
+  4. eval network-isolate               6.3412  ( 1.8160   )   -0.1035   
+  5. eval female ego                    1.6089  ( 1.4444   )   -0.1207   
+  6. eval xgen_w1 ego                  -0.0535  ( 0.6632   )   -0.0078   
+  7. eval female ego x xgen_w1 ego      1.3680  ( 1.3069   )   -0.0304   
+
+Overall maximum convergence ratio:    0.3382 
+
+
+### ansM5 - Looking at (net, female, xgen_w2): isolateNet, inPop.c, and egoX and sameX of "female", Compare with xgen_w2
+```{r, eval=FALSE}
+mydata5 = sienaDataCreate(net, female, xgen_w2) 
+myeff5 = getEffects(mydata5)
+myeff5 = includeEffects(myeff5, isolateNet, inPop.c)
+
+myeff5 = includeEffects(myeff5, egoX, sameX, interaction1 = "female")
+myeff5 = includeEffects(myeff5, egoX, interaction1 = "xgen_w2")
+
+myeff5 = includeInteraction(myeff5, egoX, egoX, interaction1 = c("female", "xgen_w2"))
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "finalpaper_ru")
+
+ansM5 = siena07(
+    myAlgorithm, 
+    data = mydata5, 
+    effects = myeff5,
+    returnDeps = TRUE
+)
+
+ansM5
+fsave(ansM5)
+```
+
+```{r}
+ansM5_load <- fload('data/processed/ansM5_20251031.rda')
+
+ansM5_load
+```
+
+Estimates, standard errors and convergence t-ratios
+
+                                       Estimate   Standard   Convergence 
+                                                    Error      t-ratio   
+
+Rate parameters: 
+  0       Rate parameter                3.2685  ( 0.6659   )             
+
+Other parameters: 
+  1. eval outdegree (density)          -3.1810  ( 0.5869   )    0.1448   
+  2. eval reciprocity                   1.6180  ( 0.5015   )   -0.0585   
+  3. eval indegree-popularity (centrd)  0.3901  ( 0.0692   )    0.2838   
+  4. eval network-isolate               5.9564  ( 2.2973   )   -0.0727   
+  5. eval female ego                    0.0981  ( 0.8621   )   -0.0965   
+  6. eval same female                   0.4685  ( 0.2298   )    0.0760   
+  7. eval xgen_w2 ego                   1.9660  ( 0.7161   )    0.0176   
+  8. eval female ego x xgen_w2 ego      3.6691  ( 1.6910   )   -0.0964   
+
+Overall maximum convergence ratio:    0.3063 
+
+
+Total of 2863 iteration steps.
+
+Is the better of the two waves of cross-gender collaboration data. 
+
+
+
+### ansM6 - Looking at (net, female): isolateNet, inPop.c, and egoX and sameX of "female", Compare with polsci and varCovar "xgen_varying" of both xgen timeframes (difference from w1 to w2)
+
+```{r, eval=FALSE}
+mydata6 = sienaDataCreate(net, female) 
+myeff6 = getEffects(mydata6)
+myeff6 = includeEffects(myeff6, isolateNet, inPop.c)
+
+myeff6 = includeEffects(myeff6, egoX, sameX, interaction1 = "female")
+myeff6 = includeEffects(myeff6, egoX, interaction1 = "polsci")
+myeff6 = includeEffects(myeff6, egoX, interaction1 = "xgen_varying") # took a really long time? 
+
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "finalpaper_ru")
+
+ansM6 = siena07(
+    myAlgorithm, 
+    data = mydata6, 
+    effects = myeff6,
+    returnDeps = TRUE
+)
+
+ansM6
+fsave(ansM6)
+```
+
+
+```{r}
+ansM6_load <- fload('data/processed/ansM6_20251031.rda')
+
+ansM6_load
+```
+
+Estimates, standard errors and convergence t-ratios
+
+                                       Estimate   Standard   Convergence 
+                                                    Error      t-ratio   
+
+Rate parameters: 
+  0       Rate parameter                2.7328  ( 0.5124   )             
+
+Other parameters: 
+  1. eval outdegree (density)          -1.6350  ( 0.8571   )    0.2210   
+  2. eval reciprocity                   1.5251  ( 0.5142   )   -0.0646   
+  3. eval indegree-popularity (centrd)  0.4038  ( 0.0764   )    0.3387   
+  4. eval network-isolate               6.8822  ( 2.1717   )   -0.0812   
+  5. eval female ego                    2.2611  ( 1.5534   )   -0.0222   
+
+Overall maximum convergence ratio:    0.3665 
+
+
+## Final Rsiena Model -
+
+### ansM7 - Looking at (net, female, xgen_w2, polsci): isolateNet, inPop.c, and egoX and sameX of "female", Compare with polsci, xgen_w2, and female interaction with xgen_w2 collaborations (controlling for discipline)
+```{r, eval=FALSE}
+mydata7 = sienaDataCreate(net, female, xgen_w2, polsci) 
+myeff7 = getEffects(mydata7)
+myeff7 = includeEffects(myeff7, isolateNet, inPop.c)
+
+myeff7 = includeEffects(myeff7, egoX, sameX, interaction1 = "female")
+myeff7 = includeEffects(myeff7, egoX, interaction1 = "polsci") #do I need to include polsci in mydata7? 
+myeff7 = includeEffects(myeff7, egoX, interaction1 = "xgen_w2") # took a really long time? 
+myeff7 = includeInteraction(myeff7, egoX, egoX, interaction1 = c("female", "xgen_w2"))
+
+
+myAlgorithm = sienaAlgorithmCreate(
+    projname = "finalpaper_ru")
+
+ansM7 = siena07(
+    myAlgorithm, 
+    data = mydata7, 
+    effects = myeff7,
+    returnDeps = TRUE
+)
+
+ansM7
+
+fsave(ansM7)
+```
+
+
+```{r}
+ansM7_load <- fload('data/processed/ansM7_20251031.rda')
+
+ansM7_load
+```
+
+Estimates, standard errors and convergence t-ratios
+
+                                       Estimate   Standard   Convergence 
+                                                    Error      t-ratio   
+
+Rate parameters: 
+  0       Rate parameter                3.3314  ( 0.6744   )             
+
+Other parameters: 
+  1. eval outdegree (density)          -3.1895  ( 0.6194   )    0.0149   
+  2. eval reciprocity                   1.6653  ( 0.4639   )    0.0185   
+  3. eval indegree-popularity (centrd)  0.3810  ( 0.0715   )    0.2146   
+  4. eval network-isolate               5.9787  ( 2.5035   )    0.0494   
+  5. eval female ego                    0.2048  ( 0.8337   )   -0.0284   
+  6. eval same female                   0.4708  ( 0.2368   )   -0.0264   
+  7. eval xgen_w2 ego                   1.7380  ( 0.7486   )   -0.0663   
+  8. eval polsci ego                   -0.5145  ( 0.5828   )    0.0242   
+  9. eval female ego x xgen_w2 ego      3.6162  ( 1.8200   )   -0.0249   
+
+Overall maximum convergence ratio:    0.2779 
+
+
+Total of 2877 iteration steps.
+
+
+
+
+## RSiena results of ansM7
+
+**1**
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Random initialization of random number stream.
+Current random number seed is 996516.
+Effects object used: myeff7 
+Model Type:
+ Standard actor-oriented model 
+Estimation method: conditional moment estimation.
+Conditioning variable is the total number of observed changes ("distance") 
+in the network variable.
+Distance for simulations is   82 .
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  0. Rate parameter                           1.4926
+  1. eval:  outdegree (density)                            -1.5585
+  2. eval:  reciprocity                                     0.0000
+  3. eval:  indegree-popularity (centrd)                    0.0000
+  4. eval:  network-isolate                                 0.0000
+  5. eval:  female ego                                      0.0000
+  6. eval:  same female                                     0.0000
+  7. eval:  xgen_w2 ego                                     0.0000
+  8. eval:  polsci ego                                      0.0000
+  9. eval:  female ego x xgen_w2 ego                        0.0000
+
+
+Values of target statistics are
+  1. Number of ties                                                      85.0000
+  2. Number of reciprocated ties                                         14.0000
+  3. Sum of squared indegrees (centrd)                                  370.5856
+  4. Number of isolates                                                  56.0000
+  5. Sum outdegrees x female                                              3.7273
+  6. Same values on female                                               52.0000
+  7. Sum outdegrees x xgen_w2                                            34.0455
+  8. Sum outdegrees x polsci                                            -21.1171
+  9. female ego x xgen_w2 ego                                             8.4223
+These were calculated from the data.
+
+ 9 parameters, 9 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+**2**
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 2877 iterations.
+Parameter estimates based on 1877 iterations,
+basic rate parameter as well as 
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+  1.   0.1120   7.5273   0.0149 
+  2.   0.0860   4.6435   0.0185 
+  3.  93.6395 436.3598   0.2146 
+  4.   0.2350   4.7567   0.0494 
+  5.  -0.1656   5.8302  -0.0284 
+  6.  -0.1670   6.3360  -0.0264 
+  7.  -0.3535   5.3314  -0.0663 
+  8.   0.1125   4.6432   0.0242 
+  9.  -0.0649   2.6016  -0.0249 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  0.2779 .
+
+
+
+**2**
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 2877 iteration steps.
+
+
+@3
+Estimates and standard errors
+                             
+Rate parameters:
+ 0. Rate parameter                            3.3314  (   0.6744)
+
+Other parameters:
+ 1. eval:  outdegree (density)                                    -3.1895  (   0.6194)
+ 2. eval:  reciprocity                                             1.6653  (   0.4639)
+ 3. eval:  indegree-popularity (centrd)                            0.3810  (   0.0715)
+ 4. eval:  network-isolate                                         5.9787  (   2.5035)
+ 5. eval:  female ego                                              0.2048  (   0.8337)
+ 6. eval:  same female                                             0.4708  (   0.2368)
+ 7. eval:  xgen_w2 ego                                             1.7380  (   0.7486)
+ 8. eval:  polsci ego                                             -0.5145  (   0.5828)
+ 9. eval:  female ego x xgen_w2 ego                                3.6162  (   1.8200)
+
+
+
+
+This model converges with a maximum convergence ratio of 0.2779, and a rate parameter of 3.3314. There is a negative effect of density ('outdegree') at -3.1895, a positive effect of reciprocity at 1.6653, and a positive effect of in-degree popularity at 0.3810. All of these effects remain significant. 
+
+Further, effects of gender, discipline, and cross-gender collaborations are also included to analyze their impace on collaborations, including EgoX of female, polsci, and xgen_w2, sameX** (preference to working with the same gender) of female, and the interaction between gender and cross-gender collaborations. 
+
+Out of all of these effects introduced to estimate the effect of gender on collaborations, all except for the egoX effect of polsci (discipline qualifying as political science) appear significant. With this, there is evidence that 'female' has a positive effect on collaborations (and particularly collaborations with other females', that 'female' has a positive effect on cross-gender collaborations, and that the interaction of 'female' with cross-gender collaborations has a significant, positive, and relatively large effect (of 3.6162). Additionally, we see that 'female' has a negative effect on 'polsci', providing evidence that 'female' egos are less likely to collaborate in political science disciplines. 
+
+
+
+
+
+### GOF for ansM7
+
+#### Indegree:
+```{r}
+gofi_ansM7 <- sienaGOF(ansM7_load, IndegreeDistribution, verbose = FALSE, join = TRUE, varName = "net")
+
+plot(gofi_ansM7)
+```
+In this macro-level investigation, we look at the degree of spread over the numerous simulations performed in rseina based on the designated parameters. Then, in the above goodness of fit model, we do an in-degree count. With this, we can see 78 nodes in the observed network at 0 degrees, 93 nodes at 1 degree, and from there the number of nodes levels out from 101-109 nodes across 2-8 degrees. In comparing the red line of actual observations to the boxplot representing the degree of spread and the violin plot representing where the majority of data it, it is evident that this model underestimates the number of isolates and over estimates the number of actors with 3-6 ties, while underestimating the actors with few degrees. In short, we can see that this goodness of fit model underestimates at 0, overestimates between 1-5, and then evens out. 
+
+In testing with the p-value, we test a set of variables against a set of fixed values, combining it into one test that takes into account if there is covariance in the variables. Traditionally that could be done with a t-test, however as this includes a more complicated set of variables, we used the Monte Carlo Mahaloanobis distance test p-value. This renders: 
+
+
+#### Outdegree: 
+```{r}
+gofi_ansM7_2 <- sienaGOF(ansM7_load, OutdegreeDistribution, verbose = FALSE, join = TRUE, varName = "net")
+
+plot(gofi_ansM7_2)
+```
+We also will look at the goodness of fit of outdegree distribution. As observed in the above goodness of fit model, the outdegree count encounters the opposite over- and underestimation of nodes at their respective degrees as the goodness of fit for the indegree distribution.  With this, we can see 67 nodes in the observed network at 0 degrees (overestimated in the goodness of fit model), 84 nodes at 1 degree (overestimated even more than at 0 degrees), and from there the number of nodes levels out from 101-111 nodes across 2-8 degrees (underestimated in the model).
+
+
+#### Triad census: 
+```{r}
+gofi_ansM7_3 <- sienaGOF(ansM7_load, TriadCensus, verbose = FALSE, join = TRUE, varName = "net")
+
+plot(gofi_ansM7_3)
+```
+
+
+
+## RELATIVE INFLUENCE 
+
+ Relative influence with ansM7 -- can't include because of interaction. 
+```{r, eval=FALSE}
+RI_ansM7 <- RSiena:::sienaRI(data = mydata7, ans = ansM7)
+
+RSiena:::plot.sienaRI(RI_ansM7, addPieChart = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+----
+
+
+
+
+# Supplementary research - All Universities
+
+## Establish new test: 'test_all' for all universities (using fcolnet) and df_ego_all (bind data rows)
+```{r}
+# Load data for all universities
+scholars$demographics[[12]]
+
+test_all = fcolnet(scholars, 
+                university = c('RU', 'UU', 'UvG', 'UvA', 'VU', 'Leiden', 'EUR', 'UvT', 'NA'), # this is where I can expand to all universities to then run
+                discipline = c("Sociologie", "Politicologie"),
+                type = c("first")) 
+
+# test2 = fcolnet()
+
+df_ego_all = bind_rows(test_all$data)
+```
+
+
+### Wrangle Data Waves, make 'nets' (nets_all) and 'net' (net_all) function for all universities
+```{r}
+wave1_all = test_all$nets[1,,]
+wave2_all = test_all$nets[2,,]
+wave3_all = test_all$nets[3,,]
+
+nets_all = array(
+    data = c(wave1_all, wave2_all), # don't include wave 3 in final analysis 
+    dim = c(dim(wave2_all), 2)
+)
+
+net_all = sienaDependent(nets_all)
+```
+
+
+## Isolate Gender variable (binary)
+```{r}
+# Recoding for gender
+df_ego_all = df_ego_all |>
+    mutate(
+        female_all = case_when(
+            gender == "female" ~ 1,
+            gender == "male" ~ 0,
+            .default = NA 
+        )
+    )
+
+female_all = coCovar(df_ego_all$female_all) #CREATE GENDER CO VARIABLE
+
+female_all <- na.omit(df_ego_all$female_all) #remove NAs
+table(df_ego_all$female_all) #check they are gone
+
+female_all = coCovar(df_ego_all$female_all) # Now make coCovar again, with na.omit-ed data 
+
+```
+
+
+## Isolate disicipline variable 
+```{r}
+# Recoding for discipline
+df_ego_all = df_ego_all |>
+    mutate(
+        polsci_all = case_when(
+            discipline.22 == "Politicologie" ~ 1, #assume discipline remains the same?
+            discipline.22 == "Sociologie" ~ 0,
+            discipline.24 == "Politicologie" ~ 1, #assume discipline remains the same?
+            discipline.24 == "Sociologie" ~ 0,
+            discipline.25 == "Politicologie" ~ 1, #assume discipline remains the same?
+            discipline.25 == "Sociologie" ~ 0,
+            .default = NA
+        )
+    )
+
+table(df_ego_all$polsci_all) #check that there are no NAs
+
+polsci_all = coCovar(df_ego_all$polsci_all) #CREATE DISCIPLINE CO VAR
+```
+
+
+
+----
+
+
+
+# Preliminary Descriptives
+
+## Distribution of Gender for All Universities (Female = 1)
+```{r}
+summary(df_ego_all$female_all)
+```
+
+The distribution of gender appears relatively balanced, with a mean of 0.5006, indicating potentially slightly more women as professors, though remaining very close to .50, it is reasonable to assume that gender is equally distributed among professors across the Netherlands.  
+
+
+## Distribution of Discipline for All Universities in the Netherlands (Political Science = 1)
+```{r}
+summary(df_ego_all$polsci_all)
+```
+
+The distribution of discipline appears to slightly favor sociology, with a mean of 0.4232, indicating more sociology professors than political science professors. It is important to pay attention to this, even though the mean still remains somewhat close to .50. 
+
+
+## Distribution of Gender by Discipline for All Universities (from 2024)
+```{r}
+table(df_ego_all$female_all, df_ego_all$discipline.24, useNA = "ifany")
+```
+Noticeably, there are fewer women who are political science professors, with 19 more male professors than female professors, and there are more women who are sociology professors, with 12 more women professors than male professors. This is across universities in the Netherlands though, and with eight universities accounted for, the gender distribution could vary per university. I represent the difference in gender count by discipline with the table above, and I then visualize this in the bar graph below. I use the disciplines counted in 2024 as the latest count from the waves I studied. 
+
+
+## Plot Distribution of Gender by Discipline
+```{r}
+library(ggplot2)
+
+df_ego_all %>%
+  filter(!is.na(gender) & !is.na(discipline.24)) %>%
+  ggplot(aes(x = discipline.24, fill = gender)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Gender Distribution by Discipline",
+       x = "Discipline", 
+       y = "Count") +
+  theme_minimal()
+```
+
+
+
+
+
+
+----
+
+
+
+# Network Visualizations - All Professors
+## Visualizing Waves 1 and 2 for all universities
+
+### Make adjacency matrix for first wave of all_professors data
+```{r}
+# make adjacency matrix with first wave of data
+test_wave1_all <- igraph::graph_from_adjacency_matrix(
+  test_all$nets[1,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"), # directed from the first author
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+
+test_wave1_all
+```
+
+
+### All Professors Wave 1 - First plot of data (colored: women represented with red and men represented with blue)
+```{r}
+# changing V: Can make size proportional to betweenness score: V(test_wave1ru)$size = betweenness(test_wave1ru, normalized = T, directed = TRUE) * 100 + 20  #after some trial and error
+
+#plot to see if it worked 
+plot(test_wave1_all,
+  vertex.color = ifelse(df_ego_all$female_all == 1, "red", "blue"),
+  vertex.label = NA,
+  edge.width = 0.2,
+  vertex.size = sqrt(igraph::degree(test_wave1_all))*3 + 5,
+  edge.arrow.size =0.2)
+
+dim(test_wave1_all) #check it works 
+sum(is.na(test_wave1_all)) #check it is complete -- if 0 missing values
+
+
+# how do I plot only the collaborations? 
+# test_wave1ru_collabs <- 
+```
+
+
+### Make adjacency matrix for second wave of all_professors data
+```{r}
+test_wave2_all <- igraph::graph_from_adjacency_matrix(
+  test_all$nets[2,,], #for this example I take the first wave of data. (thus I select the array of networks and take the first matrix)
+  mode = c("directed"),
+  weighted = NULL,
+  diag = FALSE,
+  add.colnames = NULL,
+  add.rownames = NULL
+)
+```
+
+
+### All Professors Wave 2 - First plot of data (colored: women represented with red and men represented with blue)
+```{r}
+# V(test_wave2_all)$size = betweenness(test_wave2ru, normalized = T, directed = TRUE) * 100 + 8  #after some trial and error
+
+#plot to see if it worked 
+plot(test_wave2_all,
+  vertex.color = ifelse(df_ego_all$female_all == 1, "red", "blue"),
+  vertex.label = NA,
+  edge.width = 0.2,
+  vertex.size = sqrt(igraph::degree(test_wave2_all))*3 + 5,
+  edge.arrow.size =0.2)
+```
+
+
+
+
+
+----
+
+
+
+# Descriptive Statistics - All Universities 
+## NOW - LOOK AT DESCRIPTIVE STATISTICS FOR ALL PROFESSORS 
+
+### General 
+```{r}
+summary(df_ego_all$female_all)
+```
+We can see a fairly even distribution of men to women. 
+
+
+### Size - QUESTION, WHY IS VCOUNT LARGE?
+```{r}
+#SIZE
+# number of nodes for ALL university professors - both sociology and political science 
+vcount(test_wave1_all) #returns 794
+vcount(test_wave2_all) #returns 794
+
+#SIZE - for reference
+# number of nodes for all professors
+#vcount(test_w1) #returns 674
+#vcount(test_w2) #returns 674
+```
+
+
+### Edges
+```{r}
+#EDGES
+# number of edges for RU professors
+ecount(test_wave1_all) #returns 292
+ecount(test_wave2_all) #returns 539
+```
+
+
+### Degree
+```{r}
+#DEGREE
+# looking at clustering and spread
+igraph::degree(test_wave1_all)
+igraph::degree(test_wave2_all)
+
+
+hist(table(degree(test_wave1_all)), xlab='indegree', main= 'Histogram of indegree') 
+# every number is the degree level of each actor -- and see it is heavily skewed to the left
+# Wave 1: see frequency of 10 for indegree 0:100, frequency of 0 for indegree 100:500, frequency 1 for indegree 500:650
+
+hist(table(degree(test_wave2_all)), xlab='indegree', main= 'Histogram of indegree') # every number is the degree level of each actor -- and see it is heavily left skewed too  
+# Wave 2: see frequency of 10 for indegree 0:100, frequency of 2 for indegree 100:200, 0 for 200:300, 1 for 300:400
+```
+
+
+### Degree Centrality W1 - Wave 1 (distribution of degrees plot)
+```{r}
+#degree centrality w1 
+degree_w1_all <- degree(test_wave1_all)
+degree_w1_all <- as.data.frame(degree_w1_all)
+# view(degree_w1)
+ggplot(degree_w1_all, aes(as.numeric(degree_w1_all), colour = as.numeric(degree_w1_all) )) +
+  geom_histogram(binwidth = .5) +
+  labs(
+    title = "Distribution Degrees Wave 1",
+    x = "Distribution of Degrees",
+    y = "Count"
+  )  +
+  ylim(0, 150) +
+  theme_bw()
+```
+
+
+### Degree Centrality W2 - Wave 2 (distribution of degrees plot)
+```{r}
+#degree centrality w2 
+degree_w2_all <- degree(test_wave2_all)
+degree_w2_all <- as.data.frame(degree_w2_all)
+ggplot(degree_w2_all, aes(as.numeric(degree_w2_all), colour = as.numeric(degree_w2_all))) +
+  geom_histogram(binwidth = .5) +
+  labs(
+    title = "Distribution Degrees Wave 2",
+    x = "Distribution of Degrees",
+    y = "Count"
+  ) +
+  ylim(0, 150) +
+  theme_bw()
+```
+
+
+
+### Transitivity
+Note: Transitivity is not a main focus for this research, as we focus on the effect of gender in collaborations rather than XXX.
+```{r}
+#TRANSITIVITY -- all of these return "NAN" -- check?
+#ALSO: DIRECTED/UNDIRECTED FOR DATA?
+
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+## FLAG - ERROR WITH THIS - NOT ABLE TO REALLY USE/VIEW RESULTS
+igraph::transitivity(test_wave1_all, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+igraph::transitivity(test_wave2_all, type = c("localundirected"), isolates = c("NaN", "zero")) #differences pop out less 
+
+#BETWEENNESS
+# directed: be aware that directed graphs are considered as undirected. CHECK IF TEST_W1 AND 2 ARE DIRECTED OR UNDIRECTED.
+igraph::transitivity(test_wave1_all, type = c("localundirected"), isolates = c("NaN", "zero"))
+igraph::transitivity(test_wave2_all, type = c("localundirected"), isolates = c("NaN", "zero"))
+
+#TRANSITIVITY HISTOGRAMS - 
+hist(table(transitivity(test_wave1_all, type = c("localundirected"), isolates = c("NaN", "zero"))))
+hist(table(transitivity(test_wave2_all, type = c("localundirected"), isolates = c("NaN", "zero"))))
+
+```
+
+
+
+### Dyad and Triad Census (for ref.)
+Moving from local to global transitivity 
+-   Look at triads for more global transitivity. 
+-   Note: Global = number of observed over possible - can identify all transitive triads and all possible triads 
+-   Reviewing dyads - then triads. Undirected is less difficult to calculate. 
+
+```{r}
+# plot: igraph - XX <- make_graph(y) <- test$nets[1,,] ??
+# adj mat: XX <- as_adj_matrix((plot), type = "both", sparse = FALSE) -- adj mat = test_w1 =  test$nets[1,,]
+
+
+igraph::dyad_census(test_wave1_all) #with plot -- works 
+  # Returns: 42 mut, 208 asym, 314571 null 
+igraph::dyad_census(test_wave2_all) #with plot -- works
+  # Returns: 56 mut, 427 asym, 314338 null 
+
+
+igraph::triad_census(test_wave1_all) #with plot -- works
+  # Returns:  [1] 82915337   163800  33053  93  122   129   87  69  18   0   15   7   5   5   4   0
+
+igraph::triad_census(test_wave2_all) #with plot -- works
+  # Returns:   [1] 82731511   335978  44046  155   457   267  161   65   45   1   10   16   12   10   8   2
+
+```
+
+
+### Triad census, transitivity and triad allegation (for ref.)
+-   Now, looking at triad census vs triad allegation. Not essential to research, but interesting to consider.
+```{r}
+igraph::transitivity(test_wave1_all, type = "global") #with plot
+  # Returns: [1] 0.1851266
+sna::gtrans(test_all$nets[1,,]) #triad census a different way, but this is with plot - need with adj mat:
+  # Returns: [1] 0.1520619
+
+triad_w1_all <- data.frame(sna::triad.census(test_all$nets[1,,])) #save as df, #with adj matrix
+transitivity_w1_all <- (3 * triad_w1_all$X300)/(triad_w1_all$X201 + 3 * triad_w1_all$X300) #X300 is variable for transitive triad (the fully closed triad) - we multiply by 3 because there are 3 possible transitive triads
+transitivity_w1_all
+  # Returns 0 (?)
+
+
+# Wave 2
+igraph::transitivity(test_wave2_all, type = "global")
+  # Returns: [1] 0.2018611
+sna::gtrans(test_all$nets[2,,]) #triad census a different way 
+  # Returns: [1] 0.2127352
+
+triad_w2_all <- data.frame(sna::triad.census(test_all$nets[2,,])) #save as df
+transitivity_w2_all <- (3 * triad_w2_all$X300)/(triad_w2_all$X201 + 3 * triad_w2_all$X300) #X300 is variable for transitive triad (the fully closed triad)
+# we multiply by 3 because there are 3 possible transitive triads
+transitivity_w2_all
+  # Returns: [1] 0.375
+
+```
+
+
+
+
+
+
+----
+
+
+
+
+# Supplementary Data Manipulation for Cross Gender Collaborations
+
+## Count total collaborations
+```{r}
+# Total number of collaboration ties in each wave
+total_ties_w1_all <- sum(test_all$nets[1,,]) # 292 total ties in Wave 1, same as edges
+total_ties_w2_all <- sum(test_all$nets[2,,]) # 542 total ties in Wave 2, same as edges 
+
+
+# Count total unique collaborations (both outgoing and incoming)
+df_ego_all$collab_total_w1 <- rowSums(test_all$nets[1,,]) # + colSums(test$nets[1,,])
+df_ego_all$collab_total_w2 <- rowSums(test_all$nets[2,,]) # + colSums(test$nets[2,,])
+
+sum(df_ego_all$collab_total_w1) # 292, confirmation that collaborations = edges 
+sum(df_ego_all$collab_total_w2) # 542 
+```
+
+
+## Count cross gender ties in W1 and W2 
+Looking at my data - specifically the effect of female (male=0, female=1) over collaborations by RU professors. I also want to compare this effect to controls/statistics (egoX, sameX, etc.). Looking at IF PEOPLE HAVE CROSS GENDER COLLABS.
+
+### Count the number of collaborations that happened between different genders 
+```{r}
+# Use same count function (to count cross-gender ties) as before! 
+
+#count_xgen <- function(test, gender) {
+#  edges <- which(test != 0, arr.ind = TRUE)
+#  sum (
+#    (gender[edges[,1]] == "female" & gender[edges[,2]] == "male") | 
+#      (gender[edges[,1]] == "male" & gender[edges[,2]] == "female") 
+#    )
+#}
+
+# Wave 1
+valid_nodes_w1_all <- which(!is.na(df_ego_all$gender))
+adj_w1_clean_all <- test_all$nets[1, valid_nodes_w1_all, valid_nodes_w1_all]
+discipline_w1_clean_all <- df_ego_all$gender[valid_nodes_w1_all]
+
+xgen_w1_all <- count_xgen(adj_w1_clean_all, discipline_w1_clean_all)
+
+
+# Wave 2 -- swap w W1
+valid_nodes_w2_all <- which(!is.na(df_ego_all$gender))
+adj_w2_clean_all <- test_all$nets[2, valid_nodes_w2_all, valid_nodes_w2_all]
+discipline_w2_clean_all <- df_ego_all$gender[valid_nodes_w2_all]
+
+xgen_w2_all <- count_xgen(adj_w2_clean_all, discipline_w2_clean_all)
+
+
+#make summary table
+cross_gender_collabs_table_all <- data.frame(wave = c(1, 2), 
+                              cross_gender_ties = c(xgen_w1_all, xgen_w2_all))
+
+
+print(cross_gender_collabs_table_all)
+```
+wave    cross_gender_ties
+1     	113			
+2	      232	
+
+
+
+### Count the number of collaborations that happened between the same genders 
+Same gender ties 
+```{r}
+# Use same count function (to count same-gender ties) as before! 
+
+#count_same_gen <- function(test, gender) {
+#  edges <- which(test != 0, arr.ind = TRUE)
+#  sum (
+#    (gender[edges[,1]] == "male" & gender[edges[,2]] == "male") | 
+#      (gender[edges[,1]] == "female" & gender[edges[,2]] == "female") 
+#    )
+#}
+
+
+# Wave 1
+validnodesw1_all <- which(!is.na(df_ego_all$gender))
+adjw1clean_all <- test_all$nets[1, validnodesw1_all, validnodesw1_all]
+disciplinew1clean_all <- df_ego_all$gender[validnodesw1_all]
+
+same_gen_w1_all <- count_same_gen(adjw1clean_all, disciplinew1clean_all)
+
+# Wave 2 -- swap w W1
+validnodesw2_all <- which(!is.na(df_ego_all$gender))
+adjw2clean_all <- test_all$nets[2, validnodesw2_all, validnodesw2_all]
+disciplinew2clean_all <- df_ego_all$gender[validnodesw2_all]
+
+same_gen_w2_all <- count_same_gen(adjw2clean_all, disciplinew2clean_all)
+
+#make summary table
+same_gender_collabs_table_all <- data.frame(wave = c(1, 2), 
+                              same_gender_ties = c(same_gen_w1_all, same_gen_w2_all))
+
+print(same_gender_collabs_table_all)
+
+#same gender collaborations: 177 in wave 1, 307 in wave 2. 
+
+```
+wave    same_gender_ties
+1   	  177			
+2	      307	
+
+
+Confirmation: total number ties/edges/collaborations W1 = 292; 113 = xgen, 177 = same_gen
+              total number ties/edges/collaborations W2 = 542; 232 = xgen, 307 = same_gen
+
+
+## Create column to count the number of cross gender collaborations per professor
+
+### Create function to count if ego has collaborated with another gender professor (if have done xgen collab)
+```{r}
+# Use the same cross-gender collab function as before 
+
+#has_cross_gender_collab <- function(wave_net, ego_idx, ego_gender, all_genders) {
+#  # Get all collaborations for this ego (both outgoing and incoming)
+#  outgoing <- which(wave_net[ego_idx, ] != 0)  # who ego collaborates with
+#  incoming <- which(wave_net[, ego_idx] != 0)  # who collaborates with ego
+#  all_collabs <- unique(c(outgoing, incoming))
+
+#  # If no collaborations, return 0
+#  if (length(all_collabs) == 0) {
+#    return(0)
+#  }
+  
+#  # Check if any collaborator has different gender
+#  collab_genders <- all_genders[all_collabs]
+#  has_xgen <- any(collab_genders != ego_gender) # & !is.na(collab_genders))
+  
+#  return(as.integer(has_xgen))
+#}
+
+
+
+# Apply function to Wave 1_all
+df_ego_all$xgen_w1_all <- sapply(1:nrow(df_ego_all), function(i) {
+  if (is.na(df_ego_all$gender[i])) {
+    return(NA)
+  }
+  has_cross_gender_collab(
+    wave_net = test_all$nets[1,,],
+    ego_idx = i,
+    ego_gender = df_ego_all$gender[i],
+    all_genders = df_ego_all$gender
+  )
+})
+
+
+
+# Apply to Wave 2
+df_ego_all$xgen_w2_all <- sapply(1:nrow(df_ego_all), function(i) {
+  if (is.na(df_ego_all$gender[i])) {
+    return(NA)
+  }
+  has_cross_gender_collab(
+    wave_net = test_all$nets[2,,],
+    ego_idx = i,
+    ego_gender = df_ego_all$gender[i],
+    all_genders = df_ego_all$gender
+  )
+})
+
+
+
+# View summary
+table(df_ego_all$xgen_w1_all, df_ego_all$gender, useNA = "ifany")
+ # count number of male and female professors who did and did not participate in x gender collaborations
+ # finds: Female: 324 = no xgen, 69 = xgen
+        # Male:   336 = no xgen, 56 = xgen
+table(df_ego_all$xgen_w2_all, df_ego_all$gender, useNA = "ifany")
+ # count number of male and female professors who did and did not participate in x gender collaborations
+ # finds: Female: 265 = no xgen, 129 = xgen
+        # Male:   280 = no xgen, 112 = xgen
+
+
+# See how many professors had cross-gender collabs in each wave
+summary_table_all <- data.frame(
+  wave = c("Wave 1", "Wave 2"),
+  profs_with_xgen_all = c(sum(df_ego_all$xgen_w1_all, na.rm = TRUE), 
+                      sum(df_ego_all$xgen_w2_all, na.rm = TRUE)),
+  profs_without_xgen_all = c(sum(df_ego_all$xgen_w1_all == 0, na.rm = TRUE),
+                         sum(df_ego_all$xgen_w2_all == 0, na.rm = TRUE))
+)
+print(summary_table_all)
+```
+Radboud Totals: 
+wave    profs_with_xgen     profs_without_xgen
+1	      125                	660		
+2	      241	                545	
+
+
+### Count/Compare number of ties and number of professors involved in ties -- exclude from this section??!
+```{r}
+# Wave 1 analysis
+# 1. Count professors with at least one cross-gender collab
+profs_with_xgen_w1_all <- sum(df_ego_all$xgen_w1_all == 1, na.rm = TRUE) 
+profs_with_xgen_w1_all # Counts 125 professors 
+
+# 2. Count total cross-gender ties in network
+total_xgen_ties_w1_all <- xgen_w1_all  # from your count_xgen function: 
+total_xgen_ties_w1_all #Counts 113 cross-gender ties 
+
+
+
+# Same for Wave 2
+profs_with_xgen_w2_all <- sum(df_ego_all$xgen_w2_all == 1, na.rm = TRUE)
+profs_with_xgen_w2_all # Counts 241 professors 
+
+total_xgen_ties_w2_all <- xgen_w2_all
+total_xgen_ties_w2_all # Counts 232 cross-gender ties 
+
+```
+It is understandable why the number of professors and ties will vary: it is likely that a collaboration (academic work, article, etc) could have more than one author, such as three authors, with one female and two males, such that then the count of cross gender ties would be 2 (out of the three). Alternatively, if the three authors were all female, there would be 0. If there were just 2 authors, one male and one female, then it would only be 1 cross gender tie. 
+
+
+### Create column to count the number of cross gender collaborations per professor
+```{r}
+# Count how many cross-gender collaborations each professor has
+df_ego_all$xgen_count_w1_all <- sapply(1:nrow(df_ego_all), function(i) {
+  if (is.na(df_ego_all$gender[i])) return(NA)
+  
+  # Get ego's outgoing and incoming ties
+  outgoing <- which(test_all$nets[1,i,] != 0)
+  incoming <- which(test_all$nets[1,,i] != 0)
+  all_collabs <- unique(c(outgoing, incoming))
+  
+  # Count how many have different gender
+  if (length(all_collabs) == 0) return(0)
+  
+  sum(df_ego_all$gender[all_collabs] != df_ego_all$gender[i] & 
+      !is.na(df_ego_all$gender[all_collabs]))
+})
+
+df_ego_all$xgen_count_w2_all <- sapply(1:nrow(df_ego_all), function(i) {
+  if (is.na(df_ego_all$gender[i])) return(NA)
+  
+  outgoing <- which(test_all$nets[2,i,] != 0)
+  incoming <- which(test_all$nets[2,,i] != 0)
+  all_collabs <- unique(c(outgoing, incoming))
+  
+  if (length(all_collabs) == 0) return(0)
+  
+  sum(df_ego_all$gender[all_collabs] != df_ego_all$gender[i] & 
+      !is.na(df_ego_all$gender[all_collabs]))
+})
+
+
+# Distribution of cross-gender collaborations
+table(df_ego_all$xgen_count_w1_all, useNA = "ifany")
+# Distribution in Wave 1: # of professors (bottom) with # of xgen collabs (top)
+#   0    1    2    3    4    5    6 <NA> 
+#  662   80   30   11   2    1    1    7 
+
+
+table(df_ego_all$xgen_count_w2_all, useNA = "ifany")
+# Distribution in Wave 1: # of professors (bottom) with # of xgen collabs (top)
+#    0    1    2    3    4    5    7    8  <NA> 
+#  546  136   68   26    4    5    1    1    7
+
+# Summary statistics
+summary(df_ego_all$xgen_count_w1_all)
+summary(df_ego_all$xgen_count_w2_all)
+
+
+# MAKE COLUMN WITH THE NEW X GENDER COLLABORATIONS FORMED SINCE WAVE 1
+df_ego_all$xgen_count_new_all <- (df_ego_all$xgen_count_w2_all) - (df_ego_all$xgen_count_w1_all)
+
+```
+
+
+
+
+----
+
+
+
+
+# RSiena Analysis - All Universities
+
+
+### ansM1
+``` {r eval=FALSE}
+mydata_all = sienaDataCreate(net_all, female_all)
+myeff_all = getEffects(mydata_all)
+myeff_all = includeEffects(myeff_all, isolateNet, inPop.c) 
+myeff_all = includeEffects(myeff_all, egoX, interaction1 = "female_all") # Independent variable under investigation
+
+
+# ONLY LOOKING AT FEMALE EFFECT FIRST - look at this in ansM3
+# myeff = includeEffects(myeff, egoX, interaction1 = "polsci") # Control for sociology vs political science departments
+
+# myeff = includeEffects(myeff, egoX, altX, diffX, interaction1 = "female") -- removing altX and diffX because they didn't help initial model at all! 
+
+
+#myAlgorithm = sienaAlgorithmCreate(
+#    projname = "finalpaper_all", 
+#    maxDegree = c(net_all = 50))
+
+#ansM1_all = siena07(
+#    myAlgorithm, 
+#    data = mydata_all, 
+#    effects = myeff_all,
+#    returnDeps = TRUE
+#)
+
+ansM1_all
+
+```
+
+
+
+
+# GOODNESS OF FIT FOR ALL UNI'S
+
+```{r, eval=FALSE}
+GeodesicDistribution <- function(i, data, sims, period, groupName, varName, levls = c(1:5, Inf), cumulative = TRUE,
+    ...) {
+    x <- networkExtraction(i, data, sims, period, groupName, varName)
+    require(sna)
+    a <- sna::geodist(symmetrize(x))$gdist
+    if (cumulative) {
+        gdi <- sapply(levls, function(i) {
+            sum(a <= i)
+        })
+    } else {
+        gdi <- sapply(levls, function(i) {
+            sum(a == i)
+        })
+    }
+    names(gdi) <- as.character(levls)
+    gdi
+}
+
+# The following function is taken from the help page for sienaTest -- use "ansM2"
+
+#testall_all <- function(ansM1_all) {
+#    for (i in which(ansM1_all$test_all)) {
+#        sct <- score.Test(ansM1_all, i)
+#        cat(ansM1_all$requestedEffects$effectName[i], "\n")
+#        print(sct)
+#    }
+#    invisible(score.Test(ansM1_all))
+#}
+```
+
+
+# First GOF model  
+
+```{r, eval=FALSE}
+#gofi_all <- sienaGOF(ansM1_all, IndegreeDistribution, verbose = FALSE, join = TRUE, varName = "net_all")
+##gofi_all
+#plot(gofi_all)
+
+# variable name from example = net
+# x-axis = indegree 
+# y-axis = frequency (plotting the people with 0 in-degrees)
+
+```
+
+
+# TBD: outdegree distribution
+
+```{r, eval=FALSE}
+
+#gofi_all2 <- sienaGOF(ansM1_all, OutdegreeDistribution, verbose = FALSE, join = TRUE, varName = "gender")
+
+# gofi1 <- sienaGOF(ansM1, OutdegreeDistribution, verbose = FALSE, join = TRUE, levls = c(0:10, 15, 20), varname = "net")
+
+```
+
+
+
+# RELATIVE INFLUENCE 
+
+```{r, eval=FALSE}
+#RI_all <- RSiena:::sienaRI(data = mydata_all, ans = ansM1_all)
+
+#class(RI_all)
+
+#RSiena:::plot.sienaRI(RI_all, addPieChart = TRUE)
+```
+
+
+

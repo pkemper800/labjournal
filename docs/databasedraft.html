@@ -358,32 +358,11 @@ div.tocify {
     <li>
       <a href="lab4.html">Page 4</a>
     </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Assignments
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="assignment1.html">Assignment 1</a>
-    </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Research
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="researchquestions.html">Research Questions</a>
+      <a href="lab5.html">Page 5</a>
     </li>
     <li>
-      <a href="databasedraft.html">Developing Database</a>
+      <a href="lab6.html">Page 6</a>
     </li>
   </ul>
 </li>
@@ -396,6 +375,63 @@ div.tocify {
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="codereview.html">codereview</a>
+    </li>
+    <li>
+      <a href="codereview2.html">codereview2</a>
+    </li>
+    <li>
+      <a href="codereview3.html">codereview3</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    rsiena
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="rsiena.html">rsiena</a>
+    </li>
+    <li>
+      <a href="rsiena2.html">rsiena2</a>
+    </li>
+    <li>
+      <a href="gof.html">gof</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Research Progress
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="researchquestions.html">Preliminary Research Questions</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Final Report
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="finalpaper.html">Introdution and Theory</a>
+    </li>
+    <li>
+      <a href="datamethods.html">Data and Methods: Preparation, Descriptive Statistics, RSiena Models and Results</a>
+    </li>
+    <li>
+      <a href="conclusion.html">Discussion and Conclusion</a>
+    </li>
+    <li>
+      <a href="supplementary.html">Next Steps</a>
     </li>
   </ul>
 </li>
@@ -433,35 +469,29 @@ div.tocify {
 </div>
 
 
-<div id="r-markdown" class="section level2" number="1">
-<h2><span class="header-section-number">1</span> R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting
-syntax for authoring HTML, PDF, and MS Word documents. For more details
-on using R Markdown see <a href="http://rmarkdown.rstudio.com"
-class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be
-generated that includes both content as well as the output of any
-embedded R code chunks within the document. You can embed an R code
-chunk like this:</p>
-<pre class="r"><code>summary(cars)</code></pre>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
-</div>
-<div id="including-plots" class="section level2" number="2">
-<h2><span class="header-section-number">2</span> Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="databasedraft_files/figure-html/pressure-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the
-code chunk to prevent printing of the R code that generated the
-plot.</p>
-</div>
+<pre class="r"><code>library(knitr)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  comment = &quot;#&gt;&quot;,
+  cache = TRUE
+)
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRldmVsb3BpbmcgRGF0YWJhc2UiDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQpkYXRlOiAiMjAyNS0wOS0yNSINCm91dHB1dDogaHRtbF9kb2N1bWVudA0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCiMjIFIgTWFya2Rvd24NCg0KVGhpcyBpcyBhbiBSIE1hcmtkb3duIGRvY3VtZW50LiBNYXJrZG93biBpcyBhIHNpbXBsZSBmb3JtYXR0aW5nIHN5bnRheCBmb3IgYXV0aG9yaW5nIEhUTUwsIFBERiwgYW5kIE1TIFdvcmQgZG9jdW1lbnRzLiBGb3IgbW9yZSBkZXRhaWxzIG9uIHVzaW5nIFIgTWFya2Rvd24gc2VlIDxodHRwOi8vcm1hcmtkb3duLnJzdHVkaW8uY29tPi4NCg0KV2hlbiB5b3UgY2xpY2sgdGhlICoqS25pdCoqIGJ1dHRvbiBhIGRvY3VtZW50IHdpbGwgYmUgZ2VuZXJhdGVkIHRoYXQgaW5jbHVkZXMgYm90aCBjb250ZW50IGFzIHdlbGwgYXMgdGhlIG91dHB1dCBvZiBhbnkgZW1iZWRkZWQgUiBjb2RlIGNodW5rcyB3aXRoaW4gdGhlIGRvY3VtZW50LiBZb3UgY2FuIGVtYmVkIGFuIFIgY29kZSBjaHVuayBsaWtlIHRoaXM6DQoNCmBgYHtyIGNhcnN9DQpzdW1tYXJ5KGNhcnMpDQpgYGANCg0KIyMgSW5jbHVkaW5nIFBsb3RzDQoNCllvdSBjYW4gYWxzbyBlbWJlZCBwbG90cywgZm9yIGV4YW1wbGU6DQoNCmBgYHtyIHByZXNzdXJlLCBlY2hvPUZBTFNFfQ0KcGxvdChwcmVzc3VyZSkNCmBgYA0KDQpOb3RlIHRoYXQgdGhlIGBlY2hvID0gRkFMU0VgIHBhcmFtZXRlciB3YXMgYWRkZWQgdG8gdGhlIGNvZGUgY2h1bmsgdG8gcHJldmVudCBwcmludGluZyBvZiB0aGUgUiBjb2RlIHRoYXQgZ2VuZXJhdGVkIHRoZSBwbG90Lg0K</div>
+options(width = 100)</code></pre>
+<pre class="r"><code># Setup for interactive 3D plots (optional)
+if (requireNamespace(&quot;rgl&quot;, quietly = TRUE)) {
+  rgl::setupKnitr()
+}
+
+# Define the colorize function for use later in the document
+ colorize &lt;- function(x, color) {
+  sprintf(&quot;&lt;span style=&#39;color: %s;&#39;&gt;%s&lt;/span&gt;&quot;, color, x)
+}</code></pre>
+<p>Last compiled on November, 2025</p>
+<p><br></p>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRldmVsb3BpbmcgRGF0YWJhc2UiDQphdXRob3I6ICJQYWlnZSBLZW1wZXIiDQpkYXRlOiAiMjAyNS0wOS0yNSINCm91dHB1dDogaHRtbF9kb2N1bWVudA0KLS0tDQoNCmBgYHtyfQ0KDQpsaWJyYXJ5KGtuaXRyKQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KA0KICBlY2hvID0gVFJVRSwNCiAgd2FybmluZyA9IEZBTFNFLA0KICBtZXNzYWdlID0gRkFMU0UsDQogIGNvbW1lbnQgPSAiIz4iLA0KICBjYWNoZSA9IFRSVUUNCikNCg0Kb3B0aW9ucyh3aWR0aCA9IDEwMCkNCmBgYA0KDQpgYGB7cn0NCiMgU2V0dXAgZm9yIGludGVyYWN0aXZlIDNEIHBsb3RzIChvcHRpb25hbCkNCmlmIChyZXF1aXJlTmFtZXNwYWNlKCJyZ2wiLCBxdWlldGx5ID0gVFJVRSkpIHsNCiAgcmdsOjpzZXR1cEtuaXRyKCkNCn0NCg0KIyBEZWZpbmUgdGhlIGNvbG9yaXplIGZ1bmN0aW9uIGZvciB1c2UgbGF0ZXIgaW4gdGhlIGRvY3VtZW50DQogY29sb3JpemUgPC0gZnVuY3Rpb24oeCwgY29sb3IpIHsNCiAgc3ByaW50ZigiPHNwYW4gc3R5bGU9J2NvbG9yOiAlczsnPiVzPC9zcGFuPiIsIGNvbG9yLCB4KQ0KfQ0KYGBgDQoNCmBgYHtyLCBnbG9iYWxzZXR0aW5ncywgZWNobz1GQUxTRSwgd2FybmluZz1GQUxTRSwgcmVzdWx0cz0naGlkZSd9DQpsaWJyYXJ5KGtuaXRyKQ0KDQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpvcHRzX2NodW5rJHNldCh0aWR5Lm9wdHM9bGlzdCh3aWR0aC5jdXRvZmY9MTAwKSx0aWR5PVRSVUUsIHdhcm5pbmcgPSBGQUxTRSwgbWVzc2FnZSA9IEZBTFNFLGNvbW1lbnQgPSAiIz4iLCBjYWNoZT1UUlVFLCBjbGFzcy5zb3VyY2U9YygidGVzdCIpLCBjbGFzcy5vdXRwdXQ9YygidGVzdDIiKSkNCm9wdGlvbnMod2lkdGggPSAxMDApDQpyZ2w6OnNldHVwS25pdHIoKQ0KDQoNCmNvbG9yaXplIDwtIGZ1bmN0aW9uKHgsIGNvbG9yKSB7c3ByaW50ZigiPHNwYW4gc3R5bGU9J2NvbG9yOiAlczsnPiVzPC9zcGFuPiIsIGNvbG9yLCB4KSB9DQoNCmBgYA0KDQpgYGB7ciBrbGlwcHksIGVjaG89RkFMU0UsIGluY2x1ZGU9VFJVRX0NCiNrbGlwcHk6OmtsaXBweShwb3NpdGlvbiA9IGMoJ3RvcCcsICdyaWdodCcpKQ0KI2tsaXBweTo6a2xpcHB5KGNvbG9yID0gJ2RhcmtyZWQnKQ0KI2tsaXBweTo6a2xpcHB5KHRvb2x0aXBfbWVzc2FnZSA9ICdDbGljayB0byBjb3B5JywgdG9vbHRpcF9zdWNjZXNzID0gJ0RvbmUnKQ0KYGBgDQoNCkxhc3QgY29tcGlsZWQgb24gYHIgZm9ybWF0KFN5cy50aW1lKCksICclQiwgJVknKWANCg0KPGJyPg==</div>
 
 
 </div>

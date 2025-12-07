@@ -7,11 +7,89 @@ output: html_document
 
 
 
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide'}
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"))
+options(width = 100)
+rgl::setupKnitr()
 
 
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+Last compiled on `r format(Sys.time(), '%B, %Y')`
+
+<br>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Notebook workspace: playing with OpenAlex queries. Turned eval=FALSE for this page so that it can load onto website due to error in pulling from Excel. 
 
 
 ```{r}
+#check packages 
+
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file = NULL, location = "./data/processed/") {
+    ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+    ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, ".rda", sep = "")
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+    load(filename)
+    get(ls()[ls() != "filename"])
+}
+
+fshowdf <- function(x, ...) {
+    knitr::kable(x, digits = 2, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+
+
+## CUSTOM FUNCTIONS
+
+##NOW: CHECK PACKAGES
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
+fpackage.check(packages)
+```
+
+```{r}
+install.packages("openalexR")
+library(openalexR)
+```
+
+
+
+
+```{r, eval=FALSE}
 # Load author IDs or names from Excel
 author_list <- read_excel("authors.xlsx", sheet = "Sheet1")
 head(author_list)
@@ -59,7 +137,7 @@ get_coauthors <- function(author_id) {
 
 
 Get authors and affiliations
-```{r}
+```{r, eval=FALSE}
 get_coauthors <- function(author_id) {
   # Get author's works (first 200, adjust as needed)
   works <- OAfetch::oa_query(
@@ -122,9 +200,7 @@ head(coauthorship_matrix)
 
 random other code: 
 
-
-chatty 1
-```{r}
+```{r, eval=FALSE}
 
 df_test3 <- NA
 
